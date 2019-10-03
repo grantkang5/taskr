@@ -13,10 +13,14 @@
     "react": "16.10.2",
     "react-dom": "16.10.2",
     "@apollo/react-hooks": "^3.1.1",
+    "@apollo/react-ssr": "^3.1.2",
     "apollo-boost": "^0.4.4",
     "apollo-link-token-refresh": "^0.2.6",
+    "apollo-link-context": "^1.0.19",
     "graphql": "^14.5.7",
-    "jwt-decode": "^2.2.0"
+    "jwt-decode": "^2.2.0",
+    "isomorphic-unfetch": "^3.0.0",
+    "cookie": "^0.4.0"
   },
   "devDependencies": {
     "@types/node": "^12.7.11",
@@ -24,11 +28,13 @@
     "@types/react-dom": "16.9.1",
     "typescript": "^3.6.3",
     "@graphql-codegen/cli": "^1.7.0",
+    "@graphql-codegen/introspection": "1.7.0",
     "@graphql-codegen/typescript": "1.7.0",
     "@graphql-codegen/typescript-operations": "1.7.0",
     "@graphql-codegen/typescript-react-apollo": "1.7.0",
     "@types/graphql": "^14.5.0",
     "@types/jwt-decode": "^2.2.1",
-    "@types/react-router-dom": "^5.1.0"
+    "@types/react-router-dom": "^5.1.0",
+    "@types/cookie": "^0.3.3"
   }
 }
