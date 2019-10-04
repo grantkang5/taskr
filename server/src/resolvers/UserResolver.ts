@@ -41,15 +41,19 @@ export class UserResolver {
   // Protected route
   @Query(() => String)
   @UseMiddleware(isAuth)
-  bye(@Ctx() context: MyContext) {
-    return `BYE!! ${context.payload}`;
+  bye(@Ctx() { payload }: MyContext) {
+    return `your user id is:  ${payload!.userId}`;
   }
 
-  //FIX
   @Query(() => User)
-  async me() {
-    const user = await User.find();
-    return user[0];
+  @UseMiddleware(isAuth)
+  async me(@Ctx() { payload }: MyContext) {
+    try {
+      return await User.findOne(payload!.userId);
+    } catch (err) {
+      console.log(err);
+      return null;
+    }
   }
 
   @Mutation(() => User)
