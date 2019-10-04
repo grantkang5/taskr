@@ -10,7 +10,7 @@ import {
 import { hash, compare } from 'bcryptjs';
 import { User } from '../entity/User';
 import {
-  createAcessToken,
+  createAccessToken,
   createRefreshToken
 } from '../services/auth/createTokens';
 import { Context } from '../services/Context';
@@ -31,7 +31,24 @@ export class UserResolver {
     return `Hello!`;
   }
 
-  @Mutation(() => Boolean)
+  @Query(() => [User])
+  async users() {
+    return await User.find();
+  }
+
+  @Query(() => String)
+  bye() {
+    return `BYE!!`;
+  }
+
+  //FIX
+  @Query(() => User)
+  async me() {
+    const user = await User.find();
+    return user[0];
+  }
+
+  @Mutation(() => User)
   async register(
     @Arg('email') email: string,
     @Arg('password') password: string
@@ -39,14 +56,17 @@ export class UserResolver {
     const hashedPassword = await hash(password, 12);
 
     try {
-      await User.insert({ email, password: hashedPassword });
+      const user = await User.create({
+        email,
+        password: hashedPassword
+      }).save();
+      return user;
     } catch (err) {
       if (err.code === '23505') {
         throw new Error('This email is already in use');
       }
       return err;
     }
-    return true;
   }
 
   @Mutation(() => LoginResponse)
@@ -75,7 +95,7 @@ export class UserResolver {
 
       // send accessToken to client
       return {
-        accessToken: createAcessToken(user),
+        accessToken: createAccessToken(user),
         user
       };
     } catch (err) {
