@@ -10,7 +10,7 @@ import jwtDecode from "jwt-decode";
 import { getAccessToken, setAccessToken } from "./accessToken";
 import { onError } from "apollo-link-error";
 import { ApolloLink } from "apollo-link";
-import cookie from 'cookie'
+import cookie from "cookie";
 
 const isServer = () => typeof window === "undefined";
 
@@ -23,9 +23,14 @@ const isServer = () => typeof window === "undefined";
  * @param {Boolean} [config.ssr=true]
  */
 export function withApollo(PageComponent: any, { ssr = true } = {}) {
-  const WithApollo = ({ apolloClient, apolloState, serverAccessToken, ...pageProps }: any) => {
+  const WithApollo = ({
+    apolloClient,
+    apolloState,
+    serverAccessToken,
+    ...pageProps
+  }: any) => {
     if (!isServer() && !getAccessToken()) {
-      setAccessToken(serverAccessToken)
+      setAccessToken(serverAccessToken);
     }
     const client = apolloClient || initApolloClient(apolloState);
     return <PageComponent {...pageProps} apolloClient={client} />;
@@ -52,21 +57,27 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
         ctx: { req, res }
       } = ctx;
 
-      let serverAccessToken = ''
+      let serverAccessToken = "";
 
       if (isServer()) {
-        const cookies = cookie.parse(req.headers.cookie)
-        if (cookies.qid) {
-          const response = await fetch('http://localhost:4000/refresh_token', {
-            method: "POST",
-            credentials: "include",
-            headers: {
-              cookie: 'qid=' + cookies.qid
-            }
-          })
+        let cookies: any;
+        if (req.headers.cookie) {
+          cookies = cookie.parse(req.headers.cookie);
+          if (cookies.qid) {
+            const response = await fetch(
+              "http://localhost:4000/refresh_token",
+              {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                  cookie: "qid=" + cookies.qid
+                }
+              }
+            );
 
-          const data = await response.json();
-          serverAccessToken = data.accessToken;
+            const data = await response.json();
+            serverAccessToken = data.accessToken;
+          }
         }
       }
 
