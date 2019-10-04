@@ -1,13 +1,13 @@
-import React from "react";
-import { useMeQuery, useLogoutMutation } from "../generated/graphql";
-import Link from "next/link";
-import { setAccessToken } from "../lib/accessToken";
+import React from 'react';
+import { useMeQuery } from '../generated/graphql';
+import Link from 'next/link';
+import { setAccessToken } from '../lib/accessToken';
 
 interface Props {}
 
 export const Header: React.FC<Props> = () => {
   const { data, loading } = useMeQuery();
-  const [logout, { client }] = useLogoutMutation();
+  // const [logout, { client }] = useLogoutMutation();
 
   let body: any = null;
 
@@ -24,21 +24,21 @@ export const Header: React.FC<Props> = () => {
       <nav>
         <Link href="/">
           <a>Home</a>
-        </Link>{" "}
-        |{" "}
+        </Link>{' '}
+        |{' '}
         <Link href="/register">
           <a>Register</a>
-        </Link>{" "}
-        |{" "}
+        </Link>{' '}
+        |{' '}
         <Link href="/login">
           <a>Login</a>
-        </Link>{" "}
-        |{" "}
+        </Link>{' '}
+        |{' '}
         <Link href="/bye">
           <a>bye</a>
-        </Link>{" "}
-        |{" "}
-        {!loading && data && data.me ? (
+        </Link>{' '}
+        |{' '}
+        {/* {!loading && data && data.me ? (
           <button
             onClick={async () => {
               await logout();
@@ -48,7 +48,7 @@ export const Header: React.FC<Props> = () => {
           >
             logout
           </button>
-        ) : null}
+        ) : null} */}
       </nav>
       {body}
     </header>
