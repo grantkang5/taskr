@@ -5,7 +5,8 @@ import {
   Arg,
   ObjectType,
   Field,
-  Ctx
+  Ctx,
+  UseMiddleware
 } from 'type-graphql';
 import { hash, compare } from 'bcryptjs';
 import { User } from '../entity/User';
@@ -13,8 +14,9 @@ import {
   createAccessToken,
   createRefreshToken
 } from '../services/auth/createTokens';
-import { Context } from '../services/Context';
+import { MyContext } from '../services/Context';
 import { sendRefreshToken } from '../services/auth/sendRefreshToken';
+import { isAuth } from '../services/auth/isAuth';
 
 @ObjectType()
 class LoginResponse {
@@ -36,9 +38,11 @@ export class UserResolver {
     return await User.find();
   }
 
+  // Protected route
   @Query(() => String)
-  bye() {
-    return `BYE!!`;
+  @UseMiddleware(isAuth)
+  bye(@Ctx() context: MyContext) {
+    return `BYE!! ${context.payload}`;
   }
 
   //FIX
@@ -73,7 +77,7 @@ export class UserResolver {
   async login(
     @Arg('email') email: string,
     @Arg('password') password: string,
-    @Ctx() { res }: Context
+    @Ctx() { res }: MyContext
   ) {
     try {
       const user = await User.findOne({ email });
