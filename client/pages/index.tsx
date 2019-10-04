@@ -21,11 +21,6 @@ const Home: React.FC<Props> = () => {
       <Head>
         <title>Cool App Title</title>
       </Head>
-      {data && data.me ? (
-        <div>You are logged in as {data.me.email}</div>
-      ) : (
-        <div>HOME</div>
-      )}
     </Layout>
   );
 };
