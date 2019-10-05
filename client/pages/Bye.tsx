@@ -6,6 +6,7 @@ interface Props {}
 
 const Bye: React.FC<Props> = () => {
   const { data, error } = useByeQuery({ fetchPolicy: "network-only" });
+
   if (error) {
     return <Layout>{error.message}</Layout>;
   }

@@ -14,7 +14,7 @@ const Login: React.FC = () => {
       <form
         onSubmit={async e => {
           e.preventDefault();
-          console.log(email, password);
+
           try {
             const response = await login({
               variables: {

@@ -88,9 +88,11 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
         serverAccessToken
       ));
 
-      const pageProps = PageComponent.getInitialProps
-        ? await PageComponent.getInitialProps(ctx)
-        : {};
+      let pageProps = {}
+      if (PageComponent.getInitialProps) {
+        pageProps = await PageComponent.getInitialProps(ctx)
+      }
+
 
       // Only on the server
       if (typeof window === "undefined") {
