@@ -19,7 +19,7 @@ const Home: React.FC<Props> = () => {
   return (
     <Layout>
       <Head>
-        <title>Cool App Title</title>
+        <title>Dorya</title>
       </Head>
     </Layout>
   );
