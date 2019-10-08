@@ -5,7 +5,8 @@ jobs:
     docker:
       - image: circleci/node:10.16.3
     steps:
-      - checkout
+      - checkout:
+          path: ~/ssr-auth
       - run:
           name: "lint files"
           command: yarn lint
