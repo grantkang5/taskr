@@ -24,10 +24,10 @@ jobs:
           key: dependency-cache-{{ checksum "yarn.lock" }}
 
       - persist_to_workspace:
-        root: '.'
-        paths:
-          - node_modules
-          - yarn.lock
+          root: '.'
+          paths:
+            - node_modules
+            - yarn.lock
 
   lint:
     working_directory: ~/ssr-auth/client
