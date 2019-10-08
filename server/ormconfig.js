@@ -12,12 +12,12 @@ module.exports = {
   "synchronize": true,
   "logging": false,
   "ssl": process.env.NODE_ENV === 'production' ? true : false,
-  "entities": ["src/entity/**/*.ts"],
-  "migrations": ["src/migration/**/*.ts"],
-  "subscribers": ["src/subscriber/**/*.ts"],
+  "entities": process.env.NODE.ENV === 'production' ? ["dist/entity/**/*.js"] : ["src/entity/**/*.ts"],
+  "migrations": process.env.NODE.ENV === 'production' ? ["dist/migration/**/*.js"] : ["src/migration/**/*.ts"],
+  "subscribers": process.env.NODE.ENV === 'production' ? ["dist/subscriber/**/*.js"] : ["src/subscriber/**/*.ts"],
   "cli": {
-    "entitiesDir": "src/entity",
-    "migrationsDir": "src/migration",
-    "subscribersDir": "src/subscriber"
+    "entitiesDir": process.env.NODE.ENV === 'production' ? "dist/entity" : "src/entity",
+    "migrationsDir": process.env.NODE.ENV === 'production' ? "dist/migration" : "src/migration",
+    "subscribersDir": process.env.NODE.ENV === 'production' ? "dist/subscriber" : "src/subscriber"
   }
 }
