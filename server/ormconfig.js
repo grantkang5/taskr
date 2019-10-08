@@ -8,7 +8,7 @@ module.exports = {
   "port": db.port || 5432,
   "username": db.user,
   "password": db.password,
-  "database": process.env.DATABASE_URL,
+  "database": db.database,
   "synchronize": true,
   "logging": false,
   "ssl": process.env.NODE_ENV === 'production' ? true : false,
