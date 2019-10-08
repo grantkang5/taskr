@@ -10,7 +10,6 @@
     "@types/jsonwebtoken": "^8.3.4",
     "@types/node": "^12.7.5",
     "nodemon": "^1.19.2",
-    "ts-node": "8.4.1",
     "tslint": "^5.20.0",
     "typescript": "3.6.3"
   },
@@ -26,7 +25,8 @@
     "pg": "^7.3.0",
     "reflect-metadata": "^0.1.10",
     "type-graphql": "^0.17.5",
-    "typeorm": "0.2.19"
+    "typeorm": "0.2.19",
+    "ts-node": "8.4.1"
   },
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
