@@ -1,7 +1,7 @@
 veresion: 2
 jobs:
   lint:
-    working_directory: ./client
+    working_directory: ~/ssr-auth/sclient
     docker:
       - image: circleci/node:10.16.3
     steps:
