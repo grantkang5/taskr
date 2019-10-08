@@ -1,9 +1,13 @@
+const parser = require('pg-connection-string')
+
+const db = parser(process.env.DATABASE_URL)
+
 module.exports = {
   "type": "postgres",
-  "host": process.env.PG_HOST,
+  "host": db.PG_HOST,
   "port": 5432,
-  "username": process.env.PG_USER,
-  "password": process.env.PG_PASSWORD,
+  "username": db.PG_USER,
+  "password": db.PG_PASSWORD,
   "database": process.env.DATABASE_URL,
   "synchronize": true,
   "logging": false,
