@@ -66,7 +66,6 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
           if (cookies.qid) {
             const response = await fetch(
               `${process.env.API_URL}/refresh_token`,
-              // "http://localhost:4000/refresh_token",
               {
                 method: "POST",
                 credentials: "include",
@@ -173,7 +172,6 @@ function initApolloClient(initState: any, serverAccessToken?: string) {
 function createApolloClient(initialState = {}, serverAccessToken?: string) {
   const httpLink = new HttpLink({
     uri: process.env.GRAPHQL_URL,
-    // uri: "http://localhost:4000/graphql",
     credentials: "include",
     fetch
   });
