@@ -1,6 +1,8 @@
 veresion: 2
 jobs:
   lint:
+    docker:
+      - image: circleci/node:10.16.3
     steps:
       - checkout
       - run:
