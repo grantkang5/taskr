@@ -1,12 +1,13 @@
-{
+module.exports = {
   "type": "postgres",
   "host": "localhost",
   "port": 5432,
   "username": "postgres",
   "password": "postgres",
-  "database": "ssr-auth",
+  "database": process.env.DATABASE_URL,
   "synchronize": true,
   "logging": false,
+  "ssl": true,
   "entities": ["src/entity/**/*.ts"],
   "migrations": ["src/migration/**/*.ts"],
   "subscribers": ["src/subscriber/**/*.ts"],

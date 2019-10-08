@@ -11,7 +11,7 @@ import { refreshAccessToken } from './services/auth/refreshAccessToken';
 
 const PORT = process.env.PORT || 4000;
 
-(async () => {
+const startServer = async () => {
   const app = express();
   app.use(
     cors({
@@ -35,4 +35,6 @@ const PORT = process.env.PORT || 4000;
   await createConnection();
 
   app.listen(PORT, () => console.log(`Express server listening on ${PORT}`));
-})();
+}
+
+startServer();
