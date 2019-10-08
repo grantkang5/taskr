@@ -3,9 +3,7 @@ import Head from 'next/head';
 import Layout from '../components/Layout';
 import { useMeQuery } from '../generated/graphql';
 
-interface Props {}
-
-const Home: React.FC<Props> = () => {
+const Home: React.FC = () => {
   const { data } = useMeQuery({ fetchPolicy: 'network-only' });
 
   if (!data) {

@@ -3,9 +3,7 @@ import { useMeQuery } from '../generated/graphql';
 import Link from 'next/link';
 import { setAccessToken } from '../lib/accessToken';
 
-interface Props {}
-
-export const Header: React.FC<Props> = () => {
+export const Header: React.FC = () => {
   const { data, loading } = useMeQuery();
   // const [logout, { client }] = useLogoutMutation();
 
