@@ -2,7 +2,9 @@ import React from "react";
 import { useByeQuery } from "../generated/graphql";
 import Layout from "../components/Layout";
 
-const Bye: React.FC = () => {
+interface Props {}
+
+const Bye: React.FC<Props> = () => {
   const { data, error } = useByeQuery({ fetchPolicy: "network-only" });
 
   if (error) {
