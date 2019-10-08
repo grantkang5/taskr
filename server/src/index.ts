@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-// import { createConnection } from 'typeorm';
+import 'dotenv/config';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import { UserResolver } from './resolvers/UserResolver';
@@ -15,7 +15,7 @@ const startServer = async () => {
   const app = express();
   app.use(
     cors({
-      origin: 'http://localhost:3000',
+      origin: process.env.CLIENT_URL,
       credentials: true
     })
   );

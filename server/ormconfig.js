@@ -4,11 +4,11 @@ const db = parser(process.env.DATABASE_URL)
 
 module.exports = {
   "type": "postgres",
-  "host": db.host,
-  "port": db.port || 5432,
-  "username": db.user,
-  "password": db.password,
-  "database": db.database,
+  "host": process.env.NODE_ENV === 'production' ? db.host : 'localhost',
+  "port": process.env.NODE_ENV === 'production' ? db.port : 5432,
+  "username": process.env.NODE_ENV === 'production' ? db.user : process.env.PG_USER,
+  "password": process.env.NODE_ENV === 'production' ? db.password : process.env.PG_PASSWORD,
+  "database": process.env.NODE_ENV === 'production' ? db.database : process.env.DATABASE_URL,
   "synchronize": true,
   "logging": false,
   "ssl": process.env.NODE_ENV === 'production' ? true : false,

@@ -65,7 +65,8 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
           cookies = cookie.parse(req.headers.cookie);
           if (cookies.qid) {
             const response = await fetch(
-              "http://localhost:4000/refresh_token",
+              `${process.env.API_URL}/refresh_token`,
+              // "http://localhost:4000/refresh_token",
               {
                 method: "POST",
                 credentials: "include",
@@ -171,7 +172,8 @@ function initApolloClient(initState: any, serverAccessToken?: string) {
  */
 function createApolloClient(initialState = {}, serverAccessToken?: string) {
   const httpLink = new HttpLink({
-    uri: "http://localhost:4000/graphql",
+    uri: process.env.GRAPHQL_URL,
+    // uri: "http://localhost:4000/graphql",
     credentials: "include",
     fetch
   });
@@ -197,7 +199,7 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
       }
     },
     fetchAccessToken: () => {
-      return fetch("http://localhost:4000/refresh_token", {
+      return fetch(`${process.env.API_URL}/refresh_token`, {
         method: "POST",
         credentials: "include"
       });
