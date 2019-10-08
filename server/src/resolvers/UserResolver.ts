@@ -42,7 +42,7 @@ export class UserResolver {
   @Query(() => String)
   @UseMiddleware(isAuth)
   bye(@Ctx() { payload }: MyContext) {
-    return `your user id is:  ${payload!.userId}`;
+    return `Your user id is:  ${payload!.userId}`;
   }
 
   @Query(() => User)
