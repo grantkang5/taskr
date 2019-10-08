@@ -9,6 +9,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { refreshAccessToken } from './services/auth/refreshAccessToken';
 
+const PORT = process.env.PORT || 4000;
+
 (async () => {
   const app = express();
   app.use(
@@ -32,5 +34,5 @@ import { refreshAccessToken } from './services/auth/refreshAccessToken';
   apolloServer.applyMiddleware({ app, cors: false });
   await createConnection();
 
-  app.listen(4000, () => console.log('Express server listening on 4000'));
+  app.listen(PORT, () => console.log(`Express server listening on ${PORT}`));
 })();
