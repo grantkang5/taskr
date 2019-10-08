@@ -1,5 +1,15 @@
 veresion: 2
 jobs:
+  build:
+    working_directory: ~/ssr-auth/client
+    docker:
+      - image: circleci/node:10.16.3
+    steps:
+      - checkout:
+          path: ~/ssr-auth
+      - run:
+          name: "build"
+          command: yarn
   lint:
     working_directory: ~/ssr-auth/client
     docker:
@@ -13,6 +23,9 @@ jobs:
 
 workflows:
   version: 2
-  client_prebuild:
+  client_predeploy:
     jobs:
-      - lint
+      - build
+      - lint:
+          requires:
+            - build
