@@ -1,6 +1,8 @@
 const parser = require('pg-connection-string')
 
 const db = parser(process.env.DATABASE_URL)
+console.log('database: ', db)
+console.log('NODEENV: ', process.env.NODE_ENV)
 
 module.exports = {
   "type": "postgres",
