@@ -14,7 +14,7 @@ import {
   createAccessToken,
   createRefreshToken
 } from '../services/auth/createTokens';
-import { MyContext } from '../services/Context';
+import { MyContext } from '../services/context';
 import { sendRefreshToken } from '../services/auth/sendRefreshToken';
 import { isAuth } from '../services/auth/isAuth';
 
