@@ -3,22 +3,49 @@ jobs:
   build:
     working_directory: ~/ssr-auth/client
     docker:
-      - image: circleci/node:10.16.3
+      - image: circleci/node:latest
+
     steps:
       - checkout:
           path: ~/ssr-auth
+
+      - restore_cache:
+          keys:
+          - dependency-cache-{{ checksum "yarn.lock" }}
+          - dependency-cache-
+
       - run:
-          name: "build"
+          name: "Install dependencies"
           command: yarn
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+
+      - persist_to_workspace:
+        root: '.'
+        paths:
+          - node_modules
+          - yarn.lock
+
   lint:
     working_directory: ~/ssr-auth/client
     docker:
-      - image: circleci/node:10.16.3
+      - image: circleci/node:latest
     steps:
       - checkout:
           path: ~/ssr-auth
+      
+      - attach_workspace:
+          at: '.'
+
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
       - run:
-          name: "lint files"
+          name: "Lint files"
           command: yarn lint
 
 workflows:
