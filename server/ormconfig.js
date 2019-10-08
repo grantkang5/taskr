@@ -1,8 +1,6 @@
 const parser = require('pg-connection-string')
 
 const db = parser(process.env.DATABASE_URL)
-console.log('database: ', db)
-console.log('NODEENV: ', process.env.NODE_ENV)
 
 module.exports = {
   "type": "postgres",
@@ -14,21 +12,12 @@ module.exports = {
   "synchronize": true,
   "logging": false,
   "ssl": process.env.NODE_ENV === 'production' ? true : false,
-  "entities": ["dist/entity/**/*.js"],
-  "migrations": ["dist/migration/**/*.js"],
-  "subscribers": ["dist/subscriber/**/*.js"],
+  "entities": process.env.NODE_ENV === 'production' ? ["dist/entity/**/*.js"] : ["src/entity/**/*.ts"],
+  "migrations": process.env.NODE_ENV === 'production' ? ["dist/migration/**/*.js"] : ["src/migration/**/*.ts"],
+  "subscribers": process.env.NODE_ENV === 'production' ? ["dist/subscriber/**/*.js"] : ["src/subscriber/**/*.ts"],
   "cli": {
-    "entitiesDir": "dist/entity",
-    "migrationsDir": "dist/migration",
-    "subscribersDir": "dist/subscriber"
+    "entitiesDir": process.env.NODE_ENV === 'production' ? "dist/entity" : "src/entity",
+    "migrationsDir": process.env.NODE_ENV === 'production' ? "dist/migration" : "src/migration",
+    "subscribersDir": process.env.NODE_ENV === 'production' ? "dist/subscriber" : "src/subscriber"
   }
 }
-
-// "entities": process.env.NODE.ENV === 'production' ? ["dist/entity/**/*.js"] : ["src/entity/**/*.ts"],
-//   "migrations": process.env.NODE.ENV === 'production' ? ["dist/migration/**/*.js"] : ["src/migration/**/*.ts"],
-//   "subscribers": process.env.NODE.ENV === 'production' ? ["dist/subscriber/**/*.js"] : ["src/subscriber/**/*.ts"],
-//   "cli": {
-//     "entitiesDir": process.env.NODE.ENV === 'production' ? "dist/entity" : "src/entity",
-//     "migrationsDir": process.env.NODE.ENV === 'production' ? "dist/migration" : "src/migration",
-//     "subscribersDir": process.env.NODE.ENV === 'production' ? "dist/subscriber" : "src/subscriber"
-//   }
