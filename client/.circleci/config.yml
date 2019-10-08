@@ -1,0 +1,15 @@
+veresion: 2
+jobs:
+  lint:
+    steps:
+      - checkout
+      - run:
+        name: "lint files"
+        command: |
+          yarn lint
+
+workflows:
+  version: 2
+  lint_and_test:
+    jobs:
+      - lint
