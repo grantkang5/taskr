@@ -8,6 +8,7 @@ interface Props {}
 const Home: React.FC<Props> = () => {
   const { data } = useMeQuery({ fetchPolicy: 'network-only' });
   console.log(process.env.NODE_ENV, process.env.API_URL)
+  console.log('env var from host: ', process.env.SOMETHING)
 
   if (!data) {
     return (
