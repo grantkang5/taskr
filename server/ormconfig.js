@@ -7,7 +7,7 @@ module.exports = {
   "database": process.env.DATABASE_URL,
   "synchronize": true,
   "logging": false,
-  "ssl": process.env.NODE_ENV === production ? true : false,
+  "ssl": process.env.NODE_ENV === 'production' ? true : false,
   "entities": ["src/entity/**/*.ts"],
   "migrations": ["src/migration/**/*.ts"],
   "subscribers": ["src/subscriber/**/*.ts"],
