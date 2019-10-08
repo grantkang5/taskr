@@ -5,8 +5,7 @@ jobs:
       - checkout
       - run:
         name: "lint files"
-        command: |
-          yarn lint
+        command: yarn lint
 
 workflows:
   version: 2
