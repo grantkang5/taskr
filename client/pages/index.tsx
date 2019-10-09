@@ -2,9 +2,10 @@ import React from 'react';
 import Head from 'next/head';
 import Layout from '../components/Layout';
 import { useMeQuery } from '../generated/graphql';
+import { useApolloClient } from '@apollo/react-hooks';
 
-const Home: React.FC = () => {
-  const { data } = useMeQuery({ fetchPolicy: 'network-only' });
+const Home: React.FC<Props> = () => {
+  const { data } = useMeQuery();
 
   if (!data) {
     return (
@@ -17,7 +18,7 @@ const Home: React.FC = () => {
   return (
     <Layout>
       <Head>
-        <title>Dorya</title>
+        <title>zawarudo</title>
       </Head>
     </Layout>
   );
