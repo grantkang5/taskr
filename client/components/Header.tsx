@@ -2,6 +2,8 @@ import React from 'react';
 import { useMeQuery } from '../generated/graphql';
 import Link from 'next/link';
 import { setAccessToken } from '../lib/accessToken';
+import { Logout } from './Logout';
+import { useApolloClient } from '@apollo/react-hooks';
 
 interface Props {}
 
@@ -37,7 +39,7 @@ export const Header: React.FC<Props> = () => {
         <Link href="/bye">
           <a>bye</a>
         </Link>{' '}
-        |{' '}
+        | {!loading && data && data.me && <Logout />}
         {/* {!loading && data && data.me ? (
           <button
             onClick={async () => {
