@@ -2,11 +2,12 @@ import React from 'react';
 import Head from 'next/head';
 import Layout from '../components/Layout';
 import { useMeQuery } from '../generated/graphql';
+import { useApolloClient } from '@apollo/react-hooks';
 
 interface Props {}
 
 const Home: React.FC<Props> = () => {
-  const { data } = useMeQuery({ fetchPolicy: 'network-only' });
+  const { data } = useMeQuery();
 
   if (!data) {
     return (
