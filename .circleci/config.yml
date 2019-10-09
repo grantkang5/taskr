@@ -48,6 +48,25 @@ jobs:
           name: "Lint files"
           command: yarn lint
 
+  test:
+    working_directory: ~/ssr-auth/client
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout:
+          path: ~/ssr-auth
+      
+      - attach_workspace:
+          at: '.'
+
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
+      - run:
+          name: "React test suite"
+          command: yarn test:coverage
+
 workflows:
   version: 2
   client_predeploy:
