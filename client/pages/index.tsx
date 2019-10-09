@@ -2,9 +2,8 @@ import React from 'react';
 import Head from 'next/head';
 import Layout from '../components/Layout';
 import { useMeQuery } from '../generated/graphql';
-import { useApolloClient } from '@apollo/react-hooks';
 
-const Home: React.FC<Props> = () => {
+const Home: React.FC = () => {
   const { data } = useMeQuery();
 
   if (!data) {

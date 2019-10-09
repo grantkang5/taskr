@@ -2,7 +2,6 @@ import React from 'react';
 import { useLogoutMutation } from '../generated/graphql';
 import Router from 'next/router';
 import { setAccessToken } from '../lib/accessToken';
-import { useApolloClient } from '@apollo/react-hooks';
 
 export const Logout: React.FC = () => {
   const [logout, { client }] = useLogoutMutation();
