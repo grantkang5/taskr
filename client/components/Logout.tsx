@@ -4,9 +4,7 @@ import Router from 'next/router';
 import { setAccessToken } from '../lib/accessToken';
 import { useApolloClient } from '@apollo/react-hooks';
 
-interface Props {}
-
-export const Logout: React.FC<Props> = () => {
+export const Logout: React.FC = () => {
   const [logout, { client }] = useLogoutMutation();
 
   const handleClick = async () => {
