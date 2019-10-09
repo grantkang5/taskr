@@ -20,7 +20,7 @@ const Home: React.FC<Props> = () => {
   return (
     <Layout>
       <Head>
-        <title>Dorya</title>
+        <title>zawarudo</title>
       </Head>
     </Layout>
   );
