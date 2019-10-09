@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import { useLoginMutation } from "../generated/graphql";
+import React, { useState } from 'react';
+import { useLoginMutation } from '../generated/graphql';
 import Router from 'next/router';
-import { setAccessToken } from "../lib/accessToken";
-import Layout from "../components/Layout";
+import { setAccessToken } from '../lib/accessToken';
+import Layout from '../components/Layout';
 
 const Login: React.FC = () => {
-  const [email, handleEmail] = useState("");
-  const [password, handlePassword] = useState("");
+  const [email, handleEmail] = useState('');
+  const [password, handlePassword] = useState('');
   const [login] = useLoginMutation();
 
   return (
@@ -25,7 +25,7 @@ const Login: React.FC = () => {
             if (response && response.data) {
               setAccessToken(response.data.login.accessToken);
             }
-            Router.push("/")
+            Router.push('/');
           } catch (err) {
             console.log(err);
           }
