@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { useRegisterMutation } from "../generated/graphql";
 import Router from "next/router";
+import React, { useState } from "react";
 import Layout from "../components/Layout";
+import { useRegisterMutation } from "../generated/graphql";
 
 const Register: React.FC = () => {
   const [email, handleEmail] = useState("");

@@ -5,9 +5,7 @@ import { setAccessToken } from '../lib/accessToken';
 import { Logout } from './Logout';
 import { useApolloClient } from '@apollo/react-hooks';
 
-interface Props {}
-
-export const Header: React.FC<Props> = () => {
+export const Header: React.FC = () => {
   const { data, loading } = useMeQuery();
   // const [logout, { client }] = useLogoutMutation();
 
