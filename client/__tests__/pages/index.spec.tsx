@@ -20,7 +20,7 @@ describe("Pages", () => {
       }
     ]
 
-    it("renders without error", () => {
+    it("should render and call me query", () => {
       render(
         <MockedProvider mocks={mocks} addTypename={false}>
           <Home />
