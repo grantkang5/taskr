@@ -1,9 +1,9 @@
 import * as React from "react";
-import { mount, render } from "enzyme";
-import Home from "../pages";
+import { render } from "enzyme";
+import Home from "../../pages";
 import { MockedProvider } from '@apollo/react-testing';
-import { MeDocument } from "../generated/graphql";
-import Layout from "../components/Layout";
+import { MeDocument } from "../../generated/graphql";
+import Layout from "../../components/Layout";
 
 describe("Pages", () => {
   describe("Home", () => {
