@@ -13,9 +13,9 @@ module.exports = {
   ],
   globals: {
     "ts-jest": {
-      useBabelrc: true,
+      babelConfig: true,
       // tslint:disable-next-line: object-literal-sort-keys
-      tsConfigFile: "jest.tsconfig.json"
+      tsConfig: "jest.tsconfig.json"
     }
   },
   coveragePathIgnorePatterns: [

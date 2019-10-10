@@ -2,8 +2,8 @@ import * as React from "react";
 import { render, mount } from "enzyme";
 import { act } from "react-dom/test-utils";
 import { MockedProvider, wait } from "@apollo/react-testing";
-import { LoginDocument } from "../generated/graphql";
-import Login from "../pages/login";
+import Login from "../../pages/login";
+import { LoginDocument } from "../../generated/graphql";
 
 describe("Pages", () => {
   describe("Login", () => {
