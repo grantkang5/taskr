@@ -1,23 +1,62 @@
 const parser = require('pg-connection-string')
-
 const db = parser(process.env.DATABASE_URL)
 
-module.exports = {
+module.exports = [{
+  "name": "development",
   "type": "postgres",
-  "host": process.env.NODE_ENV === 'production' ? db.host : 'localhost',
-  "port": process.env.NODE_ENV === 'production' ? db.port : 5432,
-  "username": process.env.NODE_ENV === 'production' ? db.user : process.env.PG_USER,
-  "password": process.env.NODE_ENV === 'production' ? db.password : process.env.PG_PASSWORD,
-  "database": process.env.NODE_ENV === 'production' ? db.database : process.env.DATABASE_URL,
+  "host": 'localhost',
+  "port": 5432,
+  "username": process.env.PG_USER,
+  "password": process.env.PG_PASSWORD,
+  "database": process.env.DATABASE_URL,
   "synchronize": true,
   "logging": false,
-  "ssl": process.env.NODE_ENV === 'production' ? true : false,
-  "entities": process.env.NODE_ENV === 'production' ? ["dist/entity/**/*.js"] : ["src/entity/**/*.ts"],
-  "migrations": process.env.NODE_ENV === 'production' ? ["dist/migration/**/*.js"] : ["src/migration/**/*.ts"],
-  "subscribers": process.env.NODE_ENV === 'production' ? ["dist/subscriber/**/*.js"] : ["src/subscriber/**/*.ts"],
+  "ssl": false,
+  "entities": ["src/entity/**/*.ts"],
+  "migrations": ["src/database/migration/**/*.ts"],
+  "subscribers": ["src/subscriber/**/*.ts"],
   "cli": {
-    "entitiesDir": process.env.NODE_ENV === 'production' ? "dist/entity" : "src/entity",
-    "migrationsDir": process.env.NODE_ENV === 'production' ? "dist/migration" : "src/migration",
-    "subscribersDir": process.env.NODE_ENV === 'production' ? "dist/subscriber" : "src/subscriber"
+    "entitiesDir": "src/entity",
+    "migrationsDir": "src/database/migration",
+    "subscribersDir": "src/subscriber"
   }
-}
+},
+{
+  "name": "production",
+  "type": "postgres",
+  "host": db.host,
+  "port": db.port,
+  "username": db.user,
+  "password": db.password,
+  "database": db.database,
+  "synchronize": false,
+  "logging": false,
+  "ssl": true,
+  "entities": ["dist/entity/**/*.js"],
+  "migrations": ["dist/database/migration/**/*.js"],
+  "subscribers": ["dist/subscriber/**/*.js"],
+  "cli": {
+    "entitiesDir": "dist/entity",
+    "migrationsDir": "dist/database/migration",
+    "subscribersDir": "dist/subscriber"
+  },
+  "name": "test",
+  "type": "postgres",
+  "host": 'localhost',
+  "port": 5432,
+  "username": process.env.PG_USER,
+  "password": process.env.PG_PASSWORD,
+  "database": process.env.DATABASE_URL,
+  "synchronize": true,
+  "logging": false,
+  "ssl": false,
+  "entities": ["src/entity/**/*.ts"],
+  "migrations": ["src/database/migration/**/*.ts"],
+  "subscribers": ["src/subscriber/**/*.ts"],
+  "cli": {
+    "entitiesDir": "src/entity",
+    "migrationsDir": "src/database/migration",
+    "subscribersDir": "src/subscriber"
+  }
+},
+]
