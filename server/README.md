@@ -1,7 +1,12 @@
-# Awesome Project Build with TypeORM
-        
-Steps to run this project:
+# Api
+      Steps to run this project:
 
-1. Run `npm i` command
-2. Setup database settings inside `ormconfig.json` file
-3. Run `npm start` command
+1. Run `npm install` or `yarn` command
+2. Create `.env` file with the following keys in `.env.sample`
+3. Run `yarn dev`
+
+    Creating DB & Loading Fixtures
+
+1. We are using postgres for this project. Start a server using psql or docker image
+2. Run `yarn dev`
+3. Run `yarn db:seed`
