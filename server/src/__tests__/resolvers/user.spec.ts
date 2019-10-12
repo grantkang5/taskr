@@ -69,7 +69,6 @@ describe("User Resolver", () => {
       expect(user!.email).toEqual('dev2@email.com')
       expect(res.data).toBeDefined()
       expect(res.errors).toBeUndefined()
-      expect(res.data).toMatchSnapshot();
     });
   });
 
@@ -84,7 +83,6 @@ describe("User Resolver", () => {
       })
       expect(res.data).toBeDefined()
       expect(res.errors).toBeUndefined()
-      expect(res.data).toMatchSnapshot();
     })
   })
 });
