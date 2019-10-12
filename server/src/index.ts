@@ -24,7 +24,7 @@ const startServer = async () => {
 
   app.post("/refresh_token", refreshAccessToken);
   server.applyMiddleware({ app, cors: false });
-  await createConnection(process.env.NODE_ENV!);
+  await createConnection();
   app.listen(PORT, () => console.log(`Express server listening on ${PORT}`));
 };
 
