@@ -35,8 +35,10 @@ DA:21,2
 DA:27,1
 LF:10
 LH:10
-BRF:0
-BRH:0
+BRDA:27,0,0,0
+BRDA:27,0,1,1
+BRF:2
+BRH:1
 end_of_record
 TN:
 SF:/Users/grantkang/Desktop/projects/ssr-auth/server/src/entity/User.ts
