@@ -1,11 +1,15 @@
 
 import { gql } from 'apollo-server-express'
-import { server } from '../server'
+import { testServer, initDb } from './mocks/server'
 
 const { createTestClient } = require('apollo-server-testing')
-const { query } = createTestClient(server)
+const { query } = createTestClient(testServer)
 
 describe('User Resolver', () => {
+  beforeAll(async () => {
+    initDb()
+  })
+
   it('should fetch current user', async () => {
     const res = await query({
       query: gql`
@@ -15,7 +19,10 @@ describe('User Resolver', () => {
             email
           }
         }
-      `
+      `,
+      http: {
+        headers: { 'authorization': 'yolo' }
+      }
     })
 
     console.log('res; ', res)
