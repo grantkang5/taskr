@@ -24,4 +24,4 @@ export const testServer = new ApolloServer({
   }
 });
 
-export const initDb = async () => await exec('npm run db:seed')
+export const initDb = async () => await exec('yarn db:seed')
