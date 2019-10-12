@@ -38,20 +38,24 @@
     "reflect-metadata": "^0.1.10",
     "ts-node": "8.4.1",
     "type-graphql": "^0.17.5",
-    "typeorm": "0.2.19"
+    "typeorm": "^0.2.19"
   },
   "scripts": {
     "dev": "nodemon --exec ts-node src/index.ts",
     "start": "node dist/index.js",
     "build": "tsc --sourceMap false",
     "test": "jest --coverage",
-    "db:seed": "fixtures ./src/database/fixtures --config ./ormconfig.js --connection test --sync --require=ts-node/register",
+    "db:seed": "fixtures ./src/database/fixtures --config ./ormconfig.js --connection test --sync --require=ts-node/register"
   },
   "jest": {
     "transform": {
       "^.+\\.ts?$": "ts-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
+    "testPathIgnorePatterns": [
+      "/node_modules",
+      "/src/__tests__/mocks/*"
+    ],
     "moduleFileExtensions": [
       "ts",
       "js",

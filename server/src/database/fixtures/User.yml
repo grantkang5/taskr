@@ -1,5 +1,10 @@
 entity: User
+processor: ../processor/UserProcessor
 items:
-  user{1..10}:
+  user1:
     email: '{{internet.email}}'
     password: 'password'
+  user{2..10}:
+    email: '{{internet.email}}'
+    password: '{{internet.password}}'
+ 
