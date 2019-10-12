@@ -58,7 +58,7 @@ jobs:
 
     steps:
       - checkout:
-          path: ~/ssr-auth/api
+          path: ~/ssr-auth
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "yarn.lock" }}
@@ -92,7 +92,7 @@ jobs:
           POSTGRES_DB: ssr-auth
     steps:
       - checkout:
-          path: ~/ssr-auth/api
+          path: ~/ssr-auth
       - attach_workspace:
           at: '.'
       - restore_cache:
