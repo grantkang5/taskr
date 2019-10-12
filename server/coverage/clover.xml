@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1570849561838" clover="3.2.0">
-  <project timestamp="1570849561839" name="All files">
-    <metrics statements="92" coveredstatements="77" conditionals="8" coveredconditionals="3" methods="24" coveredmethods="21" elements="124" coveredelements="101" complexity="0" loc="92" ncloc="92" packages="5" files="7" classes="7"/>
+<coverage generated="1570852224612" clover="3.2.0">
+  <project timestamp="1570852224612" name="All files">
+    <metrics statements="92" coveredstatements="77" conditionals="10" coveredconditionals="4" methods="24" coveredmethods="21" elements="126" coveredelements="102" complexity="0" loc="92" ncloc="92" packages="5" files="7" classes="7"/>
     <package name="server">
       <metrics statements="4" coveredstatements="4" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="ormconfig.js" path="/Users/grantkang/Desktop/projects/ssr-auth/server/ormconfig.js">
@@ -13,9 +13,9 @@
       </file>
     </package>
     <package name="server.src.__tests__.mocks">
-      <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+      <metrics statements="10" coveredstatements="10" conditionals="2" coveredconditionals="1" methods="4" coveredmethods="4"/>
       <file name="server.ts" path="/Users/grantkang/Desktop/projects/ssr-auth/server/src/__tests__/mocks/server.ts">
-        <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="4"/>
+        <metrics statements="10" coveredstatements="10" conditionals="2" coveredconditionals="1" methods="4" coveredmethods="4"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
@@ -25,7 +25,7 @@
         <line num="9" count="1" type="stmt"/>
         <line num="12" count="4" type="stmt"/>
         <line num="21" count="2" type="stmt"/>
-        <line num="27" count="1" type="stmt"/>
+        <line num="27" count="1" type="cond" truecount="1" falsecount="1"/>
       </file>
     </package>
     <package name="server.src.entity">
