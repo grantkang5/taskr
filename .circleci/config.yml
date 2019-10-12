@@ -7,7 +7,7 @@ jobs:
 
     steps:
       - checkout:
-          path: ~/ssr-auth/client
+          path: ~/ssr-auth
 
       - restore_cache:
           keys:
@@ -35,7 +35,7 @@ jobs:
       - image: circleci/node:latest
     steps:
       - checkout:
-          path: ~/ssr-auth/client
+          path: ~/ssr-auth
       
       - attach_workspace:
           at: '.'
