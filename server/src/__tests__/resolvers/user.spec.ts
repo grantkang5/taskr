@@ -9,7 +9,7 @@ const { query, mutate } = createTestClient(testServer);
 describe("User Resolver", () => {
   let connection: Connection;
   beforeAll(async () => {
-    initDb();
+    await initDb();
     connection = await createConnection();
   });
 
