@@ -1,13 +1,13 @@
 veresion: 2
 jobs:
-  build:
+  client_build:
     working_directory: ~/ssr-auth/client
     docker:
       - image: circleci/node:latest
 
     steps:
       - checkout:
-          path: ~/ssr-auth
+          path: ~/ssr-auth/client
 
       - restore_cache:
           keys:
@@ -29,13 +29,13 @@ jobs:
             - node_modules
             - yarn.lock
 
-  test:
+  client_test:
     working_directory: ~/ssr-auth/client
     docker:
       - image: circleci/node:latest
     steps:
       - checkout:
-          path: ~/ssr-auth
+          path: ~/ssr-auth/client
       
       - attach_workspace:
           at: '.'
@@ -51,11 +51,69 @@ jobs:
           name: "React test suite"
           command: yarn test:coverage
 
+  api_build:
+    working_directory: ~/ssr-auth/server
+    docker:
+      - image: circleci/node:latest
+
+    steps:
+      - checkout:
+          path: ~/ssr-auth/api
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
+      - run:
+          name: "Install dependencies"
+          command: yarn
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - persist_to_workspace:
+          root: '.'
+          paths:
+            - node_modules
+            - yarn.lock
+
+  api_test:
+    working_directory: ~/ssr-auth/server
+    docker:
+      - image: circleci/node:latest
+        environment:
+          NODE_ENV: test
+          ACCESS_TOKEN_SECRET: circle
+          REFRESH_TOKEN_SECRET: ci
+      - image: postgres:11.5-alpine
+        environment:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: ssr-auth
+    steps:
+      - checkout:
+          path: ~/ssr-auth/api
+      - attach_workspace:
+          at: '.'
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
+      - run:
+          name: "Api test"
+          command: yarn test
+
 workflows:
   version: 2
   client_predeploy:
     jobs:
-      - build
-      - test:
+      - client_build
+      - client_test:
           requires:
-            - build
+            - client_build
+  api_predeploy:
+    jobs:
+      - api_build
+      - api_test:
+          requires:
+            - api_build

@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`User Resolver Login mutation should return an accessToken 1`] = `
+Object {
+  "login": Object {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTU3MDg0ODY3NSwiZXhwIjoxNTcwODQ5NTc1fQ.zK0arbMJoRUFpp2c0mb8QxTvuaK44z_bh6Q91r4cZw8",
+  },
+}
+`;
+
+exports[`User Resolver Logout mutation should log the user out 1`] = `
+Object {
+  "logout": true,
+}
+`;
+
+exports[`User Resolver Me query should fetch a current user 1`] = `
+Object {
+  "me": Object {
+    "email": "dev@email.com",
+    "id": 1,
+  },
+}
+`;
+
+exports[`User Resolver Mutations should login a user 1`] = `
+Object {
+  "login": Object {
+    "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsImlhdCI6MTU3MDg0ODU3MCwiZXhwIjoxNTcwODQ5NDcwfQ.vdJ5N1jZj2y4vpFEHOEoRbuVC7LrJb5TZVsxjB-Lkwk",
+  },
+}
+`;
+
+exports[`User Resolver Queries should fetch a current user 1`] = `
+Object {
+  "me": Object {
+    "email": "dev",
+    "id": 1,
+  },
+}
+`;
+
+exports[`User Resolver Register mutation should register a user into the db 1`] = `
+Object {
+  "register": Object {
+    "email": "dev2@email.com",
+    "id": 11,
+  },
+}
+`;
