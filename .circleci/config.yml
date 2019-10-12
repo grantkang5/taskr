@@ -85,6 +85,9 @@ jobs:
           NODE_ENV: test
           ACCESS_TOKEN_SECRET: circle
           REFRESH_TOKEN_SECRET: ci
+          DATABASE_URL: ssr-auth
+          PG_USER: postgres
+          PG_PASSWORD: postgres
       - image: postgres:11.5-alpine
         environment:
           POSTGRES_PASSWORD: postgres
