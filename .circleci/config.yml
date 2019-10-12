@@ -111,3 +111,9 @@ workflows:
       - client_test:
           requires:
             - client_build
+  api_predeploy:
+    jobs:
+      - api_build
+      - api_test:
+          requires:
+            - api_build
