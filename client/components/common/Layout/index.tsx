@@ -22,19 +22,6 @@ const Layout: React.FunctionComponent<Props> = ({
 
   return (
     <div className={layoutStyle}>
-      <style jsx global>
-        {`
-          * {
-            box-sizing: border-box;
-          }
-
-          body {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-          }
-        `}
-      </style>
       <Head>
         <title>{title}</title>
         <meta charSet="utf-8" />
