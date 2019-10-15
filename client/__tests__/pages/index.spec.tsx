@@ -3,7 +3,7 @@ import { render } from "enzyme";
 import Home from "../../pages";
 import { MockedProvider } from '@apollo/react-testing';
 import { MeDocument } from "../../generated/graphql";
-import Layout from "../../components/Layout";
+import Layout from "../../components/common/Layout";
 
 describe("Pages", () => {
   describe("Home", () => {

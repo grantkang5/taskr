@@ -32,3 +32,5 @@ board: https://trello.com/b/Y3ywap6K/superapp
 # Fixtures
 - We are using fixtures to seed our database using a janky library to help us out (https://github.com/RobinCK/typeorm-fixtures);
 - Create fixtures in `database/fixtures`. They are used when running `yarn db:seed` and also used for our test-servers so keep that in mind when making sample data.
+
+# Components

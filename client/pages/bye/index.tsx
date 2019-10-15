@@ -1,6 +1,6 @@
 import React from "react";
 import { useByeQuery } from "../../generated/graphql";
-import Layout from "../../components/Layout";
+import Layout from "../../components/common/Layout";
 import { Button } from 'antd'
 
 const Bye: React.FC = () => {

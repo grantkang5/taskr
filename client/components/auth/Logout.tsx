@@ -1,7 +1,7 @@
 import React from 'react';
-import { useLogoutMutation } from '../generated/graphql';
+import { useLogoutMutation } from '../../generated/graphql';
 import Router from 'next/router';
-import { setAccessToken } from '../lib/accessToken';
+import { setAccessToken } from '../../lib/accessToken';
 
 export const Logout: React.FC = () => {
   const [logout, { client }] = useLogoutMutation();
