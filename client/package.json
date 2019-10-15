@@ -27,6 +27,7 @@
     "jwt-decode": "^2.2.0",
     "next": "9.0.7",
     "next-antd-aza-less": "^1.0.2",
+    "null-loader": "^3.0.0",
     "react": "16.10.2",
     "react-dom": "16.10.2",
     "tslint": "^5.20.0",
