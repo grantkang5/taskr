@@ -21,7 +21,7 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
     <div className={styles.layout}>
       <div className={styles.headerContainer}>
         <HeaderText white={1} style={{ marginBottom: '.5em' }}>
-          {authText[router.route].greeting} to Dorya
+          {authText[router.route].greeting} to Taskr
         </HeaderText>
 
         <div className={styles.highlight} />
