@@ -2,10 +2,7 @@ const lessToJS = require("less-vars-to-js");
 const fs = require("fs");
 const path = require("path");
 const antdLessLoader = require("next-antd-aza-less")
-
-const themeVariables = lessToJS(
-  fs.readFileSync(path.resolve(__dirname, './assets/antd-custom.less'), 'utf8')
-)
+const modifyVars = require("./assets/antd-custom.less")
 
 if (typeof require !== 'undefined') {
   // tslint:disable-next-line: no-empty
@@ -14,12 +11,14 @@ if (typeof require !== 'undefined') {
 
 module.exports = antdLessLoader({
   cssModules: true,
-  lessLoaderOptions: {
+  // tslint:disable-next-line: object-literal-sort-keys
+  cssLoaderOptions: {
     importLoaders: 1,
-    javascriptEnabled: true,
     localIdentName: "[local]___[hash:base64:5]",
-    modifyVars: themeVariables,
-    url: false
+  },
+  lessLoaderOptions: {
+    javascriptEnabled: true,
+    modifyVars: modifyVars,
   },
   // tslint:disable-next-line: object-literal-sort-keys
   env: {
