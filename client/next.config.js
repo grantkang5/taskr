@@ -1,6 +1,3 @@
-const lessToJS = require("less-vars-to-js");
-const fs = require("fs");
-const path = require("path");
 const antdLessLoader = require("next-antd-aza-less")
 const modifyVars = require("./assets/antd-custom.less")
 
