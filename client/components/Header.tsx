@@ -25,10 +25,6 @@ export const Header: React.FC<Props> = () => {
     <header>
       <nav>
         <Link href="/">
-          <a>LandingPage</a>
-        </Link>{' '}
-        |{' '}
-        <Link href="/home">
           <a>Home</a>
         </Link>{' '}
         |{' '}

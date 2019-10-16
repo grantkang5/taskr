@@ -1,5 +1,0 @@
-mutation Auth_GoogleOAuth($code: String!) {
-  auth_googleOAuth(code: $code) {
-    accessToken
-  }
-}

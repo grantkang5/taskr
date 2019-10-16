@@ -17,8 +17,6 @@ import {
 import { MyContext } from '../services/context';
 import { sendRefreshToken } from '../services/auth/sendRefreshToken';
 import { isAuth } from '../services/auth/isAuth';
-import { createOAuth2Client } from '../services/google_oauth';
-import { verify } from '../services/google_oauth';
 
 @ObjectType()
 class LoginResponse {
@@ -92,13 +90,6 @@ export class UserResolver {
         throw new Error('Could not find user');
       }
 
-      // if user's password from db is NULL
-      if (!user.password) {
-        throw new Error(
-          `This account doesn't have a password set. Do you normally login with google?`
-        );
-      }
-
       const valid = await compare(password, user.password);
 
       if (!valid) {
@@ -126,65 +117,5 @@ export class UserResolver {
     // send empty string for refreshtoken
     sendRefreshToken(res, '');
     return true;
-  }
-
-  @Query(() => String)
-  async login_googleOAuth() {
-    const client = await createOAuth2Client();
-
-    const scopes = ['openid', 'email'];
-
-    const url = client.generateAuthUrl({
-      access_type: 'offline',
-      scope: scopes
-    });
-
-    return url;
-  }
-
-  @Mutation(() => LoginResponse)
-  //TODO: Better mutation naming
-  async auth_googleOAuth(@Arg('code') code: string, @Ctx() { res }: MyContext) {
-    console.log('code is', code);
-    try {
-      const client = await createOAuth2Client();
-
-      if (!client) {
-        throw new Error('Failed to create OAuth2 client');
-      }
-
-      const { tokens } = await client.getToken(decodeURIComponent(code));
-
-      if (!tokens) {
-        throw new Error('Invalid code for tokens');
-      }
-
-      const payload = await verify(tokens.id_token!);
-
-      if (!payload) {
-        throw new Error('Failed to retrieve payload');
-      }
-
-      let user = await User.findOne({ email: payload.email });
-
-      if (!user) {
-        // register user to db if they don't exist in system
-        user = await User.create({ email: payload.email }).save();
-
-        if (!user) {
-          throw new Error('Failed to create user');
-        }
-      }
-
-      sendRefreshToken(res, createRefreshToken(user));
-
-      return {
-        accessToken: createAccessToken(user),
-        user
-      };
-    } catch (err) {
-      console.log('err is', err);
-      return err;
-    }
   }
 }
