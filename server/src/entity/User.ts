@@ -25,6 +25,6 @@ export class User extends BaseEntity {
   updatedAt: Date;
 
   // Associations
-  @OneToMany(() => Project, project => project.userConnection)
-  projectConnection: Promise<Project[]>;
+  @OneToMany(() => Project, project => project.user)
+  projects: Project[];
 }
