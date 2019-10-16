@@ -1,5 +1,4 @@
 const antdLessLoader = require("next-antd-aza-less")
-const modifyVars = require("./assets/antd-custom.less")
 
 if (typeof require !== 'undefined') {
   // tslint:disable-next-line: no-empty
@@ -15,7 +14,9 @@ module.exports = antdLessLoader({
   },
   lessLoaderOptions: {
     javascriptEnabled: true,
-    modifyVars: modifyVars,
+    modifyVars: {
+      // 'primary-color': '#1DA57A',
+    }
   },
   // tslint:disable-next-line: object-literal-sort-keys
   env: {

@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './Auth.module.less'
 import { useRouter } from 'next/router';
-import { HeaderText, HeaderSubText, SubText } from '../common/Text';
+import { HeaderText, SubText } from '../common/Text';
 import Link from 'next/link';
 
 
