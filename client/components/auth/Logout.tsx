@@ -1,9 +1,11 @@
 import React from 'react';
 import { useLogoutMutation } from '../../generated/graphql';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { setAccessToken } from '../../lib/accessToken';
+import { Button } from 'antd';
 
 export const Logout: React.FC = () => {
+  const router = useRouter()
   const [logout, { client }] = useLogoutMutation();
 
   const handleClick = async () => {
@@ -11,12 +13,12 @@ export const Logout: React.FC = () => {
     if (logoutResponse) {
       setAccessToken('');
       await client!.resetStore();
-      Router.push('/');
+      router.push('/');
     }
   };
   return (
-    <button onClick={handleClick}>
-      <div>Logout</div>
-    </button>
+    <Button type="primary" onClick={handleClick}>
+      Log out
+    </Button>
   );
 };
