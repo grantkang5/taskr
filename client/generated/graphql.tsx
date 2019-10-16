@@ -22,6 +22,7 @@ export type Mutation = {
   register: User,
   login: LoginResponse,
   logout: Scalars['Boolean'],
+  auth_googleOAuth: LoginResponse,
 };
 
 
@@ -36,12 +37,18 @@ export type MutationLoginArgs = {
   email: Scalars['String']
 };
 
+
+export type MutationAuth_GoogleOAuthArgs = {
+  code: Scalars['String']
+};
+
 export type Query = {
    __typename?: 'Query',
   hello: Scalars['String'],
   users: Array<User>,
   bye: Scalars['String'],
   me: User,
+  login_googleOAuth: Scalars['String'],
 };
 
 export type User = {
@@ -50,12 +57,33 @@ export type User = {
   email: Scalars['String'],
 };
 
+export type Auth_GoogleOAuthMutationVariables = {
+  code: Scalars['String']
+};
+
+
+export type Auth_GoogleOAuthMutation = (
+  { __typename?: 'Mutation' }
+  & { auth_googleOAuth: (
+    { __typename?: 'LoginResponse' }
+    & Pick<LoginResponse, 'accessToken'>
+  ) }
+);
+
 export type ByeQueryVariables = {};
 
 
 export type ByeQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'bye'>
+);
+
+export type Google_OAuthQueryVariables = {};
+
+
+export type Google_OAuthQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'login_googleOAuth'>
 );
 
 export type LoginMutationVariables = {
@@ -117,6 +145,21 @@ export type UsersQuery = (
 );
 
 
+export const Auth_GoogleOAuthDocument = gql`
+    mutation Auth_GoogleOAuth($code: String!) {
+  auth_googleOAuth(code: $code) {
+    accessToken
+  }
+}
+    `;
+export type Auth_GoogleOAuthMutationFn = ApolloReactCommon.MutationFunction<Auth_GoogleOAuthMutation, Auth_GoogleOAuthMutationVariables>;
+
+    export function useAuth_GoogleOAuthMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<Auth_GoogleOAuthMutation, Auth_GoogleOAuthMutationVariables>) {
+      return ApolloReactHooks.useMutation<Auth_GoogleOAuthMutation, Auth_GoogleOAuthMutationVariables>(Auth_GoogleOAuthDocument, baseOptions);
+    }
+export type Auth_GoogleOAuthMutationHookResult = ReturnType<typeof useAuth_GoogleOAuthMutation>;
+export type Auth_GoogleOAuthMutationResult = ApolloReactCommon.MutationResult<Auth_GoogleOAuthMutation>;
+export type Auth_GoogleOAuthMutationOptions = ApolloReactCommon.BaseMutationOptions<Auth_GoogleOAuthMutation, Auth_GoogleOAuthMutationVariables>;
 export const ByeDocument = gql`
     query Bye {
   bye
@@ -132,6 +175,21 @@ export const ByeDocument = gql`
       
 export type ByeQueryHookResult = ReturnType<typeof useByeQuery>;
 export type ByeQueryResult = ApolloReactCommon.QueryResult<ByeQuery, ByeQueryVariables>;
+export const Google_OAuthDocument = gql`
+    query Google_OAuth {
+  login_googleOAuth
+}
+    `;
+
+    export function useGoogle_OAuthQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<Google_OAuthQuery, Google_OAuthQueryVariables>) {
+      return ApolloReactHooks.useQuery<Google_OAuthQuery, Google_OAuthQueryVariables>(Google_OAuthDocument, baseOptions);
+    }
+      export function useGoogle_OAuthLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<Google_OAuthQuery, Google_OAuthQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<Google_OAuthQuery, Google_OAuthQueryVariables>(Google_OAuthDocument, baseOptions);
+      }
+      
+export type Google_OAuthQueryHookResult = ReturnType<typeof useGoogle_OAuthQuery>;
+export type Google_OAuthQueryResult = ApolloReactCommon.QueryResult<Google_OAuthQuery, Google_OAuthQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {

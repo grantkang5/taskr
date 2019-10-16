@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
-import { useLoginMutation } from '../generated/graphql';
+import { useLoginMutation, useGoogle_OAuthQuery } from '../generated/graphql';
 import Router from 'next/router';
 import { setAccessToken } from '../lib/accessToken';
 import Layout from '../components/Layout';
 
 const Login: React.FC = () => {
+  console.log('RENDERING LOGIN');
   const [email, handleEmail] = useState('');
   const [password, handlePassword] = useState('');
   const [login] = useLoginMutation();
+
+  //TODO: make query after click, not on load
+  const { data } = useGoogle_OAuthQuery();
 
   return (
     <Layout>
@@ -25,7 +29,7 @@ const Login: React.FC = () => {
             if (response && response.data) {
               setAccessToken(response.data.login.accessToken);
             }
-            Router.push('/');
+            Router.push('/home');
           } catch (err) {
             console.log(err);
           }
@@ -44,6 +48,8 @@ const Login: React.FC = () => {
         />
         <button type="submit">login</button>
       </form>
+
+      {data && <a href={data.login_googleOAuth}>Sign in with Google</a>}
     </Layout>
   );
 };

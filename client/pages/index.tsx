@@ -1,27 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import Layout from '../components/Layout';
-import { useMeQuery } from '../generated/graphql';
-import { useApolloClient } from '@apollo/react-hooks';
+// import { withRouter, SingletonRouter } from 'next/router';
 
 interface Props {}
 
-const Home: React.FC<Props> = () => {
-  const { data } = useMeQuery();
-<<<<<<< HEAD
-=======
-  // console.log(process.env.NODE_ENV, process.env.API_URL)
-  // console.log('env var from host: ', process.env.SOMETHING)
-  // console.log('client is ', client.cache);
->>>>>>> 9b25b7ed05e7bb2ab193fa3f1bf4aa9a9c61338a
-
-  if (!data) {
-    return (
-      <Layout>
-        <div />
-      </Layout>
-    );
-  }
+const LandingPage: React.FC<Props> = () => {
+  console.log('RENDERING landing page');
 
   return (
     <Layout>
@@ -32,4 +17,4 @@ const Home: React.FC<Props> = () => {
   );
 };
 
-export default Home;
+export default LandingPage;
