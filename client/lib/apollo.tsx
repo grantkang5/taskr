@@ -32,6 +32,7 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
     if (!isServer() && !getAccessToken()) {
       setAccessToken(serverAccessToken);
     }
+
     const client = apolloClient || initApolloClient(apolloState);
     return <PageComponent {...pageProps} apolloClient={client} />;
   };

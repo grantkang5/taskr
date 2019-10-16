@@ -1,0 +1,125 @@
+veresion: 2
+jobs:
+  client_build:
+    working_directory: ~/ssr-auth/client
+    docker:
+      - image: circleci/node:latest
+
+    steps:
+      - checkout:
+          path: ~/ssr-auth
+
+      - restore_cache:
+          keys:
+          - dependency-cache-{{ checksum "yarn.lock" }}
+          - dependency-cache-
+
+      - run:
+          name: "Install dependencies"
+          command: yarn
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+
+      - persist_to_workspace:
+          root: '.'
+          paths:
+            - node_modules
+            - yarn.lock
+
+  client_test:
+    working_directory: ~/ssr-auth/client
+    docker:
+      - image: circleci/node:latest
+    steps:
+      - checkout:
+          path: ~/ssr-auth
+      
+      - attach_workspace:
+          at: '.'
+
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
+      - run:
+          name: "Lint files"
+          command: yarn lint
+      - run:
+          name: "React test suite"
+          command: yarn test:coverage
+
+  api_build:
+    working_directory: ~/ssr-auth/server
+    docker:
+      - image: circleci/node:latest
+
+    steps:
+      - checkout:
+          path: ~/ssr-auth
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
+      - run:
+          name: "Install dependencies"
+          command: yarn
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependency-cache-{{ checksum "yarn.lock" }}
+      - persist_to_workspace:
+          root: '.'
+          paths:
+            - node_modules
+            - yarn.lock
+
+  api_test:
+    working_directory: ~/ssr-auth/server
+    docker:
+      - image: circleci/node:latest
+        environment:
+          NODE_ENV: test
+          ACCESS_TOKEN_SECRET: circle
+          REFRESH_TOKEN_SECRET: ci
+          DATABASE_URL: ssr-auth
+          PG_USER: postgres
+          PG_PASSWORD: postgres
+      - image: postgres:11.5-alpine
+        environment:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: ssr-auth
+    steps:
+      - checkout:
+          path: ~/ssr-auth
+      - attach_workspace:
+          at: '.'
+      - restore_cache:
+          keys:
+            - dependency-cache-{{ checksum "yarn.lock" }}
+            - dependency-cache-
+      - run:
+          name: Load fixtures
+          command: yarn db:seed
+      - run:
+          name: "Api test"
+          command: yarn test
+
+workflows:
+  version: 2
+  client_predeploy:
+    jobs:
+      - client_build
+      - client_test:
+          requires:
+            - client_build
+  api_predeploy:
+    jobs:
+      - api_build
+      - api_test:
+          requires:
+            - api_build
