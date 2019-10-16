@@ -1,6 +1,5 @@
 import React from "react";
 import Layout from "../components/common/Layout";
-import { useMeQuery } from "../generated/graphql";
 import { HeaderText, HeaderSubText } from "../components/common/Text";
 import { Button } from "antd";
 import Link from "next/link";
@@ -8,16 +7,6 @@ import Link from "next/link";
 import styles from "./Home.module.less";
 
 const Home: React.FC = () => {
-  const { data } = useMeQuery();
-
-  if (!data) {
-    return (
-      <Layout>
-        <div />
-      </Layout>
-    );
-  }
-
   return (
     <Layout>
       <div className={styles.main}>
@@ -28,8 +17,8 @@ const Home: React.FC = () => {
             </HeaderText>
 
             <HeaderSubText white={1} style={{ marginBottom: "28px" }}>
-              "Our app helps developers organize and plan out projects simply so
-              you can prioritize development and pushing out features"
+              Our app helps developers organize and plan out projects simply so
+              you can prioritize development and pushing out features
             </HeaderSubText>
 
             <Link href="/register">
