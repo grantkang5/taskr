@@ -2799,7 +2799,15 @@ gaxios@^2.0.0, gaxios@^2.0.1:
     https-proxy-agent "^2.2.1"
     node-fetch "^2.3.0"
 
-gcp-metadata@^3.0.0, gcp-metadata@^3.2.0:
+gcp-metadata@^3.0.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/gcp-metadata/-/gcp-metadata-3.1.0.tgz#cd08a5d5688efa4d73d1f61c1b2a7e25db2c94fa"
+  integrity sha512-TRvWwkzWLf9bn5+wgbyrnhRuIg3kqtyk+SzrbmUgLUfZOOD2+NBVXsjtkK/UfHEBl9KDZ5Q0NT+WhLSMSycFMw==
+  dependencies:
+    gaxios "^2.0.1"
+    json-bigint "^0.3.0"
+
+gcp-metadata@^3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/gcp-metadata/-/gcp-metadata-3.2.0.tgz#27d59660f11de411d35b1edb8a41e81389cab5f6"
   integrity sha512-ympv+yQ6k5QuWCuwQqnGEvFGS7MBKdcQdj1i188v3bW9QLFIchTGaBCEZxSQapT0jffdn1vdt8oJhB5VBWQO1Q==

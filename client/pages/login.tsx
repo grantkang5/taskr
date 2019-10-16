@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import {
   useLoginMutation,
-  useAuth_GoogleOAuthMutation
+  useAuth_GoogleOAuthMutation,
+  useGoogle_OAuthQuery
 } from '../generated/graphql';
 import Router from 'next/router';
 import { setAccessToken } from '../lib/accessToken';

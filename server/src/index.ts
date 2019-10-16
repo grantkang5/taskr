@@ -13,7 +13,8 @@ const startServer = async () => {
   const app = express();
   app.use(
     cors({
-      origin: process.env.CLIENT_URL,
+      origin: 'http://localhost:3000',
+      // origin: process.env.CLIENT_URL,
       credentials: true
     })
   );
@@ -26,6 +27,6 @@ const startServer = async () => {
   server.applyMiddleware({ app, cors: false });
   await createConnection();
   app.listen(PORT, () => console.log(`Express server listening on ${PORT}`));
-}
+};
 
 startServer();
