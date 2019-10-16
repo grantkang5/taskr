@@ -5,7 +5,6 @@ import { setAccessToken } from '../lib/accessToken';
 import Layout from '../components/Layout';
 
 const Login: React.FC = () => {
-  console.log('RENDERING LOGIN');
   const [email, handleEmail] = useState('');
   const [password, handlePassword] = useState('');
   const [login] = useLoginMutation();
@@ -29,6 +28,7 @@ const Login: React.FC = () => {
             if (response && response.data) {
               setAccessToken(response.data.login.accessToken);
             }
+
             Router.push('/home');
           } catch (err) {
             console.log(err);
