@@ -2,9 +2,8 @@ import React from "react";
 import { useMeQuery } from "../../../generated/graphql";
 import Link from "next/link";
 import { Button } from "antd";
-
-import styles from "./Header.module.less";
 import { Logout } from "../../auth/Logout";
+import styles from "./Header.module.less";
 
 export const Header: React.FC = () => {
   const { data, loading } = useMeQuery();
