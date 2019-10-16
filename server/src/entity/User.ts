@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { Project } from './Project';
 
@@ -25,6 +25,6 @@ export class User extends BaseEntity {
   updatedAt: Date;
 
   // Associations
-  @OneToMany(() => Project, project => project.user)
+  @ManyToMany(() => Project, project => project.users)
   projects: Project[];
-}
+  }

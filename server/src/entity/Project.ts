@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { User } from './User';
 
@@ -23,6 +23,7 @@ export class Project extends BaseEntity {
 
     // Assoications
 
-    @ManyToOne(() => User, user => user.projects)
-    user: User;
+    @ManyToMany(() => User, user => user.projects)
+    @JoinTable()
+    users: User[];
 }

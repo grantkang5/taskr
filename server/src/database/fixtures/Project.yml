@@ -1,10 +1,9 @@
-# entity: Project
-# items:
-#   project1:
-#     name: first
-#     userId: 1
-
-#   project2: second
-#     userId: 2
+entity: Project
+items:
+  project1:
+    name: first
+    userId: '@user1'
+  project2: second
+    userId: '@user2'
 
  
