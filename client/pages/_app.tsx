@@ -3,10 +3,14 @@ import React from 'react';
 import { ApolloProvider } from '@apollo/react-hooks';
 import { withApollo } from '../lib/apollo';
 import PrivateRoute from '../components/PrivateRoute';
+import ApolloClient from 'apollo-client';
 
-class MyApp extends App<any> {
+interface Props {
+  apolloClient: any
+}
+
+class MyApp extends App<Props> {
   render() {
-    console.log(process.env.NODE_ENV, process.env.CLIENT_URL);
     const { Component, pageProps, apolloClient } = this.props;
     return (
       <ApolloProvider client={apolloClient}>

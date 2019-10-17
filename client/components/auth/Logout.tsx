@@ -13,7 +13,7 @@ export const Logout: React.FC = () => {
     if (logoutResponse) {
       setAccessToken('');
       await client!.resetStore();
-      router.push('/');
+      router.push('/login');
     }
   };
   return (
