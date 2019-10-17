@@ -1,6 +1,6 @@
 import React from 'react';
-import Layout from '../components/common/Layout';
-import { HeaderText, HeaderSubText } from '../components/common/Text';
+import Layout from '../../components/common/Layout';
+import { HeaderText, HeaderSubText } from '../../components/common/Text';
 import { Button } from 'antd';
 import Link from 'next/link';
 

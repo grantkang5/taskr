@@ -1,9 +1,9 @@
-import React from "react";
-import { useMeQuery } from "../../../generated/graphql";
-import Link from "next/link";
-import { Button } from "antd";
-import { Logout } from "../../auth/Logout";
-import styles from "./Header.module.less";
+import React from 'react';
+import { useMeQuery } from '../../../generated/graphql';
+import Link from 'next/link';
+import { Button } from 'antd';
+import { Logout } from '../../auth/Logout';
+import styles from './Header.module.less';
 
 export const Header: React.FC = () => {
   const { data, loading } = useMeQuery();
@@ -12,7 +12,7 @@ export const Header: React.FC = () => {
     return (
       <header className={styles.header}>
         <div className={styles.left}>
-          <Link href="/">
+          <Link href="/home">
             <a>Home</a>
           </Link>
         </div>
@@ -32,7 +32,7 @@ export const Header: React.FC = () => {
   return (
     <header className={styles.header}>
       <div className={styles.left}>
-        <Link href="/">
+        <Link href="/home">
           <a>Home</a>
         </Link>
       </div>

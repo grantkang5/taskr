@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   useLoginMutation,
   useAuth_GoogleOAuthMutation,
-  useGoogle_OAuthQuery
+  useGoogle_OAuthQuery,
+  useGoogle_OAuthLazyQuery,
+  Google_OAuthDocument
 } from '../generated/graphql';
 import Router from 'next/router';
 import { setAccessToken } from '../lib/accessToken';
@@ -10,9 +12,13 @@ import Layout from '../components/common/Layout';
 import { Form, Icon, Input, Button, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import AuthLayout from '../components/auth/AuthLayout';
+import { useApolloClient } from '@apollo/react-hooks';
 
 const Login: React.FC<FormComponentProps> = ({ form }) => {
   const [login, { loading }] = useLoginMutation();
+  const client = useApolloClient();
+  const googleEl = useRef(null);
+  const { data } = useGoogle_OAuthQuery();
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -40,8 +46,15 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
   };
 
   const { getFieldDecorator } = form;
+
   // TODO: fix to query onclick
-  const { data } = useGoogle_OAuthQuery();
+  // const [getUrl, { data }] = useGoogle_OAuthLazyQuery({
+  //   fetchPolicy: 'cache-and-network'
+  // });
+
+  const handleClick = () => {
+    Router.push('/google');
+  };
 
   return (
     <Layout dark={1}>
@@ -89,8 +102,15 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
             </Button>
           </Form.Item>
         </Form>
+        {/* <Button onClick={handleClick} type="primary" icon="google">
+          Sign in with Google
+        </Button> */}
+        {data && (
+          <a href={data!.login_googleOAuth}>
+            Sign in with google the wrong way!
+          </a>
+        )}
       </AuthLayout>
-      {data && <a href={data.login_googleOAuth}>Sign in with Google</a>}
     </Layout>
   );
 };

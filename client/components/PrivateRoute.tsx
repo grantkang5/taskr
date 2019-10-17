@@ -1,24 +1,30 @@
-import React, { useEffect } from 'react';
-import { setAccessToken, getAccessToken } from '../lib/accessToken';
-import { useAuth_GoogleOAuthMutation, useMeQuery } from '../generated/graphql';
-import Login from '../pages/login';
+import React from 'react';
+import { useMeQuery } from '../generated/graphql';
 import { useRouter } from 'next/router';
 
-interface Props {}
+interface Props {
+  children: React.ReactNode;
+}
 
-const PrivateRoute = (Component: React.FC<Props>) => () => {
+const PrivateRoute: React.FC<Props> = ({ children }) => {
+  console.log('private route check');
   const router = useRouter();
-  const { data } = useMeQuery();
+  const { data, loading } = useMeQuery();
 
-  useEffect(() => {
-    if (!data) router.push('/login');
-  }, []);
+  const whitelist = ['/login', '/register', '/home', '/google'];
 
-  if (data && data.me) {
-    return <Component />;
+  if (loading) {
+    // TODO: add load screen
+    return <></>;
   }
-
-  return <></>;
+  // not authenticated, redirect unless it's in whitelist
+  if (!whitelist.includes(router.route) && !data) {
+    console.log('router is', router);
+    router.push('/login');
+    return <></>;
+  }
+  console.log('returning children');
+  return <>{children}</>;
 };
 
 export default PrivateRoute;
