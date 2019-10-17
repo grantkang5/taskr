@@ -11,7 +11,6 @@ interface Props {
 
 const AuthLayout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
-  console.log('router is', router)
   const authText: { [index: string]: any } = {
     '/login': {
       greeting: 'Log in',

@@ -145,7 +145,6 @@ export class UserResolver {
   @Mutation(() => LoginResponse)
   //TODO: Better mutation naming
   async auth_googleOAuth(@Arg('code') code: string, @Ctx() { res }: MyContext) {
-    console.log('code is', code);
     try {
       const client = await createOAuth2Client();
 
@@ -183,7 +182,7 @@ export class UserResolver {
         user
       };
     } catch (err) {
-      console.log('err is', err);
+      console.log('err', err);
       return err;
     }
   }

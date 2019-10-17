@@ -6,7 +6,7 @@ import PrivateRoute from '../components/PrivateRoute';
 
 class MyApp extends App<any> {
   render() {
-    console.log('my app root');
+    console.log(process.env.NODE_ENV, process.env.CLIENT_URL);
     const { Component, pageProps, apolloClient } = this.props;
     return (
       <ApolloProvider client={apolloClient}>

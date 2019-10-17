@@ -7,7 +7,6 @@ interface Props {
 }
 
 const PrivateRoute: React.FC<Props> = ({ children }) => {
-  console.log('private route check');
   const router = useRouter();
   const { data, loading } = useMeQuery();
 
@@ -19,11 +18,10 @@ const PrivateRoute: React.FC<Props> = ({ children }) => {
   }
   // not authenticated, redirect unless it's in whitelist
   if (!whitelist.includes(router.route) && !data) {
-    console.log('router is', router);
     router.push('/login');
     return <></>;
   }
-  console.log('returning children');
+
   return <>{children}</>;
 };
 

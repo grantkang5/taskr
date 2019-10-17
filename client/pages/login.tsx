@@ -1,24 +1,31 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import {
   useLoginMutation,
-  useAuth_GoogleOAuthMutation,
-  useGoogle_OAuthQuery,
   useGoogle_OAuthLazyQuery,
-  Google_OAuthDocument
 } from '../generated/graphql';
-import Router from 'next/router';
+import { useRouter } from 'next/router';
 import { setAccessToken } from '../lib/accessToken';
 import Layout from '../components/common/Layout';
 import { Form, Icon, Input, Button, message } from 'antd';
 import { FormComponentProps } from 'antd/lib/form';
 import AuthLayout from '../components/auth/AuthLayout';
-import { useApolloClient } from '@apollo/react-hooks';
 
 const Login: React.FC<FormComponentProps> = ({ form }) => {
+  const router = useRouter()
+  const [useGoogleURL, { data, called, error, loading: lazyLoading }] = useGoogle_OAuthLazyQuery()
   const [login, { loading }] = useLoginMutation();
-  const client = useApolloClient();
-  const googleEl = useRef(null);
-  const { data } = useGoogle_OAuthQuery();
+
+  useEffect(() => {
+    if (called && !error && !lazyLoading && data && data.login_googleOAuth) {
+      window.location.href = data.login_googleOAuth
+    }
+  }, [data])
+
+  const handleGoogleLogin = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    await useGoogleURL();
+  }
+
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -35,7 +42,7 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
           if (response && response.data) {
             setAccessToken(response.data.login.accessToken);
           }
-          Router.push('/');
+          router.push('/');
         } catch (err) {
           err.graphQLErrors
             ? message.error(err.graphQLErrors[0].message, 2)
@@ -46,15 +53,6 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
   };
 
   const { getFieldDecorator } = form;
-
-  // TODO: fix to query onclick
-  // const [getUrl, { data }] = useGoogle_OAuthLazyQuery({
-  //   fetchPolicy: 'cache-and-network'
-  // });
-
-  const handleClick = () => {
-    Router.push('/google');
-  };
 
   return (
     <Layout dark={1}>
@@ -102,14 +100,9 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
             </Button>
           </Form.Item>
         </Form>
-        {/* <Button onClick={handleClick} type="primary" icon="google">
-          Sign in with Google
-        </Button> */}
-        {data && (
-          <a href={data!.login_googleOAuth}>
+          <Button onClick={handleGoogleLogin}>
             Sign in with google the wrong way!
-          </a>
-        )}
+          </Button>
       </AuthLayout>
     </Layout>
   );

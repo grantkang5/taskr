@@ -5,7 +5,7 @@ export const createOAuth2Client = async () => {
   return new google.auth.OAuth2(
     process.env.GOOGLE_OAUTH2_CLIENT_ID,
     process.env.GOOGLE_OAUTH2_CLIENT_SECRET,
-    process.env.CLIENT_URL
+    `${process.env.CLIENT_URL}/google`
   );
 };
 
