@@ -2,16 +2,10 @@
 
 .header {
   width: 100%;
-  padding: 11px 110px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1C1D21;
-  position: fixed;
-  top: 0;
-  z-index: 1;
-  box-sizing: border-box;
-  height: 60px;
+  background-color: @dark;
 
   .left {
     display: flex;
@@ -38,8 +32,4 @@
       color: @primary;
     }
   }
-}
-
-.header:after {
-  margin-top: 60px;
 }

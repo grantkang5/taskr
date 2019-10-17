@@ -2,7 +2,8 @@ import * as React from "react";
 import Head from "next/head";
 import { Header } from "../Header";
 import styles from "./Layout.module.less";
-import classNames from 'classnames'
+import classNames from "classnames";
+import { Layout as AntdLayout } from "antd";
 
 type Props = {
   title?: string;
@@ -10,7 +11,7 @@ type Props = {
   dark?: number;
 };
 
-const Layout: React.FunctionComponent<Props> = ({
+const Layout: React.FC<Props> = ({
   children,
   hide,
   dark,
@@ -18,23 +19,21 @@ const Layout: React.FunctionComponent<Props> = ({
 }) => {
   const layoutStyle = classNames(styles.layout, {
     [styles.dark]: dark
-  })
+  });
 
   return (
-    <div className={layoutStyle}>
+    <AntdLayout className={layoutStyle}>
       <Head>
         <title>{title}</title>
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
+
       {!hide ? (
-        <React.Fragment>
-          <Header />
-          <div className={styles.headerSpace} />
-        </React.Fragment>
+        <Header dark={dark} />
       ) : null}
-      {children}
-    </div>
+      <AntdLayout.Content>{children}</AntdLayout.Content>
+    </AntdLayout>
   );
 };
 

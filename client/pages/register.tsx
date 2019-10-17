@@ -5,6 +5,7 @@ import { useRegisterMutation } from '../generated/graphql';
 import { message, Form, Input, Icon, Button } from 'antd';
 import AuthLayout from '../components/auth/AuthLayout';
 import { FormComponentProps } from 'antd/lib/form';
+import GoogleLogin from '../components/auth/GoogleLogin';
 
 const Register: React.FC<FormComponentProps> = ({ form }) => {
   const [register, { loading }] = useRegisterMutation();
@@ -104,6 +105,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
             </Button>
           </Form.Item>
         </Form>
+        <GoogleLogin />
       </AuthLayout>
     </Layout>
   );

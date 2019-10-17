@@ -1,4 +1,4 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') { require('dotenv').config() }
 const antdLessLoader = require('next-antd-aza-less');
 
 if (typeof require !== 'undefined') {

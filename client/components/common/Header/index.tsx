@@ -1,16 +1,20 @@
 import React from 'react';
 import { useMeQuery } from '../../../generated/graphql';
 import Link from 'next/link';
-import { Button } from 'antd';
+import { Button, Layout } from 'antd';
 import { Logout } from '../../auth/Logout';
 import styles from './Header.module.less';
 
-export const Header: React.FC = () => {
+interface Props {
+  dark?: number 
+}
+
+export const Header: React.FC<Props> = () => {
   const { data, loading } = useMeQuery();
 
   if (!data || !data.me) {
     return (
-      <header className={styles.header}>
+      <Layout.Header className={styles.header}>
         <div className={styles.left}>
           <Link href="/home">
             <a>Home</a>
@@ -25,12 +29,12 @@ export const Header: React.FC = () => {
             <a className={styles.blueLink}>Sign Up</a>
           </Link>
         </div>
-      </header>
+      </Layout.Header>
     );
   }
 
   return (
-    <header className={styles.header}>
+    <Layout.Header className={styles.header}>
       <div className={styles.left}>
         <Link href="/home">
           <a>Home</a>
@@ -40,6 +44,6 @@ export const Header: React.FC = () => {
       <div className={styles.right}>
         <Logout />
       </div>
-    </header>
+    </Layout.Header>
   );
 };
