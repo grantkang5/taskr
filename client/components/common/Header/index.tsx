@@ -1,7 +1,7 @@
 import React from 'react';
 import { useMeQuery } from '../../../generated/graphql';
 import Link from 'next/link';
-import { Button, Layout } from 'antd';
+import { Layout } from 'antd';
 import { Logout } from '../../auth/Logout';
 import styles from './Header.module.less';
 
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export const Header: React.FC<Props> = () => {
-  const { data, loading } = useMeQuery();
+  const { data } = useMeQuery();
 
   if (!data || !data.me) {
     return (
