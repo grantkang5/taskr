@@ -1,8 +1,9 @@
-const antdLessLoader = require("next-antd-aza-less")
+require('dotenv').config();
+const antdLessLoader = require('next-antd-aza-less');
 
 if (typeof require !== 'undefined') {
   // tslint:disable-next-line: no-empty
-  require.extensions['.less'] = file => {}
+  require.extensions['.less'] = file => {};
 }
 
 module.exports = antdLessLoader({
@@ -10,7 +11,7 @@ module.exports = antdLessLoader({
   // tslint:disable-next-line: object-literal-sort-keys
   cssLoaderOptions: {
     importLoaders: 1,
-    localIdentName: "[local]___[hash:base64:5]",
+    localIdentName: '[local]___[hash:base64:5]'
   },
   lessLoaderOptions: {
     javascriptEnabled: true,
@@ -20,32 +21,33 @@ module.exports = antdLessLoader({
   },
   // tslint:disable-next-line: object-literal-sort-keys
   env: {
-    "API_URL": process.env.API_URL || "http://localhost:4000",
-    "GRAPHQL_URL": process.env.GRAPHQL_URL || "http://localhost:4000/graphql",
+    API_URL: process.env.API_URL,
+    CLIENT_URL: process.env.CLIENT_URL,
+    GRAPHQL_URL: process.env.GRAPHQL_URL
   },
   webpack: (config, { isServer }) => {
     if (isServer) {
-      const antStyles = /antd\/.*?\/style.*?/
-      const origExternals = [...config.externals]
+      const antStyles = /antd\/.*?\/style.*?/;
+      const origExternals = [...config.externals];
       config.externals = [
         (context, request, callback) => {
           if (request.match(antStyles)) {
-            return callback()
+            return callback();
           }
           if (typeof origExternals[0] === 'function') {
-            origExternals[0](context, request, callback)
+            origExternals[0](context, request, callback);
           } else {
-            callback()
+            callback();
           }
         },
-        ...(typeof origExternals[0] === 'function' ? [] : origExternals),
-      ]
+        ...(typeof origExternals[0] === 'function' ? [] : origExternals)
+      ];
 
       config.module.rules.unshift({
         test: antStyles,
-        use: 'null-loader',
-      })
+        use: 'null-loader'
+      });
     }
-    return config
+    return config;
   }
 });

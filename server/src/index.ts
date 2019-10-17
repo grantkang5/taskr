@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 4000;
 const startServer = async () => {
   const app = express();
   app.use(
-    cors({
+    cors({  
       origin: process.env.CLIENT_URL,
       credentials: true
     })

@@ -6,6 +6,7 @@ board: https://trello.com/b/Y3ywap6K/superapp
     Steps to run this project:
 
 1. Run `npm install` or `yarn` command
+2. Create `.env` file in `client/` following the `.env.sample` file
 2. Run `yarn dev`
 
     Creating graphql queries and mutations

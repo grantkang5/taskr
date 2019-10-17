@@ -1,21 +1,30 @@
 import React from 'react';
 
-import styles from './Auth.module.less'
+import styles from './Auth.module.less';
 import { useRouter } from 'next/router';
 import { HeaderText, SubText } from '../common/Text';
 import Link from 'next/link';
 
-
 interface Props {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 const AuthLayout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const authText: { [index: string]: any } = {
-    "/login": { greeting: "Log in", alt: "Don't have an account?", altLink: "Sign up", href: "/register" },
-    "/register": { greeting: "Sign up", alt: "Already have an account?", altLink: "Log in", href: "/login" }
-  }
+    '/login': {
+      greeting: 'Log in',
+      alt: "Don't have an account?",
+      altLink: 'Sign up',
+      href: '/register'
+    },
+    '/register': {
+      greeting: 'Sign up',
+      alt: 'Already have an account?',
+      altLink: 'Log in',
+      href: '/login'
+    }
+  };
 
   return (
     <div className={styles.layout}>
@@ -28,20 +37,16 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
 
         <div>
           <SubText white={1}>
-            {authText[router.route].alt} {' '}
+            {authText[router.route].alt}{' '}
             <Link href={authText[router.route].href}>
-              <a>
-                {authText[router.route].altLink}
-              </a>
+              <a>{authText[router.route].altLink}</a>
             </Link>
           </SubText>
         </div>
       </div>
-      <div className={styles.formContainer}>
-        {children}
-      </div>
+      <div className={styles.formContainer}>{children}</div>
     </div>
-  )
-}
+  );
+};
 
 export default AuthLayout;
