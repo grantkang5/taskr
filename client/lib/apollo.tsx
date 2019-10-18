@@ -59,8 +59,10 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
       } = ctx;
 
       let serverAccessToken = '';
-
+      console.log('client rendering page props with apollo...')
       if (isServer()) {
+        console.log('NEXT JS SERVER reading cookies from header: ', req.headers.cookie)
+        console.log('fetching refresh token [nextjs] to ', process.env.API_URL!)
         let cookies: any;
         if (req.headers.cookie) {
           cookies = cookie.parse(req.headers.cookie);
@@ -212,6 +214,8 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
   });
 
   const authLink = setContext((_request, { headers }) => {
+    console.log('auth Link apollo client middlewares serverAccessToken: ', serverAccessToken)
+    console.log('or accesstoken from memeory: ', getAccessToken())
     const token = isServer() ? serverAccessToken : getAccessToken();
     return {
       headers: {
