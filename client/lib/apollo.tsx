@@ -67,7 +67,17 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
         console.log('SERVERACCESTOKEN: ', serverAccessToken)
         console.log('headers: ', req.headers)
         let cookies: any;
-        if (req.headers.cookie) {
+        
+        const response = await fetch(`${process.env.API_URL}/get_refresh`, {
+          method: 'POST',
+          credentials: 'include'
+        })
+
+        const data = await response.json();
+        cookies = cookie.parse(data.cookie)
+
+        if (req.headers.cookie || cookies) {
+          console.log('tHIS IS COOKIES: ', cookies)
           cookies = cookie.parse(req.headers.cookie);
           if (cookies.qid) {
             const response = await fetch(
