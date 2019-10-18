@@ -63,6 +63,9 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
       if (isServer()) {
         console.log('NEXT JS SERVER reading cookies from header: ', req.headers.cookie)
         console.log('fetching refresh token [nextjs] to ', process.env.API_URL!)
+
+        console.log('SERVERACCESTOKEN: ', serverAccessToken)
+        console.log('headers: ', req.headers)
         let cookies: any;
         if (req.headers.cookie) {
           cookies = cookie.parse(req.headers.cookie);
