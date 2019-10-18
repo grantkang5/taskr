@@ -9,7 +9,7 @@ import Layout from '../components/common/Layout';
 const Dashboard = () => {
   return (
     <Layout>
-      Layout
+      This is the dashboard
     </Layout>
   );
 };
