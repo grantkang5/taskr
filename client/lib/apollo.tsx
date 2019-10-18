@@ -66,6 +66,7 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
         console.log('fetching refresh token [nextjs] to ', process.env.API_URL!)
         const randomCookie = JSCookie.get('qid')
         console.log('JS COOKIE IS DA BEST: ', randomCookie)
+
         let cookies: any;
         if (req.headers.cookie) {
           cookies = cookie.parse(req.headers.cookie);
