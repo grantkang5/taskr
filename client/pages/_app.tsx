@@ -8,6 +8,8 @@ interface Props {
   apolloClient: any
 }
 
+import './App.module.less'
+
 class MyApp extends App<Props> {
   render() {
     const { Component, pageProps, apolloClient } = this.props;
