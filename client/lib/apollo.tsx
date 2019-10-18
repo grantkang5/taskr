@@ -65,7 +65,6 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
         console.log('fetching refresh token [nextjs] to ', process.env.API_URL!)
 
         console.log('SERVERACCESTOKEN: ', serverAccessToken)
-        console.log('headers: ', req.headers)
         let cookies: any;
         
         const response = await fetch(`${process.env.API_URL}/get_refresh`, {
