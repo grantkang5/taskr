@@ -1,9 +1,8 @@
-import App from 'next/app';
-import React from 'react';
-import { ApolloProvider } from '@apollo/react-hooks';
-import { withApollo } from '../lib/apollo';
-import PrivateRoute from '../components/PrivateRoute';
-import ApolloClient from 'apollo-client';
+import App from "next/app";
+import React from "react";
+import { ApolloProvider } from "@apollo/react-hooks";
+import { withApollo } from "../lib/apollo";
+import PrivateRoute from "../components/PrivateRoute";
 
 interface Props {
   apolloClient: any
@@ -14,9 +13,7 @@ class MyApp extends App<Props> {
     const { Component, pageProps, apolloClient } = this.props;
     return (
       <ApolloProvider client={apolloClient}>
-        <PrivateRoute>
-          <Component {...pageProps} />
-        </PrivateRoute>
+        <Component {...pageProps} />
       </ApolloProvider>
     );
   }

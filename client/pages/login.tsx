@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   useLoginMutation,
-  useGoogle_OAuthLazyQuery
 } from "../generated/graphql";
 import { useRouter } from "next/router";
 import { setAccessToken } from "../lib/accessToken";
