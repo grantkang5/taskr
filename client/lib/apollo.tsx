@@ -11,7 +11,6 @@ import { getAccessToken, setAccessToken } from './accessToken';
 import { onError } from 'apollo-link-error';
 import { ApolloLink } from 'apollo-link';
 import cookie from 'cookie';
-import JSCookie from 'js-cookie'
 
 const isServer = () => typeof window === 'undefined';
 
@@ -62,10 +61,6 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
       let serverAccessToken = '';
 
       if (isServer()) {
-        console.log('NEXT JS SERVER reading cookies from header: ', req.headers.cookie)
-        console.log('fetching refresh token [nextjs] to ', process.env.API_URL!)
-        console.log('JS COOKIE IS DA BEST: ', randomCookie)
-
         let cookies: any;
         if (req.headers.cookie) {
           cookies = cookie.parse(req.headers.cookie);

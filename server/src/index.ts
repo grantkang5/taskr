@@ -21,11 +21,6 @@ const startServer = async () => {
   app.use("/refresh_token", cookieParser());
 
   app.get("/", (_req, res) => res.send("hello"));
-  app.post("/get_refresh", cookieParser(), (req, res) => {
-    console.log("HEY WE ARE IN GET REFRESH ROUTE: ", req.cookies)
-    res.send({ cookie: req.cookies.qid })
-  })
-  
 
   app.post("/refresh_token", refreshAccessToken);
   server.applyMiddleware({ app, cors: false });
