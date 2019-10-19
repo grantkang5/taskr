@@ -20,7 +20,7 @@ const startServer = async () => {
 
   app.use("/refresh_token", cookieParser());
 
-  app.get("/", (_req, res) => res.send("hello"));
+  app.get("/", (_req, res) => res.send("zawarudo"));
 
   app.post("/refresh_token", refreshAccessToken);
   server.applyMiddleware({ app, cors: false });
