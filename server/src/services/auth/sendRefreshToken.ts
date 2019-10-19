@@ -5,7 +5,7 @@ export const sendRefreshToken = (res: Response, token: string) => {
     httpOnly: true,
     /** disable path for next.js server */
     // path: "/refresh_token",
-    domain: '.herokuapp.com',
+    domain: '.taskr-app.com',
     expires: new Date(Date.now() + 7 * 24 * 3600000)
   });
 };
