@@ -9,6 +9,8 @@ import { Form, Icon, Input, Button, message } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import AuthLayout from "../components/auth/AuthLayout";
 import GoogleLogin from "../components/auth/GoogleLogin";
+import { Redirect } from "../lib/redirect";
+import { loadGetInitialProps } from "next/dist/next-server/lib/utils";
 
 const Login: React.FC<FormComponentProps> = ({ form }) => {
   const router = useRouter();
@@ -16,6 +18,7 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
+
     const { validateFields } = form;
     validateFields(async (err, { email, password }) => {
       if (!err) {
@@ -26,10 +29,11 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
               password
             }
           });
+
           if (response && response.data) {
             setAccessToken(response.data.login.accessToken);
+            router.push('/error', '/')
           }
-          router.push("/");
         } catch (err) {
           err.graphQLErrors
             ? message.error(err.graphQLErrors[0].message, 2)

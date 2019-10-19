@@ -16,16 +16,16 @@ export const Header: React.FC<Props> = () => {
     return (
       <Layout.Header className={styles.header}>
         <div className={styles.left}>
-          <Link href="/home">
+          <Link href="/home" as="/home">
             <a>Home</a>
           </Link>
         </div>
         <div className={styles.right}>
-          <Link href="/login">
+          <Link href="/login" as="/login">
             <a>Log In</a>
           </Link>
 
-          <Link href="/register">
+          <Link href="/register" as="/register">
             <a className={styles.blueLink}>Sign Up</a>
           </Link>
         </div>
@@ -36,7 +36,7 @@ export const Header: React.FC<Props> = () => {
   return (
     <Layout.Header className={styles.header}>
       <div className={styles.left}>
-        <Link href="/home">
+        <Link href="/home" as="/home">
           <a>Home</a>
         </Link>
       </div>

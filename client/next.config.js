@@ -21,9 +21,9 @@ module.exports = antdLessLoader({
   },
   // tslint:disable-next-line: object-literal-sort-keys
   env: {
-    API_URL: process.env.API_URL,
-    CLIENT_URL: process.env.CLIENT_URL,
-    GRAPHQL_URL: process.env.GRAPHQL_URL
+    API_URL: process.env.API_URL || 'http://localhost:4000',
+    CLIENT_URL: process.env.CLIENT_URL || 'http://localhost:3000',
+    GRAPHQL_URL: process.env.GRAPHQL_URL || 'http://localhost:4000/graphql'
   },
   webpack: (config, { isServer }) => {
     if (isServer) {

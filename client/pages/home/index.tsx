@@ -21,7 +21,7 @@ const Home: React.FC = () => {
               you can prioritize development and pushing out features
             </HeaderSubText>
 
-            <Link href="/register">
+            <Link href="/register" as="/register">
               <Button type="primary">
                 <a>Start your account - it's free</a>
               </Button>
