@@ -8,7 +8,8 @@ export const Logout: React.FC = () => {
   const router = useRouter()
   const [logout, { client }] = useLogoutMutation();
 
-  const handleClick = async () => {
+  const handleClick = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
     const logoutResponse = await logout();
     if (logoutResponse) {
       setAccessToken('');

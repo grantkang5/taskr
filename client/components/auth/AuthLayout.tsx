@@ -38,7 +38,7 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
         <div>
           <SubText white={1}>
             {authText[router.route].alt}{' '}
-            <Link href={authText[router.route].href}>
+            <Link href={authText[router.route].href} as={authText[router.route].href}>
               <a>{authText[router.route].altLink}</a>
             </Link>
           </SubText>
