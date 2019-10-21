@@ -23,6 +23,7 @@ export type Mutation = {
   login: LoginResponse,
   logout: Scalars['Boolean'],
   auth_googleOAuth: LoginResponse,
+  hello: Scalars['String'],
 };
 
 
@@ -44,11 +45,15 @@ export type MutationAuth_GoogleOAuthArgs = {
 
 export type Query = {
    __typename?: 'Query',
-  hello: Scalars['String'],
   users: Array<User>,
   bye: Scalars['String'],
   me: User,
   login_googleOAuth: Scalars['String'],
+};
+
+export type Subscription = {
+   __typename?: 'Subscription',
+  helloSubscription: Scalars['String'],
 };
 
 export type User = {
