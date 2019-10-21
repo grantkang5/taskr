@@ -88,8 +88,6 @@ jobs:
           DATABASE_URL: taskr
           PG_USER: postgres
           PG_PASSWORD: postgres
-          REDIS_HOST: redis
-          REDIS_PORT: 6379
       - image: circleci/postgres:latest
         environment:
           POSTGRES_PASSWORD: postgres
