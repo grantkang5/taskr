@@ -88,7 +88,7 @@ jobs:
           DATABASE_URL: taskr-api
           PG_USER: postgres
           PG_PASSWORD: postgres
-      - image: circleci/postgres:latest
+      - image: postgres:latest
         environment:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
