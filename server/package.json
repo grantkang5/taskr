@@ -47,6 +47,7 @@
     "start": "node dist/index.js",
     "build": "tsc --sourceMap false",
     "test": "jest",
+    "db:create": "createdb taskr-api",
     "db:seed": "fixtures ./src/database/fixtures --config ./ormconfig.js --sync --require=ts-node/register"
   },
   "jest": {
