@@ -85,14 +85,14 @@ jobs:
           NODE_ENV: test
           ACCESS_TOKEN_SECRET: circle
           REFRESH_TOKEN_SECRET: ci
-          DATABASE_URL: taskr
+          DATABASE_URL: taskr-api
           PG_USER: postgres
           PG_PASSWORD: postgres
       - image: circleci/postgres:latest
         environment:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
-          POSTGRES_DB: taskr
+          POSTGRES_DB: taskr-api
     steps:
       - checkout:
           path: ~/taskr
