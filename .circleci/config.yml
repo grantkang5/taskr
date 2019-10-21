@@ -1,13 +1,13 @@
 veresion: 2
 jobs:
   client_build:
-    working_directory: ~/ssr-auth/client
+    working_directory: ~/taskr/client
     docker:
       - image: circleci/node:latest
 
     steps:
       - checkout:
-          path: ~/ssr-auth
+          path: ~/taskr
 
       - restore_cache:
           keys:
@@ -30,12 +30,12 @@ jobs:
             - yarn.lock
 
   client_test:
-    working_directory: ~/ssr-auth/client
+    working_directory: ~/taskr/client
     docker:
       - image: circleci/node:latest
     steps:
       - checkout:
-          path: ~/ssr-auth
+          path: ~/taskr
       
       - attach_workspace:
           at: '.'
@@ -52,13 +52,13 @@ jobs:
           command: yarn test:coverage
 
   api_build:
-    working_directory: ~/ssr-auth/server
+    working_directory: ~/taskr/server
     docker:
       - image: circleci/node:latest
 
     steps:
       - checkout:
-          path: ~/ssr-auth
+          path: ~/taskr
       - restore_cache:
           keys:
             - dependency-cache-{{ checksum "yarn.lock" }}
@@ -78,24 +78,27 @@ jobs:
             - yarn.lock
 
   api_test:
-    working_directory: ~/ssr-auth/server
+    working_directory: ~/taskr/server
     docker:
       - image: circleci/node:latest
         environment:
           NODE_ENV: test
           ACCESS_TOKEN_SECRET: circle
           REFRESH_TOKEN_SECRET: ci
-          DATABASE_URL: ssr-auth
+          DATABASE_URL: taskr
           PG_USER: postgres
           PG_PASSWORD: postgres
-      - image: postgres:11.5-alpine
+          REDIS_HOST: redis
+          REDIS_PORT: 6379
+      - image: circleci/postgres:latest
         environment:
           POSTGRES_PASSWORD: postgres
           POSTGRES_USER: postgres
-          POSTGRES_DB: ssr-auth
+          POSTGRES_DB: taskr
+      - image: circleci/redis:latest
     steps:
       - checkout:
-          path: ~/ssr-auth
+          path: ~/taskr
       - attach_workspace:
           at: '.'
       - restore_cache:
