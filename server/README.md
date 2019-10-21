@@ -3,10 +3,10 @@ heroku: http://api.taskr-app.com/
 # Taskr api
 
 #### Table of Contents
-[Installation](###Installation)
-[Getting started](###Getting_started)
-[Typeorm](###Typeorm)
-[Making a pull request](###Making_a_pull_request)
+- [Installation](#Installation)
+- [Getting started](#Getting_started)
+- [Typeorm](#Typeorm)
+- [Making a pull request](#Making_a_pull_request)
 
 ### Installation
 1. Run `npm install` or `yarn`

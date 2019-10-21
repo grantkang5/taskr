@@ -5,14 +5,14 @@ This project is built using Next.js to assist in server-side rendering our React
 # Taskr client
 
 #### Table of Contents
-[Installation](###Installation)
-[Getting started](###Getting_started)
-[Generate graphql](###Generate_graphql)
-[Routing](###Routing)
-[Graphql](###Graphql)
-[Styling](###Styling)
-[Tests](###Tests)
-[Making a pull request](###Making_a_pull_request)
+- [Installation](#Installation)
+- [Getting started](#Getting_started)
+- [Generate graphql](#Generate_graphql)
+- [Routing](#Routing)
+- [Graphql](#Graphql)
+- [Styling](#Styling)
+- [Tests](#Tests)
+- [Making a pull request](#Making_a_pull_request)
 
 ### Installation
 1. `npm install` or `yarn`
