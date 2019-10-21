@@ -21,6 +21,7 @@
     "apollo-boost": "^0.4.4",
     "apollo-link-context": "^1.0.19",
     "apollo-link-token-refresh": "^0.2.6",
+    "apollo-link-ws": "^1.0.19",
     "classnames": "^2.2.6",
     "cookie": "^0.4.0",
     "graphql": "^14.5.7",
@@ -31,6 +32,7 @@
     "null-loader": "^3.0.0",
     "react": "16.10.2",
     "react-dom": "16.10.2",
+    "subscriptions-transport-ws": "^0.9.16",
     "tslint": "^5.20.0",
     "yup": "^0.27.0"
   },

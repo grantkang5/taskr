@@ -9,8 +9,10 @@ import { TokenRefreshLink } from 'apollo-link-token-refresh';
 import jwtDecode from 'jwt-decode';
 import { getAccessToken, setAccessToken } from './accessToken';
 import { onError } from 'apollo-link-error';
-import { ApolloLink } from 'apollo-link';
+import { ApolloLink, split } from 'apollo-link';
+import { WebSocketLink } from "apollo-link-ws"
 import cookie from 'cookie';
+import { getMainDefinition } from 'apollo-utilities';
 
 const isServer = () => typeof window === 'undefined';
 
@@ -176,6 +178,13 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
     fetch
   });
 
+  const wsLink = new WebSocketLink({
+    uri: process.env.GRAPHQL_URL!.replace(/^https?/, 'ws'),
+    options: {
+      reconnect: true
+    }
+  })
+
   const refreshLink = new TokenRefreshLink({
     accessTokenField: 'accessToken',
     isTokenValidOrUndefined: () => {
@@ -226,9 +235,23 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
     console.log('Network Error: ', networkError);
   });
 
+  interface Definition {
+    kind: string,
+    operation?: string
+  }
+
+  const terminatingLink = split(
+    ({ query }) => {
+      const { kind, operation }: Definition = getMainDefinition(query);
+      return kind === 'OperationDefinition' && operation === 'subscription';
+    },
+    wsLink,
+    authLink.concat(httpLink)
+  )
+
   return new ApolloClient({
     ssrMode: typeof window === 'undefined', // Disables forceFetch on the server (so queries are only run once)
-    link: ApolloLink.from([refreshLink, authLink, errorLink, httpLink]),
+    link: ApolloLink.from([refreshLink, authLink, errorLink, terminatingLink]),
     cache: new InMemoryCache().restore(initialState)
   });
 }

@@ -6,7 +6,11 @@ import {
   ObjectType,
   Field,
   Ctx,
-  UseMiddleware
+  UseMiddleware,
+  Subscription,
+  PubSub,
+  PubSubEngine,
+  Root
 } from 'type-graphql';
 import { hash, compare } from 'bcryptjs';
 import { User } from '../entity/User';
@@ -30,11 +34,6 @@ class LoginResponse {
 
 @Resolver()
 export class UserResolver {
-  @Query(() => String)
-  hello() {
-    return `Hello!`;
-  }
-
   @Query(() => [User])
   async users() {
     return await User.find();
@@ -56,6 +55,20 @@ export class UserResolver {
       console.log(err);
       return null;
     }
+  }
+
+  @Query(() => String)
+  async login_googleOAuth() {
+    const client = await createOAuth2Client();
+
+    const scopes = ['openid', 'email'];
+
+    const url = client.generateAuthUrl({
+      access_type: 'offline',
+      scope: scopes
+    });
+
+    return url;
   }
 
   @Mutation(() => User)
@@ -128,20 +141,6 @@ export class UserResolver {
     return true;
   }
 
-  @Query(() => String)
-  async login_googleOAuth() {
-    const client = await createOAuth2Client();
-
-    const scopes = ['openid', 'email'];
-
-    const url = client.generateAuthUrl({
-      access_type: 'offline',
-      scope: scopes
-    });
-
-    return url;
-  }
-
   @Mutation(() => LoginResponse)
   //TODO: Better mutation naming
   async auth_googleOAuth(@Arg('code') code: string, @Ctx() { res }: MyContext) {
@@ -151,19 +150,16 @@ export class UserResolver {
       if (!client) {
         throw new Error('Failed to create OAuth2 client');
       }
-
       const { tokens } = await client.getToken(decodeURIComponent(code));
 
       if (!tokens) {
         throw new Error('Invalid code for tokens');
       }
-
       const payload = await verify(tokens.id_token!);
 
       if (!payload) {
         throw new Error('Failed to retrieve payload');
       }
-
       let user = await User.findOne({ email: payload.email });
 
       if (!user) {
@@ -185,5 +181,20 @@ export class UserResolver {
       console.log('err', err);
       return err;
     }
+  }
+
+  @Mutation(() => String)
+  async hello(
+    @PubSub() pubSub: PubSubEngine
+  ) {
+    await pubSub.publish("HELLO", "WORLD")
+    return `Hello!`;
+  }
+
+  @Subscription(() => String, { topics: "HELLO" })
+  helloSubscription(
+    @Root() string: String
+  ) {
+    return `Subscription string: ${string}`
   }
 }
