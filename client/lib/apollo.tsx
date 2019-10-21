@@ -68,14 +68,25 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
         let cookies: any;
         if (req.headers.cookie) {
           cookies = cookie.parse(req.headers.cookie);
-          if (cookies.qid) {
+          let cookieId = 'qid=';
+          let refreshRoute = 'refresh_token';
+          if (cookies) {
+            // check if cookie has google's token
+            if (cookies.gid) {
+              cookieId = 'gid=';
+              refreshRoute = 'refresh_google_token';
+            }
             const response = await fetch(
-              `${process.env.API_URL}/refresh_token`,
+              `${process.env.API_URL}/${refreshRoute}`,
               {
                 method: "POST",
                 credentials: "include",
                 headers: {
+<<<<<<< 6c673b94d1d35206eb453941e27ca1dc26c46cbb
                   cookie: "qid=" + cookies.qid
+=======
+                  cookie: cookieId + cookies.qid
+>>>>>>> google feature vortex
                 }
               }
             );

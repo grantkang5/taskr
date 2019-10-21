@@ -17,12 +17,12 @@ import { User } from '../entity/User';
 import {
   createAccessToken,
   createRefreshToken
-} from '../services/auth/createTokens';
+} from '../services/auth/web/createTokens';
 import { MyContext } from '../services/context';
 import { sendRefreshToken } from '../services/auth/sendRefreshToken';
 import { isAuth } from '../services/auth/isAuth';
-import { createOAuth2Client } from '../services/google_oauth';
-import { verify } from '../services/google_oauth';
+import { createOAuth2Client } from '../services/auth/google';
+import { verify } from '../services/auth/google';
 
 @ObjectType()
 class LoginResponse {
@@ -81,7 +81,8 @@ export class UserResolver {
     try {
       const user = await User.create({
         email,
-        password: hashedPassword
+        password: hashedPassword,
+        auth: 'website'
       }).save();
       return user;
     } catch (err) {
@@ -151,6 +152,7 @@ export class UserResolver {
         throw new Error('Failed to create OAuth2 client');
       }
       const { tokens } = await client.getToken(decodeURIComponent(code));
+      client.setCredentials(tokens);
 
       if (!tokens) {
         throw new Error('Invalid code for tokens');
@@ -164,17 +166,22 @@ export class UserResolver {
 
       if (!user) {
         // register user to db if they don't exist in system
-        user = await User.create({ email: payload.email }).save();
+        user = await User.create({
+          email: payload.email,
+          auth: 'google'
+        }).save();
 
         if (!user) {
           throw new Error('Failed to create user');
         }
       }
 
-      sendRefreshToken(res, createRefreshToken(user));
+      // TODO: send and check with google's refresh token
+      sendRefreshToken(res, tokens.refresh_token!, 'google');
 
+      // TODO: send googles accesstoken
       return {
-        accessToken: createAccessToken(user),
+        accessToken: tokens.access_token,
         user
       };
     } catch (err) {

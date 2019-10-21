@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
-import { User } from '../../entity/User';
+import { User } from '../../../entity/User';
 import { createAccessToken, createRefreshToken } from './createTokens';
-import { sendRefreshToken } from './sendRefreshToken';
+import { sendRefreshToken } from '../sendRefreshToken';
 
 export const refreshAccessToken = async (req: Request, res: Response) => {
   const token = req.cookies.qid;
@@ -38,7 +38,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
     return res.send({ ok: false, accessToken: '' });
   }
 
-  sendRefreshToken(res, createRefreshToken(user));
+  sendRefreshToken(res, createRefreshToken(user), 'website');
 
   return res.send({ ok: false, accessToken: createAccessToken(user) });
 };
