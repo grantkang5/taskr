@@ -17,6 +17,7 @@
     "babel-core": "^6.26.3",
     "babel-jest": "^24.9.0",
     "babel-preset-env": "^1.7.0",
+    "concurrently": "^5.0.0",
     "jest": "^24.9.0",
     "nodemon": "^1.19.2",
     "ts-jest": "^24.1.0",
@@ -46,10 +47,11 @@
     "typeorm": "^0.2.19"
   },
   "scripts": {
-    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev": "concurrently \"yarn db:start\" \"nodemon --exec ts-node src/index.ts\"",
     "start": "node dist/index.js",
     "build": "tsc --sourceMap false",
     "test": "jest",
+    "db:start": "docker-compose up --build",
     "db:create": "createdb taskr-api",
     "db:seed": "fixtures ./src/database/fixtures --config ./ormconfig.js --sync --require=ts-node/register"
   },
