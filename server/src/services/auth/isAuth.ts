@@ -18,8 +18,13 @@ export const isAuth: MiddlewareFn<MyContext> = async ({ context }, next) => {
     // payload contains googleIdToken instead of user
     if (googleIdToken) {
       const googleTokenPayload = await verifyIdToken(googleIdToken);
+      console.log(googleTokenPayload);
       if (googleTokenPayload) {
-        payload = await User.findOne({ email: googleTokenPayload.email });
+        const user = await User.findOne({ email: googleTokenPayload.email });
+        if (!user) {
+          throw new Error('User not found');
+        }
+        payload = { userId: user.id };
       }
     }
     context.payload = payload as any;

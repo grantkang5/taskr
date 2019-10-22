@@ -49,7 +49,8 @@ export class UserResolver {
   @UseMiddleware(isAuth)
   async me(@Ctx() { payload }: MyContext) {
     try {
-      return await User.findOne(payload!.userId);
+      const user = await User.findOne({ id: parseInt(payload!.userId) });
+      return user;
     } catch (err) {
       console.log(err);
       return null;
