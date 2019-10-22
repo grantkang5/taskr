@@ -29,9 +29,9 @@ const startServer = async () => {
   const ws = createServer(app)
   server.installSubscriptionHandlers(ws)
   await createConnection();
-  redis.set('foo', 'bar')
+  redis.set('foo', 'bar', "EX", 10)
   redis.get('foo', (_err, res) => {
-    console.log(res)
+    return res
   })
   ws.listen(PORT, () => console.log(`Express server listening on ${PORT}`));
 };
