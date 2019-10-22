@@ -2,7 +2,7 @@ import { ApolloServer, PubSub } from "apollo-server-express";
 import { RedisPubSub } from "graphql-redis-subscriptions";
 import { buildSchemaSync } from "type-graphql";
 
-import { UserResolver } from "./resolvers/UserResolver";
+import { UserResolver } from "../resolvers/UserResolver";
 import { PubSubRedisOptions } from "graphql-redis-subscriptions/dist/redis-pubsub";
 
 export const pubSub =
