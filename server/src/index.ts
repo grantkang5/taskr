@@ -5,8 +5,9 @@ import { createConnection } from "typeorm";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { refreshAccessToken } from "./services/auth/refreshAccessToken";
-import { server } from "./server";
+import { server } from "./services/server";
 import { createServer } from "http";
+import { redis } from "./services/redis";
 
 const PORT = process.env.PORT || 4000;
 
@@ -28,6 +29,10 @@ const startServer = async () => {
   const ws = createServer(app)
   server.installSubscriptionHandlers(ws)
   await createConnection();
+  redis.set('foo', 'bar')
+  redis.get('foo', (_err, res) => {
+    console.log(res)
+  })
   ws.listen(PORT, () => console.log(`Express server listening on ${PORT}`));
 };
 
