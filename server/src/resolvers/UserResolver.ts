@@ -7,10 +7,7 @@ import {
   Field,
   Ctx,
   UseMiddleware,
-  Subscription,
-  PubSub,
-  PubSubEngine,
-  Root
+  Int
 } from 'type-graphql';
 import { hash, compare } from 'bcryptjs';
 import { User } from '../entity/User';
@@ -23,6 +20,8 @@ import { sendRefreshToken } from '../services/auth/sendRefreshToken';
 import { isAuth } from '../services/auth/isAuth';
 import { createOAuth2Client } from '../services/google_oauth';
 import { verify } from '../services/google_oauth';
+import { getConnection } from 'typeorm';
+import { transporter, fromEmail } from '../services/mailer/transporter';
 
 @ObjectType()
 class LoginResponse {
@@ -37,13 +36,6 @@ export class UserResolver {
   @Query(() => [User])
   async users() {
     return await User.find();
-  }
-
-  // Protected route
-  @Query(() => String)
-  @UseMiddleware(isAuth)
-  bye(@Ctx() { payload }: MyContext) {
-    return `Your user id is:  ${payload!.userId}`;
   }
 
   @Query(() => User)
@@ -83,6 +75,7 @@ export class UserResolver {
         email,
         password: hashedPassword
       }).save();
+
       return user;
     } catch (err) {
       if (err.code === '23505') {
@@ -103,6 +96,10 @@ export class UserResolver {
 
       if (!user) {
         throw new Error('Could not find user');
+      }
+
+      if (!user.validated) {
+        throw new Error('This account has not been validated')
       }
 
       // if user's password from db is NULL
@@ -183,18 +180,31 @@ export class UserResolver {
     }
   }
 
-  @Mutation(() => String)
-  async hello(
-    @PubSub() pubSub: PubSubEngine
+  @Mutation(() => Boolean)
+  async revokeRefreshToken(
+    @Arg('userId', () => Int) userId: number
   ) {
-    await pubSub.publish("HELLO", "WORLD")
-    return `Hello!`;
+    await getConnection().getRepository(User)
+      .increment({ id: userId }, 'tokenVersion', 1)
+    return true
   }
 
-  @Subscription(() => String, { topics: "HELLO" })
-  helloSubscription(
-    @Root() string: String
+  @Mutation(() => Boolean)
+  async hello(
+    @Arg('email') email: string,
+    @Arg('password') password: string
   ) {
-    return `Subscription string: ${string}`
+    const hashedURL = await hash(`${email}${password}`, 12)
+    transporter.sendMail({
+      from: fromEmail,
+      to: email,
+      subject: 'Please confirm your account registration',
+      html: `
+        <p>Click the following link to confirm your account:</p>
+        <a href='${process.env.CLIENT_URL}/email-verification/${hashedURL}'></a>
+      `
+    })
+
+    return true
   }
 }
