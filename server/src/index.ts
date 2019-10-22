@@ -4,10 +4,9 @@ import express from 'express';
 import { createConnection } from 'typeorm';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { refreshAccessToken } from './services/auth/web/refreshAccessToken';
+import { refreshAccessToken } from './services/auth/refreshAccessToken';
 import { server } from './server';
 import { createServer } from 'http';
-import { refreshAccessToken as refreshGoogleToken } from './services/auth/google/refreshAccessToken';
 
 const PORT = process.env.PORT || 4000;
 
@@ -20,11 +19,8 @@ const startServer = async () => {
     })
   );
 
-  app.use('/refresh_token', cookieParser());
-
   app.get('/', (_req, res) => res.send('taskr api'));
-  app.post('/refresh_token', refreshAccessToken);
-  app.post('/refresh_google_token', refreshGoogleToken);
+  app.post('/refresh_token', cookieParser(), refreshAccessToken);
   server.applyMiddleware({ app, cors: false });
   const ws = createServer(app);
   server.installSubscriptionHandlers(ws);

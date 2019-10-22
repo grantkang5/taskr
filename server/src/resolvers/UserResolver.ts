@@ -21,8 +21,7 @@ import {
 import { MyContext } from '../services/context';
 import { sendRefreshToken } from '../services/auth/sendRefreshToken';
 import { isAuth } from '../services/auth/isAuth';
-import { createOAuth2Client } from '../services/auth/google';
-import { verify } from '../services/auth/google';
+import { createOAuth2Client, verifyIdToken } from '../services/auth/google';
 
 @ObjectType()
 class LoginResponse {
@@ -157,7 +156,7 @@ export class UserResolver {
       if (!tokens) {
         throw new Error('Invalid code for tokens');
       }
-      const payload = await verify(tokens.id_token!);
+      const payload = await verifyIdToken(tokens.id_token!);
 
       if (!payload) {
         throw new Error('Failed to retrieve payload');
@@ -176,12 +175,10 @@ export class UserResolver {
         }
       }
 
-      // TODO: send and check with google's refresh token
-      sendRefreshToken(res, tokens.refresh_token!, 'google');
+      sendRefreshToken(res, createRefreshToken(tokens.refresh_token!));
 
-      // TODO: send googles accesstoken
       return {
-        accessToken: tokens.access_token,
+        accessToken: createAccessToken(tokens.id_token!),
         user
       };
     } catch (err) {
@@ -191,17 +188,13 @@ export class UserResolver {
   }
 
   @Mutation(() => String)
-  async hello(
-    @PubSub() pubSub: PubSubEngine
-  ) {
-    await pubSub.publish("HELLO", "WORLD")
+  async hello(@PubSub() pubSub: PubSubEngine) {
+    await pubSub.publish('HELLO', 'WORLD');
     return `Hello!`;
   }
 
-  @Subscription(() => String, { topics: "HELLO" })
-  helloSubscription(
-    @Root() string: String
-  ) {
-    return `Subscription string: ${string}`
+  @Subscription(() => String, { topics: 'HELLO' })
+  helloSubscription(@Root() string: String) {
+    return `Subscription string: ${string}`;
   }
 }

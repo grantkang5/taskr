@@ -68,21 +68,16 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
         let cookies: any;
         if (req.headers.cookie) {
           cookies = cookie.parse(req.headers.cookie);
-          let cookieId = 'qid=';
+          let cookieHeader = 'qid=' + cookies.qid;
           let refreshRoute = 'refresh_token';
           if (cookies) {
-            // check if cookie has google's token
-            if (cookies.gid) {
-              cookieId = 'gid=';
-              refreshRoute = 'refresh_google_token';
-            }
             const response = await fetch(
               `${process.env.API_URL}/${refreshRoute}`,
               {
                 method: 'POST',
                 credentials: 'include',
                 headers: {
-                  cookie: cookieId + cookies.qid
+                  cookie: cookieHeader
                 }
               }
             );

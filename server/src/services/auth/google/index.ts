@@ -9,13 +9,11 @@ export const createOAuth2Client = async () => {
   );
 };
 
-export const verify = async (token: string) => {
+export const verifyIdToken = async (token: string) => {
   const client = new OAuth2Client(process.env.GOOGLE_OAUTH2_CLIENT_ID);
   const ticket = await client.verifyIdToken({
     idToken: token,
     audience: process.env.GOOGLE_OAUTH2_CLIENT_ID!
   });
-  const payload = ticket.getPayload();
-
-  return payload;
+  return ticket.getPayload();
 };
