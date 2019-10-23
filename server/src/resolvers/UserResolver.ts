@@ -176,7 +176,11 @@ export class UserResolver {
         }
       }
 
-      sendRefreshToken(res, createRefreshToken(tokens.refresh_token!));
+      if (!tokens.refresh_token) {
+        throw new Error('Failed to retrieve refresh_token from google');
+      }
+
+      sendRefreshToken(res, createRefreshToken(tokens.refresh_token));
 
       return {
         accessToken: createAccessToken(tokens.id_token!),
