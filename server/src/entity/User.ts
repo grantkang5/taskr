@@ -14,4 +14,9 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true })
   password: string;
+
+  // TODO: make enum. 'website' | 'google'
+  @Field()
+  @Column({ default: 'website' })
+  auth: string;
 }
