@@ -17,6 +17,6 @@ export class User extends BaseEntity {
 
   // TODO: make enum. 'website' | 'google'
   @Field()
-  @Column()
+  @Column({ default: 'website' })
   auth: string;
 }
