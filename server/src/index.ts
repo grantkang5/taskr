@@ -30,7 +30,7 @@ const startServer = async () => {
   redis.get('foo', (_err, res) => {
     return res;
   });
-  ws.listen(PORT, () => console.log(`Express server listening on ${PORT}`));
+  ws.listen(PORT, () => console.log(`Express server is listening on ${PORT}`));
 };
 
 startServer();
