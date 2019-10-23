@@ -146,6 +146,10 @@ export class UserResolver {
         throw new Error("Could not find user");
       }
 
+      if (!user.validated) {
+        throw new Error('This account has not been validated')
+      }
+
       // if user's password from db is NULL
       if (!user.password) {
         throw new Error(
