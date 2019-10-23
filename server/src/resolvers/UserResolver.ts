@@ -176,6 +176,8 @@ export class UserResolver {
         }
       }
 
+      console.log('tokens is ', tokens);
+
       if (!tokens.refresh_token) {
         throw new Error('Failed to retrieve refresh_token from google');
       }
