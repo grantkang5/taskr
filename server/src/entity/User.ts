@@ -17,8 +17,4 @@ export class User extends BaseEntity {
 
   @Column("int", { default: 0 })
   tokenVersion: number;
-
-  @Column({ default: false })
-  validated: boolean;
-
 }

@@ -1,0 +1,3 @@
+mutation SendVerificationLink($email: String!, $password: String!) {
+  sendVerificationLink(email:$email, password:$password)
+}

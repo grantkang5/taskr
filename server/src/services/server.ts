@@ -4,7 +4,6 @@ import { buildSchemaSync } from "type-graphql";
 import { UserResolver } from "../resolvers/UserResolver";
 import { pubSub } from "./redis";
 
-
 export const server = new ApolloServer({
   schema: buildSchemaSync({
     resolvers: [UserResolver],

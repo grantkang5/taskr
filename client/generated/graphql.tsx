@@ -19,16 +19,29 @@ export type LoginResponse = {
 
 export type Mutation = {
    __typename?: 'Mutation',
-  register: User,
+  sendVerificationLink: Scalars['String'],
+  resendVerificationLink: Scalars['String'],
+  register: LoginResponse,
   login: LoginResponse,
   logout: Scalars['Boolean'],
   auth_googleOAuth: LoginResponse,
-  hello: Scalars['String'],
+  revokeRefreshToken: Scalars['Boolean'],
+};
+
+
+export type MutationSendVerificationLinkArgs = {
+  password: Scalars['String'],
+  email: Scalars['String']
+};
+
+
+export type MutationResendVerificationLinkArgs = {
+  email: Scalars['String']
 };
 
 
 export type MutationRegisterArgs = {
-  password: Scalars['String'],
+  verificationLink: Scalars['String'],
   email: Scalars['String']
 };
 
@@ -43,17 +56,15 @@ export type MutationAuth_GoogleOAuthArgs = {
   code: Scalars['String']
 };
 
-export type Query = {
-   __typename?: 'Query',
-  users: Array<User>,
-  bye: Scalars['String'],
-  me: User,
-  login_googleOAuth: Scalars['String'],
+
+export type MutationRevokeRefreshTokenArgs = {
+  userId: Scalars['Int']
 };
 
-export type Subscription = {
-   __typename?: 'Subscription',
-  helloSubscription: Scalars['String'],
+export type Query = {
+   __typename?: 'Query',
+  me: User,
+  login_googleOAuth: Scalars['String'],
 };
 
 export type User = {
@@ -73,14 +84,6 @@ export type Auth_GoogleOAuthMutation = (
     { __typename?: 'LoginResponse' }
     & Pick<LoginResponse, 'accessToken'>
   ) }
-);
-
-export type ByeQueryVariables = {};
-
-
-export type ByeQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'bye'>
 );
 
 export type Google_OAuthQueryVariables = {};
@@ -126,27 +129,37 @@ export type MeQuery = (
 
 export type RegisterMutationVariables = {
   email: Scalars['String'],
-  password: Scalars['String']
+  verificationLink: Scalars['String']
 };
 
 
 export type RegisterMutation = (
   { __typename?: 'Mutation' }
   & { register: (
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'email'>
+    { __typename?: 'LoginResponse' }
+    & Pick<LoginResponse, 'accessToken'>
   ) }
 );
 
-export type UsersQueryVariables = {};
+export type ResendVerificationLinkMutationVariables = {
+  email: Scalars['String']
+};
 
 
-export type UsersQuery = (
-  { __typename?: 'Query' }
-  & { users: Array<(
-    { __typename?: 'User' }
-    & Pick<User, 'id' | 'email'>
-  )> }
+export type ResendVerificationLinkMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'resendVerificationLink'>
+);
+
+export type SendVerificationLinkMutationVariables = {
+  email: Scalars['String'],
+  password: Scalars['String']
+};
+
+
+export type SendVerificationLinkMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'sendVerificationLink'>
 );
 
 
@@ -165,21 +178,6 @@ export type Auth_GoogleOAuthMutationFn = ApolloReactCommon.MutationFunction<Auth
 export type Auth_GoogleOAuthMutationHookResult = ReturnType<typeof useAuth_GoogleOAuthMutation>;
 export type Auth_GoogleOAuthMutationResult = ApolloReactCommon.MutationResult<Auth_GoogleOAuthMutation>;
 export type Auth_GoogleOAuthMutationOptions = ApolloReactCommon.BaseMutationOptions<Auth_GoogleOAuthMutation, Auth_GoogleOAuthMutationVariables>;
-export const ByeDocument = gql`
-    query Bye {
-  bye
-}
-    `;
-
-    export function useByeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ByeQuery, ByeQueryVariables>) {
-      return ApolloReactHooks.useQuery<ByeQuery, ByeQueryVariables>(ByeDocument, baseOptions);
-    }
-      export function useByeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ByeQuery, ByeQueryVariables>) {
-        return ApolloReactHooks.useLazyQuery<ByeQuery, ByeQueryVariables>(ByeDocument, baseOptions);
-      }
-      
-export type ByeQueryHookResult = ReturnType<typeof useByeQuery>;
-export type ByeQueryResult = ApolloReactCommon.QueryResult<ByeQuery, ByeQueryVariables>;
 export const Google_OAuthDocument = gql`
     query Google_OAuth {
   login_googleOAuth
@@ -242,10 +240,9 @@ export const MeDocument = gql`
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeQueryResult = ApolloReactCommon.QueryResult<MeQuery, MeQueryVariables>;
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $password: String!) {
-  register(email: $email, password: $password) {
-    id
-    email
+    mutation Register($email: String!, $verificationLink: String!) {
+  register(email: $email, verificationLink: $verificationLink) {
+    accessToken
   }
 }
     `;
@@ -257,21 +254,29 @@ export type RegisterMutationFn = ApolloReactCommon.MutationFunction<RegisterMuta
 export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
 export type RegisterMutationResult = ApolloReactCommon.MutationResult<RegisterMutation>;
 export type RegisterMutationOptions = ApolloReactCommon.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
-export const UsersDocument = gql`
-    query Users {
-  users {
-    id
-    email
-  }
+export const ResendVerificationLinkDocument = gql`
+    mutation ResendVerificationLink($email: String!) {
+  resendVerificationLink(email: $email)
 }
     `;
+export type ResendVerificationLinkMutationFn = ApolloReactCommon.MutationFunction<ResendVerificationLinkMutation, ResendVerificationLinkMutationVariables>;
 
-    export function useUsersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UsersQuery, UsersQueryVariables>) {
-      return ApolloReactHooks.useQuery<UsersQuery, UsersQueryVariables>(UsersDocument, baseOptions);
+    export function useResendVerificationLinkMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ResendVerificationLinkMutation, ResendVerificationLinkMutationVariables>) {
+      return ApolloReactHooks.useMutation<ResendVerificationLinkMutation, ResendVerificationLinkMutationVariables>(ResendVerificationLinkDocument, baseOptions);
     }
-      export function useUsersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UsersQuery, UsersQueryVariables>) {
-        return ApolloReactHooks.useLazyQuery<UsersQuery, UsersQueryVariables>(UsersDocument, baseOptions);
-      }
-      
-export type UsersQueryHookResult = ReturnType<typeof useUsersQuery>;
-export type UsersQueryResult = ApolloReactCommon.QueryResult<UsersQuery, UsersQueryVariables>;
+export type ResendVerificationLinkMutationHookResult = ReturnType<typeof useResendVerificationLinkMutation>;
+export type ResendVerificationLinkMutationResult = ApolloReactCommon.MutationResult<ResendVerificationLinkMutation>;
+export type ResendVerificationLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<ResendVerificationLinkMutation, ResendVerificationLinkMutationVariables>;
+export const SendVerificationLinkDocument = gql`
+    mutation SendVerificationLink($email: String!, $password: String!) {
+  sendVerificationLink(email: $email, password: $password)
+}
+    `;
+export type SendVerificationLinkMutationFn = ApolloReactCommon.MutationFunction<SendVerificationLinkMutation, SendVerificationLinkMutationVariables>;
+
+    export function useSendVerificationLinkMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SendVerificationLinkMutation, SendVerificationLinkMutationVariables>) {
+      return ApolloReactHooks.useMutation<SendVerificationLinkMutation, SendVerificationLinkMutationVariables>(SendVerificationLinkDocument, baseOptions);
+    }
+export type SendVerificationLinkMutationHookResult = ReturnType<typeof useSendVerificationLinkMutation>;
+export type SendVerificationLinkMutationResult = ApolloReactCommon.MutationResult<SendVerificationLinkMutation>;
+export type SendVerificationLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<SendVerificationLinkMutation, SendVerificationLinkMutationVariables>;

@@ -1,14 +1,14 @@
+import React from 'react';
 import Router from 'next/router';
-import React, { useState } from 'react';
 import Layout from '../components/common/Layout';
-import { useRegisterMutation } from '../generated/graphql';
+import { useSendVerificationLinkMutation } from '../generated/graphql';
 import { message, Form, Input, Icon, Button } from 'antd';
 import AuthLayout from '../components/auth/AuthLayout';
 import { FormComponentProps } from 'antd/lib/form';
 import GoogleLogin from '../components/auth/GoogleLogin';
 
 const Register: React.FC<FormComponentProps> = ({ form }) => {
-  const [register, { loading }] = useRegisterMutation();
+  const [sendVerificationLink, { loading }] = useSendVerificationLinkMutation();
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -16,14 +16,18 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
     validateFields(async (err, { email, password }) => {
       if (!err) {
         try {
-          await register({
+          const response = await sendVerificationLink({
             variables: {
               email,
               password
             }
           });
-          Router.push('/login');
-          message.success("You've succesfully created an account!");
+          if (response && response.data) {
+            Router.push({
+              pathname: '/email-verification',
+              query: { email, verificationLink: response.data.sendVerificationLink }
+            });
+          }
         } catch (err) {
           err.graphQLErrors
             ? message.error(err.graphQLErrors[0].message, 2)
