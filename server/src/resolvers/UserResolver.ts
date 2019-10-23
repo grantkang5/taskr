@@ -183,7 +183,7 @@ export class UserResolver {
         user
       };
     } catch (err) {
-      console.log('err', err);
+      console.log(err);
       return err;
     }
   }
