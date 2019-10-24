@@ -1,19 +1,35 @@
 import { sign } from 'jsonwebtoken';
 import { User } from '../../entity/User';
+type Payload = User | string;
 
-export const createAccessToken = (user: User) => {
-  return sign({ userId: user.id }, process.env.ACCESS_TOKEN_SECRET!, {
-    expiresIn: '15m'
-  });
+export const createAccessToken = (payload: Payload) => {
+  if (typeof payload === 'string') {
+    return sign({ googleIdToken: payload }, process.env.ACCESS_TOKEN_SECRET!, {
+      expiresIn: '15m'
+    });
+  } else {
+    return sign({ userId: payload.id }, process.env.ACCESS_TOKEN_SECRET!, {
+      expiresIn: '15m'
+    });
+  }
 };
 
-export const createRefreshToken = (user: User) => {
-  return sign(
-    {
-      userId: user.id,
-      tokenVersion: user.tokenVersion
-    },
-    process.env.REFRESH_TOKEN_SECRET!,
-    { expiresIn: '7d' }
-  );
+export const createRefreshToken = (payload: Payload) => {
+  if (typeof payload === 'string') {
+    return sign(
+      { googleRefreshToken: payload },
+      process.env.REFRESH_TOKEN_SECRET!,
+      {
+        expiresIn: '7d'
+      }
+    );
+  } else {
+    return sign(
+      { userId: payload.id, tokenVersion: payload.tokenVersion },
+      process.env.REFRESH_TOKEN_SECRET!,
+      {
+        expiresIn: '7d'
+      }
+    );
+  }
 };
