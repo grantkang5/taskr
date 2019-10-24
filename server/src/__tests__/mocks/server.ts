@@ -5,6 +5,8 @@ import { buildSchemaSync } from "type-graphql";
 import { UserResolver } from "../../resolvers/UserResolver";
 import { exec } from "child_process";
 import { sign } from "jsonwebtoken";
+import { Connection, createConnection } from 'typeorm';
+// import { redis } from '../../services/redis';
 
 export const testServer = new ApolloServer({
   schema: buildSchemaSync({ resolvers: [UserResolver] }),
@@ -24,4 +26,13 @@ export const testServer = new ApolloServer({
   }
 });
 
-export const initDb = async () => process.env.NODE_ENV !== 'test' ? await exec('yarn db:seed') : null
+export const createTestDb = async () => {
+  await exec('yarn db:seed')
+  // await redis.flushall();
+  return await createConnection();
+}
+
+export const closeTestDb = async (connection: Connection) => {
+  await connection.close();
+  // await redis.quit();
+}

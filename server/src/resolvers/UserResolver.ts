@@ -77,7 +77,7 @@ export class UserResolver {
       const hashedPassword = await hash(password, 12);
 
       await redis.hmset(email, { password: hashedPassword, verificationLink })
-      redis.expire(email, 3600)
+      await redis.expire(email, 3600)
 
       transporter.sendMail(verificationEmail(email, verificationLink));
       return verificationLink;
@@ -100,7 +100,7 @@ export class UserResolver {
       const newVerificationLink = await hash(verificationLink, 10)
 
       await redis.hmset(email, { password, verificationLink: newVerificationLink })
-      redis.expire(email, 3600)
+      await redis.expire(email, 3600)
 
       transporter.sendMail(verificationEmail(email, newVerificationLink))
       return newVerificationLink
