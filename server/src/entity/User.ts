@@ -17,4 +17,8 @@ export class User extends BaseEntity {
 
   @Column("int", { default: 0 })
   tokenVersion: number;
+  // TODO: make enum. 'website' | 'google'
+  @Field()
+  @Column({ default: 'website' })
+  auth: string;
 }

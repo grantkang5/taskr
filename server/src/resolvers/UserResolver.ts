@@ -14,17 +14,16 @@ import { User } from "../entity/User";
 import {
   createAccessToken,
   createRefreshToken
-} from "../services/auth/createTokens";
-import { MyContext } from "../services/context";
-import { sendRefreshToken } from "../services/auth/sendRefreshToken";
-import { isAuth } from "../services/auth/isAuth";
-import { createOAuth2Client } from "../services/google_oauth";
-import { verify } from "../services/google_oauth";
+} from "../services/auth/web/createTokens";
 import { getConnection } from "typeorm";
 import { transporter } from "../services/mailer/transporter";
 import { redis } from "../services/redis";
 import { verificationEmail } from "../services/mailer/verificationEmail";
 import { rateLimit } from "../services/rate-limit";
+import { MyContext } from '../services/context';
+import { sendRefreshToken } from '../services/auth/sendRefreshToken';
+import { isAuth } from '../services/auth/isAuth';
+import { createOAuth2Client, verifyIdToken } from '../services/auth/google';
 
 @ObjectType()
 class LoginResponse {
@@ -40,7 +39,8 @@ export class UserResolver {
   @UseMiddleware(isAuth)
   async me(@Ctx() { payload }: MyContext) {
     try {
-      return await User.findOne(payload!.userId);
+      const user = await User.findOne({ id: parseInt(payload!.userId) });
+      return user;
     } catch (err) {
       console.log(err);
       return null;
@@ -54,8 +54,9 @@ export class UserResolver {
     const scopes = ["openid", "email"];
 
     const url = client.generateAuthUrl({
-      access_type: "offline",
-      scope: scopes
+      access_type: 'offline',
+      scope: scopes,
+      prompt: 'consent'
     });
 
     return url;
@@ -124,7 +125,8 @@ export class UserResolver {
 
       const user = await User.create({
         email,
-        password
+        password,
+        auth: 'website'
       }).save();
       redis.del(email)
       
@@ -199,11 +201,12 @@ export class UserResolver {
         throw new Error("Failed to create OAuth2 client");
       }
       const { tokens } = await client.getToken(decodeURIComponent(code));
+      client.setCredentials(tokens);
 
       if (!tokens) {
         throw new Error("Invalid code for tokens");
       }
-      const payload = await verify(tokens.id_token!);
+      const payload = await verifyIdToken(tokens.id_token!);
 
       if (!payload) {
         throw new Error("Failed to retrieve payload");
@@ -212,21 +215,33 @@ export class UserResolver {
 
       if (!user) {
         // register user to db if they don't exist in system
-        user = await User.create({ email: payload.email }).save();
+        user = await User.create({
+          email: payload.email,
+          auth: 'google'
+        }).save();
 
         if (!user) {
           throw new Error("Failed to create user");
         }
       }
 
-      sendRefreshToken(res, createRefreshToken(user));
+      console.log('tokens is ', tokens);
+
+      if (!tokens.refresh_token) {
+        // if no refresh_token, retrieve refreshtoken via api request
+        // tokens.refresh_token = await
+
+        throw new Error('Failed to retrieve refresh_token from google');
+      }
+
+      sendRefreshToken(res, createRefreshToken(tokens.refresh_token!));
 
       return {
-        accessToken: createAccessToken(user),
+        accessToken: createAccessToken(tokens.id_token!),
         user
       };
     } catch (err) {
-      console.log("err", err);
+      console.log(err);
       return err;
     }
   }

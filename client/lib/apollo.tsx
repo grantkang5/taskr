@@ -40,14 +40,14 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
     return <PageComponent {...pageProps} apolloClient={client} />;
   };
 
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== 'production') {
     // Find correct display name
     const displayName =
-      PageComponent.displayName || PageComponent.name || "Component";
+      PageComponent.displayName || PageComponent.name || 'Component';
 
     // Warn if old way of installing apollo is used
-    if (displayName === "App") {
-      console.warn("This withApollo HOC only works with PageComponents.");
+    if (displayName === 'App') {
+      console.warn('This withApollo HOC only works with PageComponents.');
     }
 
     // Set correct display name for devtools
@@ -61,20 +61,22 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
         ctx: { req, res }
       } = ctx;
 
-      let serverAccessToken = "";
+      let serverAccessToken = '';
 
       if (isServer()) {
         let cookies: any;
         if (req.headers.cookie) {
           cookies = cookie.parse(req.headers.cookie);
-          if (cookies.qid) {
+          let cookieHeader = 'qid=' + cookies.qid;
+          let refreshRoute = 'refresh_token';
+          if (cookies) {
             const response = await fetch(
-              `${process.env.API_URL}/refresh_token`,
+              `${process.env.API_URL}/${refreshRoute}`,
               {
-                method: "POST",
-                credentials: "include",
+                method: 'POST',
+                credentials: 'include',
                 headers: {
-                  cookie: "qid=" + cookies.qid
+                  cookie: cookieHeader
                 }
               }
             );
@@ -98,7 +100,7 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
       }
 
       // Only on the server
-      if (typeof window === "undefined") {
+      if (typeof window === 'undefined') {
         // When redirecting, the response is finished.
         // No point in continuing to render
         if (res && res.finished) {
@@ -108,7 +110,7 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
         if (ssr) {
           try {
             // Run all GraphQL queries
-            const { getDataFromTree } = await import("@apollo/react-ssr");
+            const { getDataFromTree } = await import('@apollo/react-ssr');
             await getDataFromTree(
               <AppTree
                 pageProps={{
@@ -122,7 +124,7 @@ export function withApollo(PageComponent: any, { ssr = true } = {}) {
             // Prevent Apollo Client GraphQL errors from crashing SSR.
             // Handle them in components via the data.error prop:
             // https://www.apollographql.com/docs/react/api/react-apollo.html#graphql-query-data-error
-            console.error("Error while running `getDataFromTree`", error);
+            console.error('Error while running `getDataFromTree`', error);
           }
         }
 
@@ -175,7 +177,7 @@ function initApolloClient(initState: any, serverAccessToken?: string) {
 function createApolloClient(initialState = {}, serverAccessToken?: string) {
   const httpLink = new HttpLink({
     uri: process.env.GRAPHQL_URL,
-    credentials: "include",
+    credentials: 'include',
     fetch
   });
 
@@ -196,7 +198,7 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
     : null;
 
   const refreshLink = new TokenRefreshLink({
-    accessTokenField: "accessToken",
+    accessTokenField: 'accessToken',
     isTokenValidOrUndefined: () => {
       const token = getAccessToken();
 
@@ -217,15 +219,15 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
     },
     fetchAccessToken: () => {
       return fetch(`${process.env.API_URL}/refresh_token`, {
-        method: "POST",
-        credentials: "include"
+        method: 'POST',
+        credentials: 'include'
       });
     },
     handleFetch: accessToken => {
       setAccessToken(accessToken);
     },
     handleError: err => {
-      console.warn("Your refresh token is invalid. Try to relogin");
+      console.warn('Your refresh token is invalid. Try to relogin');
       console.error(err);
     }
   });
@@ -235,14 +237,14 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
     return {
       headers: {
         ...headers,
-        authorization: token ? `bearer ${token}` : ""
+        authorization: token ? `bearer ${token}` : ''
       }
     };
   });
 
   const errorLink = onError(({ graphQLErrors, networkError }) => {
-    console.log("GraphQL Error: ", graphQLErrors);
-    console.log("Network Error: ", networkError);
+    console.log('GraphQL Error: ', graphQLErrors);
+    console.log('Network Error: ', networkError);
   });
 
   interface Definition {
@@ -254,7 +256,7 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
     ? split(
         ({ query }) => {
           const { kind, operation }: Definition = getMainDefinition(query);
-          return kind === "OperationDefinition" && operation === "subscription";
+          return kind === 'OperationDefinition' && operation === 'subscription';
         },
         wsLink!,
         authLink.concat(httpLink)
@@ -262,7 +264,7 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
     : httpLink;
 
   return new ApolloClient({
-    ssrMode: typeof window === "undefined", // Disables forceFetch on the server (so queries are only run once)
+    ssrMode: typeof window === 'undefined', // Disables forceFetch on the server (so queries are only run once)
     link: ApolloLink.from([refreshLink, authLink, errorLink, terminatingLink]),
     cache: new InMemoryCache().restore(initialState)
   });

@@ -71,6 +71,7 @@ export type User = {
    __typename?: 'User',
   id: Scalars['Int'],
   email: Scalars['String'],
+  auth: Scalars['String'],
 };
 
 export type Auth_GoogleOAuthMutationVariables = {
