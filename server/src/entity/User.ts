@@ -1,5 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToMany,
+  JoinTable,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn
+} from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
+import { Task } from './Task';
+import { Message } from './Message';
+import { Project } from './Project';
 
 @ObjectType()
 @Entity('users')
@@ -29,4 +42,21 @@ export class User extends BaseEntity {
   @Field()
   @Column({ default: 'website' })
   auth: string;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @ManyToMany(() => Project)
+  @JoinTable()
+  projects: Project[];
+
+  @ManyToMany(() => Task)
+  @JoinTable()
+  tasks: Task[];
+
+  @OneToMany(() => Message, message => message.user)
+  messages: Message[];
 }
