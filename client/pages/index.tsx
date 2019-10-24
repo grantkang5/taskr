@@ -6,6 +6,8 @@ import Layout from '../components/common/Layout';
  * Api: Query currentUser's projects / Activity / Cards
  */
 
+ import './App.module.less'
+
 const Dashboard = () => {
   return (
     <Layout>
