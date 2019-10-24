@@ -7,17 +7,19 @@ import {
   Field,
   Ctx,
   UseMiddleware,
-  Subscription,
-  PubSub,
-  PubSubEngine,
-  Root
-} from 'type-graphql';
-import { hash, compare } from 'bcryptjs';
-import { User } from '../entity/User';
+  Int
+} from "type-graphql";
+import { hash, compare } from "bcryptjs";
+import { User } from "../entity/User";
 import {
   createAccessToken,
   createRefreshToken
-} from '../services/auth/web/createTokens';
+} from "../services/auth/web/createTokens";
+import { getConnection } from "typeorm";
+import { transporter } from "../services/mailer/transporter";
+import { redis } from "../services/redis";
+import { verificationEmail } from "../services/mailer/verificationEmail";
+import { rateLimit } from "../services/rate-limit";
 import { MyContext } from '../services/context';
 import { sendRefreshToken } from '../services/auth/sendRefreshToken';
 import { isAuth } from '../services/auth/isAuth';
@@ -33,18 +35,6 @@ class LoginResponse {
 
 @Resolver()
 export class UserResolver {
-  @Query(() => [User])
-  async users() {
-    return await User.find();
-  }
-
-  // Protected route
-  @Query(() => String)
-  @UseMiddleware(isAuth)
-  bye(@Ctx() { payload }: MyContext) {
-    return `Your user id is:  ${payload!.userId}`;
-  }
-
   @Query(() => User)
   @UseMiddleware(isAuth)
   async me(@Ctx() { payload }: MyContext) {
@@ -61,7 +51,7 @@ export class UserResolver {
   async login_googleOAuth() {
     const client = await createOAuth2Client();
 
-    const scopes = ['openid', 'email'];
+    const scopes = ["openid", "email"];
 
     const url = client.generateAuthUrl({
       access_type: 'offline',
@@ -72,39 +62,97 @@ export class UserResolver {
     return url;
   }
 
-  @Mutation(() => User)
-  async register(
-    @Arg('email') email: string,
-    @Arg('password') password: string
+  @Mutation(() => String)
+  @UseMiddleware(rateLimit(10))
+  async sendVerificationLink(
+    @Arg("email") email: string,
+    @Arg("password") password: string
   ) {
-    const hashedPassword = await hash(password, 12);
-
     try {
+      const user = await User.findOne({ email })
+      if (user) {
+        throw new Error("This email is already in use")
+      }
+      const verificationLink = await hash(email, 10);
+      const hashedPassword = await hash(password, 12);
+
+      await redis.hmset(email, { password: hashedPassword, verificationLink })
+      await redis.expire(email, 3600)
+
+      transporter.sendMail(verificationEmail(email, verificationLink));
+      return verificationLink;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+
+  @Mutation(() => String)
+  @UseMiddleware(rateLimit(10))
+  async resendVerificationLink(
+    @Arg("email") email: string
+  ) {
+    try {
+      const user = await User.findOne({ email })
+      if (user) throw new Error('This account has already been verified')
+      const { password, verificationLink } = await redis.hgetall(email)
+      if (!password || !verificationLink) throw new Error('This email is no longer valid, sign up again')
+      const newVerificationLink = await hash(verificationLink, 10)
+
+      await redis.hmset(email, { password, verificationLink: newVerificationLink })
+      await redis.expire(email, 3600)
+
+      transporter.sendMail(verificationEmail(email, newVerificationLink))
+      return newVerificationLink
+    } catch (err) {
+      console.log(err)
+      return err
+    }
+  }
+
+  @Mutation(() => LoginResponse)
+  @UseMiddleware(rateLimit(10))
+  async register(
+    @Arg("email") email: string,
+    @Arg("verificationLink") verificationLink: string,
+    @Ctx() { res }: MyContext
+  ) {
+    try {
+      const { verificationLink: storedLink, password } = await redis.hgetall(email)
+      if (verificationLink !== storedLink) {
+        throw new Error('This link has expired')
+      }
+
       const user = await User.create({
         email,
-        password: hashedPassword,
+        password,
         auth: 'website'
       }).save();
-      return user;
+      await redis.del(email)
+      
+      sendRefreshToken(res, createRefreshToken(user))
+
+      return {
+        accessToken: createAccessToken(user),
+        user
+      };
     } catch (err) {
-      if (err.code === '23505') {
-        throw new Error('This email is already in use');
-      }
-      return err;
+      console.log(err)
+      return err
     }
   }
 
   @Mutation(() => LoginResponse)
   async login(
-    @Arg('email') email: string,
-    @Arg('password') password: string,
+    @Arg("email") email: string,
+    @Arg("password") password: string,
     @Ctx() { res }: MyContext
   ) {
     try {
       const user = await User.findOne({ email });
 
       if (!user) {
-        throw new Error('Could not find user');
+        throw new Error("Could not find user");
       }
 
       // if user's password from db is NULL
@@ -117,7 +165,7 @@ export class UserResolver {
       const valid = await compare(password, user.password);
 
       if (!valid) {
-        throw new Error('Incorrect password');
+        throw new Error("Incorrect password");
       }
 
       // login succesful
@@ -139,29 +187,29 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async logout(@Ctx() { res }: MyContext) {
     // send empty string for refreshtoken
-    sendRefreshToken(res, '');
+    sendRefreshToken(res, "");
     return true;
   }
 
   @Mutation(() => LoginResponse)
   //TODO: Better mutation naming
-  async auth_googleOAuth(@Arg('code') code: string, @Ctx() { res }: MyContext) {
+  async auth_googleOAuth(@Arg("code") code: string, @Ctx() { res }: MyContext) {
     try {
       const client = await createOAuth2Client();
 
       if (!client) {
-        throw new Error('Failed to create OAuth2 client');
+        throw new Error("Failed to create OAuth2 client");
       }
       const { tokens } = await client.getToken(decodeURIComponent(code));
       client.setCredentials(tokens);
 
       if (!tokens) {
-        throw new Error('Invalid code for tokens');
+        throw new Error("Invalid code for tokens");
       }
       const payload = await verifyIdToken(tokens.id_token!);
 
       if (!payload) {
-        throw new Error('Failed to retrieve payload');
+        throw new Error("Failed to retrieve payload");
       }
       let user = await User.findOne({ email: payload.email });
 
@@ -173,7 +221,7 @@ export class UserResolver {
         }).save();
 
         if (!user) {
-          throw new Error('Failed to create user');
+          throw new Error("Failed to create user");
         }
       }
 
@@ -198,14 +246,11 @@ export class UserResolver {
     }
   }
 
-  @Mutation(() => String)
-  async hello(@PubSub() pubSub: PubSubEngine) {
-    await pubSub.publish('HELLO', 'WORLD');
-    return `Hello!`;
-  }
-
-  @Subscription(() => String, { topics: 'HELLO' })
-  helloSubscription(@Root() string: String) {
-    return `Subscription string: ${string}`;
+  @Mutation(() => Boolean)
+  async revokeRefreshToken(@Arg("userId", () => Int) userId: number) {
+    await getConnection()
+      .getRepository(User)
+      .increment({ id: userId }, "tokenVersion", 1);
+    return true;
   }
 }

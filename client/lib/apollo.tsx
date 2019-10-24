@@ -1,22 +1,21 @@
-import React from 'react';
-import Head from 'next/head';
-import { ApolloClient } from 'apollo-client';
-import { InMemoryCache, NormalizedCacheObject } from 'apollo-cache-inmemory';
-import { HttpLink } from 'apollo-link-http';
-import { setContext } from 'apollo-link-context';
-import fetch from 'isomorphic-unfetch';
-import { TokenRefreshLink } from 'apollo-link-token-refresh';
-import jwtDecode from 'jwt-decode';
-import { getAccessToken, setAccessToken } from './accessToken';
-import { onError } from 'apollo-link-error';
-import { ApolloLink, split } from 'apollo-link';
-import { WebSocketLink } from 'apollo-link-ws';
-import { SubscriptionClient } from 'subscriptions-transport-ws';
-import { getMainDefinition } from 'apollo-utilities';
-import ws from 'ws';
-import cookie from 'cookie';
+import React from "react";
+import Head from "next/head";
+import { ApolloClient } from "apollo-client";
+import { InMemoryCache, NormalizedCacheObject } from "apollo-cache-inmemory";
+import { HttpLink } from "apollo-link-http";
+import { setContext } from "apollo-link-context";
+import fetch from "isomorphic-unfetch";
+import { TokenRefreshLink } from "apollo-link-token-refresh";
+import jwtDecode from "jwt-decode";
+import { getAccessToken, setAccessToken } from "./accessToken";
+import { onError } from "apollo-link-error";
+import { ApolloLink, split } from "apollo-link";
+import { WebSocketLink } from "apollo-link-ws";
+import { SubscriptionClient } from "subscriptions-transport-ws";
+import { getMainDefinition } from "apollo-utilities";
+import cookie from "cookie";
 
-const isServer = () => typeof window === 'undefined';
+const isServer = () => typeof window === "undefined";
 
 /**
  * Creates and provides the apolloContext
@@ -182,14 +181,21 @@ function createApolloClient(initialState = {}, serverAccessToken?: string) {
     fetch
   });
 
-  let wsLink = null;
-  if (!isServer()) {
-    const webSocketURI = process.env.GRAPHQL_URL!.replace(/^https?/, 'ws');
-    const client = new SubscriptionClient(webSocketURI, {
-      reconnect: true
-    });
-    wsLink = new WebSocketLink(client);
-  }
+  const webSocketURI = process.env.GRAPHQL_URL!.replace(
+    /^https?/,
+    process.env.NODE_ENV === "production" ? "wss" : "ws"
+  );
+  // const client = new SubscriptionClient(webSocketURI, {
+  //   reconnect: true
+  // });
+  const wsLink = !isServer()
+    ? new WebSocketLink({
+        uri: webSocketURI,
+        options: {
+          reconnect: true
+        }
+      })
+    : null;
 
   const refreshLink = new TokenRefreshLink({
     accessTokenField: 'accessToken',

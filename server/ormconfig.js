@@ -41,22 +41,22 @@ const config = {
     }
   },
   test: {
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: process.env.PG_USER,
-    password: process.env.PG_PASSWORD,
-    database: process.env.DATABASE_URL,
-    synchronize: true,
-    logging: false,
-    ssl: false,
-    entities: ['src/entity/**/*.ts'],
-    migrations: ['src/database/migration/**/*.ts'],
-    subscribers: ['src/subscriber/**/*.ts'],
-    cli: {
-      entitiesDir: 'src/entity',
-      migrationsDir: 'src/database/migration',
-      subscribersDir: 'src/subscriber'
+    "type": "postgres",
+    "host": process.env.PG_HOST,
+    "port": process.env.PG_PORT,
+    "username": process.env.PG_USER,
+    "password": process.env.PG_PASSWORD,
+    "database": process.env.DATABASE_URL,
+    "synchronize": true,
+    "logging": false,
+    "ssl": false,
+    "entities": ["src/entity/**/*.ts"],
+    "migrations": ["src/database/migration/**/*.ts"],
+    "subscribers": ["src/subscriber/**/*.ts"],
+    "cli": {
+      "entitiesDir": "src/entity",
+      "migrationsDir": "src/database/migration",
+      "subscribersDir": "src/subscriber"
     }
   }
 };

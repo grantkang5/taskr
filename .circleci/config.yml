@@ -1,4 +1,4 @@
-veresion: 2
+version: 2
 jobs:
   client_build:
     working_directory: ~/taskr/client
@@ -88,6 +88,9 @@ jobs:
           DATABASE_URL: postgres
           PG_USER: postgres
           PG_PASSWORD: postgres
+          CLIENT_URL: http://localhost:3000
+          PG_HOST: localhost
+          PG_PORT: 5432
       - image: postgres:11.5-alpine
         environment:
           POSTGRES_PASSWORD: postgres
