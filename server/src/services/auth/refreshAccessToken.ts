@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
 import { User } from '../../entity/User';
-import { createAccessToken, createRefreshToken } from './web/createTokens';
+import { createAccessToken, createRefreshToken } from './createTokens';
 import { sendRefreshToken } from './sendRefreshToken';
 import axios from 'axios';
 

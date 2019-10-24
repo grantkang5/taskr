@@ -14,7 +14,7 @@ import { User } from "../entity/User";
 import {
   createAccessToken,
   createRefreshToken
-} from "../services/auth/web/createTokens";
+} from "../services/auth/createTokens";
 import { getConnection } from "typeorm";
 import { transporter } from "../services/mailer/transporter";
 import { redis } from "../services/redis";
@@ -24,6 +24,7 @@ import { MyContext } from '../services/context';
 import { sendRefreshToken } from '../services/auth/sendRefreshToken';
 import { isAuth } from '../services/auth/isAuth';
 import { createOAuth2Client, verifyIdToken } from '../services/auth/google';
+import { cloudinary } from "../services/cloudinary";
 
 @ObjectType()
 class LoginResponse {
@@ -69,7 +70,7 @@ export class UserResolver {
     @Arg("password") password: string
   ) {
     try {
-      const user = await User.findOne({ email })
+      const user = await User.findOne({ email }) || await redis.hgetall(email)
       if (user) {
         throw new Error("This email is already in use")
       }
@@ -255,5 +256,17 @@ export class UserResolver {
       .getRepository(User)
       .increment({ id: userId }, "tokenVersion", 1);
     return true;
+  }
+
+  @Mutation(() => Boolean)
+  async postImage() {
+    try {
+      const res = await cloudinary.uploader.upload(__dirname + '/test.jpg')
+      console.log('image res: ', res)
+      return true
+    } catch (err) {
+      console.log(err)
+      return err
+    }
   }
 }
