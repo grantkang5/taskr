@@ -46,7 +46,7 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
   const { getFieldDecorator } = form;
 
   return (
-    <Layout dark={1}>
+    <Layout dark={1} title="Login | Taskr">
       <AuthLayout>
         <Form onSubmit={handleSubmit}>
           <Form.Item>

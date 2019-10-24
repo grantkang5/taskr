@@ -49,7 +49,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
   const { getFieldDecorator } = form;
 
   return (
-    <Layout dark={1}>
+    <Layout dark={1} title="Signup | Taskr">
       <AuthLayout>
         <Form onSubmit={handleSubmit}>
           <Form.Item>

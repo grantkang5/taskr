@@ -24,6 +24,7 @@ import { getConnection } from "typeorm";
 import { transporter } from "../services/mailer/transporter";
 import { redis } from "../services/redis";
 import { verificationEmail } from "../services/mailer/verificationEmail";
+import { rateLimit } from "../services/rate-limit";
 
 @ObjectType()
 class LoginResponse {
@@ -61,6 +62,7 @@ export class UserResolver {
   }
 
   @Mutation(() => String)
+  @UseMiddleware(rateLimit(10))
   async sendVerificationLink(
     @Arg("email") email: string,
     @Arg("password") password: string
@@ -85,11 +87,15 @@ export class UserResolver {
   }
 
   @Mutation(() => String)
+  @UseMiddleware(rateLimit(10))
   async resendVerificationLink(
     @Arg("email") email: string
   ) {
     try {
+      const user = await User.findOne({ email })
+      if (user) throw new Error('This account has already been verified')
       const { password, verificationLink } = await redis.hgetall(email)
+      if (!password || !verificationLink) throw new Error('This email is no longer valid, sign up again')
       const newVerificationLink = await hash(verificationLink, 10)
 
       await redis.hmset(email, { password, verificationLink: newVerificationLink })
@@ -104,6 +110,7 @@ export class UserResolver {
   }
 
   @Mutation(() => LoginResponse)
+  @UseMiddleware(rateLimit(10))
   async register(
     @Arg("email") email: string,
     @Arg("verificationLink") verificationLink: string,
@@ -144,10 +151,6 @@ export class UserResolver {
 
       if (!user) {
         throw new Error("Could not find user");
-      }
-
-      if (!user.validated) {
-        throw new Error('This account has not been validated')
       }
 
       // if user's password from db is NULL

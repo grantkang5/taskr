@@ -52,23 +52,37 @@ describe("User Resolver", () => {
     });
   });
 
-  describe("Register mutation", () => {
+  describe("SendVerificationLink and Register mutation", () => {
     it("should register a user into the db", async () => {
-      const res = await mutate({
+      const sendVerificationLink = await mutate({
         mutation: gql`
-          mutation Register($email: String!, $password: String!) {
-            register(email: $email, password: $password) {
-              id
-              email
+          mutation SendVerificationLink($email: String!, $password: String!) {
+            sendVerificationLink(email: $email, password: $password)
+          }
+        `,
+        variables: { email: "dev2@email.com", password: "abcd1234" }
+      });
+      expect(sendVerificationLink.data).toBeDefined();
+      expect(sendVerificationLink.errors).toBeUndefined();
+
+      const register = await mutate({
+        mutation: gql`
+          mutation Register($email: String!, $verificationLink: String!) {
+            register(email: $email, verificationLink: $verificationLink) {
+              accessToken
             }
           }
         `,
-        variables: { email: "dev2@email.com", password: "password" }
+        variables: {
+          email: "dev2@email.com",
+          verificationLink: sendVerificationLink.data.sendVerificationLink
+        }
       });
-      const user = await User.findOne({ email: "dev2@email.com" })
-      expect(user!.email).toEqual('dev2@email.com')
-      expect(res.data).toBeDefined()
-      expect(res.errors).toBeUndefined()
+      const user = await User.findOne({ email: "dev2@email.com" });
+
+      expect(user!.email).toEqual("dev2@email.com");
+      expect(register.data).toBeDefined();
+      expect(register.errors).toBeUndefined();
     });
   });
 
@@ -80,9 +94,9 @@ describe("User Resolver", () => {
             logout
           }
         `
-      })
-      expect(res.data).toBeDefined()
-      expect(res.errors).toBeUndefined()
-    })
-  })
+      });
+      expect(res.data).toBeDefined();
+      expect(res.errors).toBeUndefined();
+    });
+  });
 });

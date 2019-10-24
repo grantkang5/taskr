@@ -30,13 +30,11 @@
     "next": "9.0.7",
     "next-antd-aza-less": "^1.0.2",
     "null-loader": "^3.0.0",
-    "path-to-regexp": "^3.1.0",
     "react": "16.10.2",
     "react-dom": "16.10.2",
     "subscriptions-transport-ws": "^0.9.16",
     "tslint": "^5.20.0",
-    "ws": "^7.2.0",
-    "yup": "^0.27.0"
+    "ws": "^7.2.0"
   },
   "devDependencies": {
     "@apollo/react-testing": "^3.1.2",
@@ -53,7 +51,6 @@
     "@types/jest": "^24.0.18",
     "@types/jwt-decode": "^2.2.1",
     "@types/node": "^12.7.11",
-    "@types/path-to-regexp": "^1.7.0",
     "@types/react": "^16.9.4",
     "@types/react-dom": "16.9.1",
     "@types/react-test-renderer": "^16.9.0",

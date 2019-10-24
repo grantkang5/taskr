@@ -53,6 +53,7 @@
   },
   "scripts": {
     "dev": "concurrently \"yarn db:start\" \"nodemon --exec ts-node src/index.ts\"",
+    "dev:api": "nodemon --exec ts-node src/index.ts",
     "start": "node dist/index.js",
     "build": "tsc --sourceMap false",
     "test": "jest",

@@ -3,26 +3,26 @@ import { render, mount } from "enzyme";
 import { act } from "react-dom/test-utils";
 import { MockedProvider, wait } from "@apollo/react-testing";
 import Register from "../../pages/register";
-import { RegisterDocument } from "../../generated/graphql";
+import { SendVerificationLinkDocument } from "../../generated/graphql";
 
 describe("Pages", () => {
   describe("Login", () => {
-    let loginMutationCalled = false;
+    let registerMutationCalled = false;
     const mockUser = { email: 'qwjwlqqwrq@email.com', password: 'asdaskdjasldjal' }
     const mocks = [
       {
         request: {
-          query: RegisterDocument,
+          query: SendVerificationLinkDocument,
           variables: {
             email: mockUser.email,
             password: mockUser.password
           }
         },
         result: () => {
-          loginMutationCalled = true;
+          registerMutationCalled = true;
           return {
             data: {
-              login: { accessToken: "" }
+              sendVerificationLink: "abc"
             }
           };
         }
@@ -32,7 +32,7 @@ describe("Pages", () => {
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
     useRouter.mockImplementation(() => ({ route: '/register' }))
 
-    it("fires a mutation on clicking the submit button", async () => {
+    it("fires sendVerificationLink mutation on clicking the submit button", async () => {
       const wrapper = mount(
         <MockedProvider mocks={mocks} addTypename={false}>
           <Register />
@@ -46,7 +46,7 @@ describe("Pages", () => {
         await wait(0);
       });
 
-      expect(loginMutationCalled).toBe(true);
+      expect(registerMutationCalled).toBe(true);
     });
   });
 });
