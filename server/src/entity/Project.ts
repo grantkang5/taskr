@@ -25,7 +25,7 @@ export class Project extends BaseEntity {
   desc: string;
 
   @Field()
-  @Column()
+  @Column(() => User)
   owner: User;
 
   @CreateDateColumn()
