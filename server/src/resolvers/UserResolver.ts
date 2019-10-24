@@ -65,7 +65,8 @@ export class UserResolver {
 
     const url = client.generateAuthUrl({
       access_type: 'offline',
-      scope: scopes
+      scope: scopes,
+      prompt: 'force'
     });
 
     return url;
@@ -180,6 +181,7 @@ export class UserResolver {
 
       if (!tokens.refresh_token) {
         // if no refresh_token, retrieve refreshtoken via api request
+        // tokens.refresh_token = await
       }
 
       sendRefreshToken(res, createRefreshToken(tokens.refresh_token));
