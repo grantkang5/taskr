@@ -4,6 +4,10 @@ import {
   Column,
   BaseEntity,
   ManyToMany,
+<<<<<<< HEAD
+=======
+  JoinTable,
+>>>>>>> aef5341cfe9d4144aedb1810bff3b85bf477d6ce
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn
