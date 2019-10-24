@@ -1,4 +1,4 @@
-veresion: 2
+version: 2
 jobs:
   client_build:
     working_directory: ~/taskr/client

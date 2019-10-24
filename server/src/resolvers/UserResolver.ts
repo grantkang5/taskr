@@ -128,7 +128,7 @@ export class UserResolver {
         password,
         auth: 'website'
       }).save();
-      redis.del(email)
+      await redis.del(email)
       
       sendRefreshToken(res, createRefreshToken(user))
 
