@@ -182,9 +182,11 @@ export class UserResolver {
       if (!tokens.refresh_token) {
         // if no refresh_token, retrieve refreshtoken via api request
         // tokens.refresh_token = await
+
+        throw new Error('Failed to retrieve refresh_token from google');
       }
 
-      sendRefreshToken(res, createRefreshToken(tokens.refresh_token));
+      sendRefreshToken(res, createRefreshToken(tokens.refresh_token!));
 
       return {
         accessToken: createAccessToken(tokens.id_token!),
