@@ -6,7 +6,7 @@ import { UserResolver } from "../../resolvers/UserResolver";
 import { exec } from "child_process";
 import { sign } from "jsonwebtoken";
 import { Connection, createConnection } from 'typeorm';
-// import { redis } from '../../services/redis';
+import { redis } from '../../services/redis';
 
 export const testServer = new ApolloServer({
   schema: buildSchemaSync({ resolvers: [UserResolver] }),
@@ -27,12 +27,24 @@ export const testServer = new ApolloServer({
 });
 
 export const createTestDb = async () => {
-  await exec('yarn db:seed')
-  // await redis.flushall();
-  return await createConnection();
+  try {
+    await exec('yarn db:seed')
+    await redis.flushall();
+    return await createConnection();
+  } catch (err) {
+    console.log(err)
+    return err
+  }
 }
 
 export const closeTestDb = async (connection: Connection) => {
-  await connection.close();
-  // await redis.quit();
+  try {
+    await connection.close();
+    await redis.disconnect();
+    await redis.quit();
+    return true
+  } catch (err) {
+    console.log(err)
+    return err
+  }
 }

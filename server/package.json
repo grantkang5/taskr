@@ -57,7 +57,7 @@
     "dev:api": "nodemon --exec ts-node src/index.ts",
     "start": "node dist/index.js",
     "build": "tsc --sourceMap false",
-    "test": "jest",
+    "test": "jest --forceExit",
     "db:start": "docker-compose up --build",
     "db:create": "createdb taskr-api",
     "db:seed": "fixtures ./src/database/fixtures --config ./ormconfig.js --sync --require=ts-node/register"
