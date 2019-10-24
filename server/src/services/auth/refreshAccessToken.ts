@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { verify } from 'jsonwebtoken';
 import { User } from '../../entity/User';
-import { createAccessToken, createRefreshToken } from './web/createTokens';
+import { createAccessToken, createRefreshToken } from './createTokens';
 import { sendRefreshToken } from './sendRefreshToken';
 import axios from 'axios';
 
@@ -41,7 +41,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
     }
 
     if (user.tokenVersion !== payload.tokenVersion) {
-      return res.send({ ok: false, accessToken: "" })
+      return res.send({ ok: false, accessToken: '' });
     }
 
     sendRefreshToken(res, createRefreshToken(user));

@@ -17,7 +17,7 @@ import {
 } from "../services/auth/web/createTokens";
 import { getConnection } from "typeorm";
 import { transporter } from "../services/mailer/transporter";
-import { redis } from "../services/redis";
+import {../services/auth/google/createTokens;
 import { verificationEmail } from "../services/mailer/verificationEmail";
 import { rateLimit } from "../services/rate-limit";
 import { MyContext } from '../services/context';
