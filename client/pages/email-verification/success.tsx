@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import {
   useRegisterMutation,
   useResendVerificationLinkMutation,
-  MeDocument,
   useMeLazyQuery
 } from "../../generated/graphql";
 import { setAccessToken } from "../../lib/accessToken";

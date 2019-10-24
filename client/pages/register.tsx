@@ -7,6 +7,8 @@ import AuthLayout from '../components/auth/AuthLayout';
 import { FormComponentProps } from 'antd/lib/form';
 import GoogleLogin from '../components/auth/GoogleLogin';
 
+import './App.module.less'
+
 const Register: React.FC<FormComponentProps> = ({ form }) => {
   const [sendVerificationLink, { loading }] = useSendVerificationLinkMutation();
 

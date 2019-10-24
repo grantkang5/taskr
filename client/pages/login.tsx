@@ -9,8 +9,8 @@ import { Form, Icon, Input, Button, message } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import AuthLayout from "../components/auth/AuthLayout";
 import GoogleLogin from "../components/auth/GoogleLogin";
-import { Redirect } from "../lib/redirect";
-import { loadGetInitialProps } from "next/dist/next-server/lib/utils";
+
+import './App.module.less'
 
 const Login: React.FC<FormComponentProps> = ({ form }) => {
   const router = useRouter();
