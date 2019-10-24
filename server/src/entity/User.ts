@@ -15,6 +15,14 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   password: string;
 
+  @Field()
+  @Column()
+  username: string;
+
+  @Field()
+  @Column({ nullable: true })
+  avatar: string;
+
   @Column("int", { default: 0 })
   tokenVersion: number;
   // TODO: make enum. 'website' | 'google'

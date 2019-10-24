@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useMeQuery } from "../generated/graphql";
 import { useRouter } from "next/router";
 import Dashboard from "../pages";
@@ -9,6 +9,12 @@ interface Props {
 const AuthProvider: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const { data, loading } = useMeQuery();
+
+  useEffect(() => {
+    if (data && data.me && whitelist.includes(router.route)) {
+      router.push('/error', '/')
+    }
+  }, [data])
 
   const whitelist = [
     "/login",
