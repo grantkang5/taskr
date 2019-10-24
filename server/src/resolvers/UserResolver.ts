@@ -65,7 +65,8 @@ export class UserResolver {
 
     const url = client.generateAuthUrl({
       access_type: 'offline',
-      scope: scopes
+      scope: scopes,
+      prompt: 'force'
     });
 
     return url;
@@ -179,7 +180,8 @@ export class UserResolver {
       console.log('tokens is ', tokens);
 
       if (!tokens.refresh_token) {
-        throw new Error('Failed to retrieve refresh_token from google');
+        // if no refresh_token, retrieve refreshtoken via api request
+        // tokens.refresh_token = await
       }
 
       sendRefreshToken(res, createRefreshToken(tokens.refresh_token));
