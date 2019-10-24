@@ -123,9 +123,12 @@ export class UserResolver {
         throw new Error('This link has expired')
       }
 
+      const username = email.split('@')[0]
+
       const user = await User.create({
         email,
         password,
+        username,
         auth: 'website'
       }).save();
       await redis.del(email)
@@ -215,8 +218,10 @@ export class UserResolver {
 
       if (!user) {
         // register user to db if they don't exist in system
+        const username = payload.email!.split('@')[0]
         user = await User.create({
           email: payload.email,
+          username,
           auth: 'google'
         }).save();
 
@@ -224,8 +229,6 @@ export class UserResolver {
           throw new Error("Failed to create user");
         }
       }
-
-      console.log('tokens is ', tokens);
 
       if (!tokens.refresh_token) {
         // if no refresh_token, retrieve refreshtoken via api request
