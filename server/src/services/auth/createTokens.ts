@@ -24,8 +24,12 @@ export const createRefreshToken = (payload: Payload) => {
       }
     );
   } else {
-    return sign({ userId: payload.id }, process.env.REFRESH_TOKEN_SECRET!, {
-      expiresIn: '7d'
-    });
+    return sign(
+      { userId: payload.id, tokenVersion: payload.tokenVersion },
+      process.env.REFRESH_TOKEN_SECRET!,
+      {
+        expiresIn: '7d'
+      }
+    );
   }
 };
