@@ -26,16 +26,16 @@ export class Project extends BaseEntity {
   @Column()
   desc: string;
 
-  @Field()
-  @OneToOne(() => User)
-  @JoinColumn()
-  owner: User;
-
   @CreateDateColumn()
   created_at: Date;
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @Field()
+  @OneToOne(() => User)
+  @JoinColumn()
+  owner: User;
 
   @ManyToMany(() => User)
   users: User[];
