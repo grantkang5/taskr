@@ -6,7 +6,9 @@ import {
   ManyToMany,
   OneToMany,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { User } from './User';
@@ -25,7 +27,8 @@ export class Project extends BaseEntity {
   desc: string;
 
   @Field()
-  @Column(() => User)
+  @OneToOne(() => User)
+  @JoinColumn()
   owner: User;
 
   @CreateDateColumn()
