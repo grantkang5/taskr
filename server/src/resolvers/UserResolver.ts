@@ -66,7 +66,7 @@ export class UserResolver {
     const url = client.generateAuthUrl({
       access_type: 'offline',
       scope: scopes,
-      prompt: 'force'
+      prompt: 'consent'
     });
 
     return url;
