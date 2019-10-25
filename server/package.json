@@ -16,6 +16,7 @@
     "@types/node": "^12.7.5",
     "@types/nodemailer": "^6.2.1",
     "@types/pg-connection-string": "^2.0.0",
+    "@types/uuid": "^3.4.5",
     "apollo-server-testing": "^2.9.6",
     "babel-core": "^6.26.3",
     "babel-jest": "^24.9.0",
@@ -51,7 +52,8 @@
     "reflect-metadata": "^0.1.10",
     "ts-node": "8.4.1",
     "type-graphql": "^0.17.5",
-    "typeorm": "^0.2.19"
+    "typeorm": "^0.2.19",
+    "uuid": "^3.3.3"
   },
   "scripts": {
     "dev": "concurrently \"yarn db:start\" \"nodemon --exec ts-node src/index.ts\"",
