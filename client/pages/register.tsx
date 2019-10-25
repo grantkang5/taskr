@@ -27,7 +27,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
           if (response && response.data) {
             Router.push({
               pathname: '/email-verification',
-              query: { email, verificationLink: response.data.sendVerificationLink }
+              query: { email, id: response.data.sendVerificationLink }
             });
           }
         } catch (err) {

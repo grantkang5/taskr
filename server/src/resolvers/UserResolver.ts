@@ -23,7 +23,11 @@ import { MyContext } from '../services/context';
 import { sendRefreshToken } from '../services/auth/sendRefreshToken';
 import { isAuth } from '../services/auth/isAuth';
 import { createOAuth2Client, verifyIdToken } from '../services/auth/google';
+import { cloudinary } from "../services/cloudinary";
 import { redis } from '../services/redis';
+import { ImageResponse } from './ImageResponse';
+import { v4 } from 'uuid'
+import { forgotPasswordEmail } from '../services/mailer/forgotPasswordEmail';
 
 @ObjectType()
 class LoginResponse {
@@ -69,11 +73,17 @@ export class UserResolver {
     @Arg('password') password: string
   ) {
     try {
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ email })
       if (user) {
         throw new Error('This email is already in use');
       }
-      const verificationLink = await hash(email, 10);
+      const unverifiedUser = await redis.hgetall(email)
+      if (Object.keys(unverifiedUser).length) {
+        this.resendVerificationLink(email)
+        throw new Error('This account has not been validated. Please check your email for the validation link')
+      }
+
+      const verificationLink = v4();
       const hashedPassword = await hash(password, 12);
 
       await redis.hmset(email, { password: hashedPassword, verificationLink });
@@ -94,9 +104,10 @@ export class UserResolver {
       const user = await User.findOne({ email });
       if (user) throw new Error('This account has already been verified');
       const { password, verificationLink } = await redis.hgetall(email);
-      if (!password || !verificationLink)
+      if (!password || !verificationLink) {
         throw new Error('This email is no longer valid, sign up again');
-      const newVerificationLink = await hash(verificationLink, 10);
+      }
+      const newVerificationLink = v4();
 
       await redis.hmset(email, {
         password,
@@ -249,6 +260,114 @@ export class UserResolver {
       };
     } catch (err) {
       console.log(err);
+      return err;
+    }
+  }
+
+  @Mutation(() => ImageResponse)
+  @UseMiddleware(isAuth)
+  async createAvatar(
+    @Arg('image') image: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    try {
+      const user = await User.findOne({ id: parseInt(payload!.userId) })
+      const res = await cloudinary.uploader.upload(image)
+      user!.avatar = res.public_id
+      await user!.save();
+      return res
+    } catch (err) {
+      console.log(err)
+      return err
+    }
+  }
+
+  @Mutation(() => ImageResponse)
+  @UseMiddleware(isAuth)
+  async updateAvatar(
+    @Arg('image') image: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    try {
+      const user = await User.findOne({ id: parseInt(payload!.userId) })
+      // destroy current user's avatar from storage
+      await cloudinary.uploader.destroy(user!.avatar)
+
+      const res = await cloudinary.uploader.upload(image)
+      user!.avatar = res.public_id
+      await user!.save();
+      return res
+    } catch (err) {
+      console.log(err)
+      return err
+    }
+  }
+
+  @Mutation(() => User)
+  @UseMiddleware(isAuth)
+  async updateUsername(
+    @Arg('username') username: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    try {
+      const user = await User.findOne({ id: parseInt(payload!.userId) })
+      user!.username = username;
+      const newUser = await user!.save();
+      return newUser
+    } catch (err) {
+      console.log(err)
+      return err;
+    }
+  }
+
+  @Mutation(() => String)
+  @UseMiddleware(rateLimit(5))
+  async sendForgotPasswordLink(
+    @Arg('email') email: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    try {
+      if (payload) {
+        throw new Error("What are you trying to do?")
+      }
+      const user = await User.findOne({ email })
+      if (!user) {
+        throw new Error("This user email does not exist")
+      }
+
+      user.tokenVersion++;
+      await user.save();
+
+      const forgotPasswordLink = v4();
+      await redis.set(`forgot-${email}`, forgotPasswordLink, 'EX', 3600)
+      transporter.sendMail(forgotPasswordEmail(email, forgotPasswordLink))
+      return forgotPasswordLink
+    } catch (err) {
+      console.log(err)
+      return err;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(rateLimit(5))
+  async forgotPassword(
+    @Arg('email') email: string,
+    @Arg('forgotPasswordLink') forgotPasswordLink: string,
+    @Arg('password') password: string,
+  ) {
+    try {
+      const storedLink = await redis.get(`forgot-${email}`)
+      if (storedLink !== forgotPasswordLink) {
+        throw new Error('This link has expired')
+      }
+      const user = await User.findOne({ email })
+      if (!user) throw new Error("This user doesn't exist")
+      const hashedPassword = await hash(password, 12);
+      user.password = hashedPassword
+      await user.save();
+      return true
+    } catch (err) {
+      console.log(err)
       return err;
     }
   }

@@ -31,7 +31,8 @@ describe("Pages", () => {
     const useRouter = jest.spyOn(require("next/router"), "useRouter");
     useRouter.mockImplementation(() => ({
       route: "/email-verification",
-      query: { email: mockQuery.email, verificationLink: mockQuery.verificationLink }
+      query: { email: mockQuery.email, id: mockQuery.verificationLink },
+      push: () => null
     }));
 
     it("fires resendVerificationLink mutation on clicking resend link", async () => {

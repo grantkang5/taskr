@@ -40,8 +40,8 @@ export const createTestDb = async () => {
 export const closeTestDb = async (connection: Connection) => {
   try {
     await connection.close();
+    await redis.flushall();
     await redis.disconnect();
-    await redis.quit();
     return true
   } catch (err) {
     console.log(err)

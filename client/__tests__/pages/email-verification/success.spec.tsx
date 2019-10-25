@@ -21,7 +21,7 @@ describe("Pages", () => {
       route: "/email-verification/success",
       query: {
         email: mockQuery.email,
-        verificationLink: mockQuery.verificationLink
+        id: mockQuery.verificationLink
       },
       // tslint:disable-next-line: no-empty
       push: () => {}
@@ -76,7 +76,6 @@ describe("Pages", () => {
               verificationLink: mockQuery.verificationLink
             }
           },
-          // error: new GraphQLError('register error')
           result: {
             errors: [new GraphQLError('register error')]
           }
