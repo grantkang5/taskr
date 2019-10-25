@@ -170,7 +170,7 @@ export class UserResolver {
       const user = await User.findOne({ email });
 
       if (!user) {
-        throw new Error('Could not find user');
+        throw new Error('Incorrect email address');
       }
 
       // if user's password from db is NULL
@@ -365,6 +365,7 @@ export class UserResolver {
       const hashedPassword = await hash(password, 12);
       user.password = hashedPassword
       await user.save();
+      await redis.del(`forgot-${email}`)
       return true
     } catch (err) {
       console.log(err)

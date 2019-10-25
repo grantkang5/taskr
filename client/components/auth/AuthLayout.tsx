@@ -13,16 +13,28 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
   const router = useRouter();
   const authText: { [index: string]: any } = {
     '/login': {
-      greeting: 'Log in',
+      greeting: 'Log in to Taskr',
       alt: "Don't have an account?",
       altLink: 'Sign up',
-      href: '/register'
+      altHref: '/register'
     },
     '/register': {
-      greeting: 'Sign up',
+      greeting: 'Sign up to Taskr',
       alt: 'Already have an account?',
       altLink: 'Log in',
-      href: '/login'
+      altHref: '/login'
+    },
+    '/forgot-password': {
+      greeting: 'Forgot password',
+      alt: "Go back to",
+      altLink: 'Log in',
+      altHref: '/login'
+    },
+    '/forgot-password/success': {
+      greeting: 'Reset password',
+      alt: "Go back to",
+      altLink: 'Log in',
+      altHref: '/login'
     }
   };
 
@@ -30,7 +42,7 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
     <div className={styles.layout}>
       <div className={styles.headerContainer}>
         <HeaderText white={1} style={{ marginBottom: '.5em' }}>
-          {authText[router.route].greeting} to Taskr
+          {authText[router.route].greeting}
         </HeaderText>
 
         <div className={styles.highlight} />
@@ -38,7 +50,7 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
         <div>
           <SubText white={1}>
             {authText[router.route].alt}{' '}
-            <Link href={authText[router.route].href} as={authText[router.route].href}>
+            <Link href={authText[router.route].altHref} as={authText[router.route].href}>
               <a>{authText[router.route].altLink}</a>
             </Link>
           </SubText>

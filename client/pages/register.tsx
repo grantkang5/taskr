@@ -15,8 +15,8 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     const { validateFields } = form;
-    validateFields(async (err, { email, password }) => {
-      if (!err) {
+    validateFields(async (validationErrors, { email, password }) => {
+      if (!validationErrors) {
         try {
           const response = await sendVerificationLink({
             variables: {
@@ -54,7 +54,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
     <Layout dark={1} title="Signup | Taskr">
       <AuthLayout>
         <Form onSubmit={handleSubmit}>
-          <Form.Item>
+          <Form.Item hasFeedback>
             {getFieldDecorator('email', {
               rules: [
                 { required: true, message: 'Email field is required' },
@@ -70,7 +70,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
             )}
           </Form.Item>
 
-          <Form.Item>
+          <Form.Item hasFeedback>
             {getFieldDecorator('password', {
               rules: [
                 { required: true, message: 'Password field is required' },
@@ -85,7 +85,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
               />
             )}
           </Form.Item>
-          <Form.Item>
+          <Form.Item hasFeedback>
             {getFieldDecorator('confirmPassword', {
               rules: [
                 { required: true, message: 'Please confirm your password' },

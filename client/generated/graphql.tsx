@@ -11,6 +11,19 @@ export type Scalars = {
   Float: number,
 };
 
+export type ImageResponse = {
+   __typename?: 'ImageResponse',
+  public_id: Scalars['String'],
+  width: Scalars['Float'],
+  height: Scalars['Float'],
+  format: Scalars['String'],
+  created_at: Scalars['String'],
+  bytes: Scalars['Float'],
+  url: Scalars['String'],
+  secure_url: Scalars['String'],
+  original_filename: Scalars['String'],
+};
+
 export type LoginResponse = {
    __typename?: 'LoginResponse',
   accessToken: Scalars['String'],
@@ -25,6 +38,11 @@ export type Mutation = {
   login: LoginResponse,
   logout: Scalars['Boolean'],
   auth_googleOAuth: LoginResponse,
+  createAvatar: ImageResponse,
+  updateAvatar: ImageResponse,
+  updateUsername: User,
+  sendForgotPasswordLink: Scalars['String'],
+  forgotPassword: Scalars['Boolean'],
   revokeRefreshToken: Scalars['Boolean'],
 };
 
@@ -57,6 +75,33 @@ export type MutationAuth_GoogleOAuthArgs = {
 };
 
 
+export type MutationCreateAvatarArgs = {
+  image: Scalars['String']
+};
+
+
+export type MutationUpdateAvatarArgs = {
+  image: Scalars['String']
+};
+
+
+export type MutationUpdateUsernameArgs = {
+  username: Scalars['String']
+};
+
+
+export type MutationSendForgotPasswordLinkArgs = {
+  email: Scalars['String']
+};
+
+
+export type MutationForgotPasswordArgs = {
+  password: Scalars['String'],
+  forgotPasswordLink: Scalars['String'],
+  email: Scalars['String']
+};
+
+
 export type MutationRevokeRefreshTokenArgs = {
   userId: Scalars['Int']
 };
@@ -71,6 +116,8 @@ export type User = {
    __typename?: 'User',
   id: Scalars['Int'],
   email: Scalars['String'],
+  username: Scalars['String'],
+  avatar: Scalars['String'],
   auth: Scalars['String'],
 };
 
@@ -85,6 +132,18 @@ export type Auth_GoogleOAuthMutation = (
     { __typename?: 'LoginResponse' }
     & Pick<LoginResponse, 'accessToken'>
   ) }
+);
+
+export type ForgotPasswordMutationVariables = {
+  email: Scalars['String'],
+  forgotPasswordLink: Scalars['String'],
+  password: Scalars['String']
+};
+
+
+export type ForgotPasswordMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'forgotPassword'>
 );
 
 export type Google_OAuthQueryVariables = {};
@@ -152,6 +211,16 @@ export type ResendVerificationLinkMutation = (
   & Pick<Mutation, 'resendVerificationLink'>
 );
 
+export type SendForgotPasswordLinkMutationVariables = {
+  email: Scalars['String']
+};
+
+
+export type SendForgotPasswordLinkMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'sendForgotPasswordLink'>
+);
+
 export type SendVerificationLinkMutationVariables = {
   email: Scalars['String'],
   password: Scalars['String']
@@ -179,6 +248,19 @@ export type Auth_GoogleOAuthMutationFn = ApolloReactCommon.MutationFunction<Auth
 export type Auth_GoogleOAuthMutationHookResult = ReturnType<typeof useAuth_GoogleOAuthMutation>;
 export type Auth_GoogleOAuthMutationResult = ApolloReactCommon.MutationResult<Auth_GoogleOAuthMutation>;
 export type Auth_GoogleOAuthMutationOptions = ApolloReactCommon.BaseMutationOptions<Auth_GoogleOAuthMutation, Auth_GoogleOAuthMutationVariables>;
+export const ForgotPasswordDocument = gql`
+    mutation forgotPassword($email: String!, $forgotPasswordLink: String!, $password: String!) {
+  forgotPassword(email: $email, forgotPasswordLink: $forgotPasswordLink, password: $password)
+}
+    `;
+export type ForgotPasswordMutationFn = ApolloReactCommon.MutationFunction<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+
+    export function useForgotPasswordMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>) {
+      return ApolloReactHooks.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument, baseOptions);
+    }
+export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
+export type ForgotPasswordMutationResult = ApolloReactCommon.MutationResult<ForgotPasswordMutation>;
+export type ForgotPasswordMutationOptions = ApolloReactCommon.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
 export const Google_OAuthDocument = gql`
     query Google_OAuth {
   login_googleOAuth
@@ -268,6 +350,19 @@ export type ResendVerificationLinkMutationFn = ApolloReactCommon.MutationFunctio
 export type ResendVerificationLinkMutationHookResult = ReturnType<typeof useResendVerificationLinkMutation>;
 export type ResendVerificationLinkMutationResult = ApolloReactCommon.MutationResult<ResendVerificationLinkMutation>;
 export type ResendVerificationLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<ResendVerificationLinkMutation, ResendVerificationLinkMutationVariables>;
+export const SendForgotPasswordLinkDocument = gql`
+    mutation SendForgotPasswordLink($email: String!) {
+  sendForgotPasswordLink(email: $email)
+}
+    `;
+export type SendForgotPasswordLinkMutationFn = ApolloReactCommon.MutationFunction<SendForgotPasswordLinkMutation, SendForgotPasswordLinkMutationVariables>;
+
+    export function useSendForgotPasswordLinkMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SendForgotPasswordLinkMutation, SendForgotPasswordLinkMutationVariables>) {
+      return ApolloReactHooks.useMutation<SendForgotPasswordLinkMutation, SendForgotPasswordLinkMutationVariables>(SendForgotPasswordLinkDocument, baseOptions);
+    }
+export type SendForgotPasswordLinkMutationHookResult = ReturnType<typeof useSendForgotPasswordLinkMutation>;
+export type SendForgotPasswordLinkMutationResult = ApolloReactCommon.MutationResult<SendForgotPasswordLinkMutation>;
+export type SendForgotPasswordLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<SendForgotPasswordLinkMutation, SendForgotPasswordLinkMutationVariables>;
 export const SendVerificationLinkDocument = gql`
     mutation SendVerificationLink($email: String!, $password: String!) {
   sendVerificationLink(email: $email, password: $password)
