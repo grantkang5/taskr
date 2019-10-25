@@ -77,4 +77,4 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
   );
 };
 
-export default Form.create({ name: "forgot-password" })(ForgotPasswordPage);
+export default Form.create({ name: "forgotPassword" })(ForgotPasswordPage);

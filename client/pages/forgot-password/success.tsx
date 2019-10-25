@@ -110,6 +110,6 @@ const ForgotPasswordSuccessPage: React.FC<FormComponentProps> = ({ form }) => {
   );
 };
 
-export default Form.create({ name: "forgot-password/success" })(
+export default Form.create({ name: "forgotPasswordSuccess" })(
   ForgotPasswordSuccessPage
 );
