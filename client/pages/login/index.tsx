@@ -1,27 +1,26 @@
-import React from "react";
-import {
-  useLoginMutation,
-} from "../generated/graphql";
+import React, { useState } from "react";
+import { useLoginMutation } from "../../generated/graphql";
 import { useRouter } from "next/router";
-import { setAccessToken } from "../lib/accessToken";
-import Layout from "../components/common/Layout";
+import { setAccessToken } from "../../lib/accessToken";
+import Layout from "../../components/common/Layout";
 import { Form, Icon, Input, Button, message } from "antd";
 import { FormComponentProps } from "antd/lib/form";
-import AuthLayout from "../components/auth/AuthLayout";
-import GoogleLogin from "../components/auth/GoogleLogin";
+import AuthLayout from "../../components/auth/AuthLayout";
+import GoogleLogin from "../../components/auth/GoogleLogin";
 
-import './App.module.less'
+import styles from "./Login.module.less";
 
 const Login: React.FC<FormComponentProps> = ({ form }) => {
   const router = useRouter();
+  const [forgotPassword, showForgotPassword] = useState(false);
   const [login, { loading }] = useLoginMutation();
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
 
     const { validateFields } = form;
-    validateFields(async (err, { email, password }) => {
-      if (!err) {
+    validateFields(async (validationErrors, { email, password }) => {
+      if (!validationErrors) {
         try {
           const response = await login({
             variables: {
@@ -32,12 +31,13 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
 
           if (response && response.data) {
             setAccessToken(response.data.login.accessToken);
-            router.push('/error', '/')
+            router.push("/error", "/");
           }
         } catch (err) {
+          showForgotPassword(true);
           err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2)
-            : message.error(err.message, 2);
+            ? message.error(err.graphQLErrors[0].message, 2.5)
+            : message.error("An unknown error has occurred", 2);
         }
       }
     });
@@ -49,7 +49,7 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
     <Layout dark={1} title="Login | Taskr">
       <AuthLayout>
         <Form onSubmit={handleSubmit}>
-          <Form.Item>
+          <Form.Item hasFeedback>
             {getFieldDecorator("email", {
               rules: [
                 { required: true, message: "Email field is required" },
@@ -64,8 +64,7 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
               />
             )}
           </Form.Item>
-
-          <Form.Item>
+          <Form.Item hasFeedback>
             {getFieldDecorator("password", {
               rules: [
                 { required: true, message: "Password field is required" },
@@ -80,7 +79,13 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
               />
             )}
           </Form.Item>
+
           <Form.Item>
+            {forgotPassword && (
+              <a href="/forgot-password" className={styles.forgotPassword}>
+                Forgot your password?
+              </a>
+            )}
             <Button
               htmlType="submit"
               type="primary"

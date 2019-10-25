@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useMeQuery } from "../generated/graphql";
 import { useRouter } from "next/router";
-import Dashboard from "../pages";
+
 interface Props {
   children: React.ReactNode;
 }
@@ -20,6 +20,8 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     "/login",
     "/register",
     "/home",
+    "/forgot-password",
+    "/forgot-password/success",
     "/google",
     "/email-verification",
     "/email-verification/success"
