@@ -20,7 +20,7 @@ const EmailVerificationPage = () => {
           pathname: "/email-verification",
           query: {
             email: router.query.email,
-            verificationLink: response.data.resendVerificationLink
+            id: response.data.resendVerificationLink
           }
         });
         message.success('Email verification sent', 2)
@@ -33,7 +33,7 @@ const EmailVerificationPage = () => {
   };
 
   useEffect(() => {
-    if (!router.query.verificationLink || !router.query.email) {
+    if (!router.query.id || !router.query.email) {
       router.push("/error", "/");
     }
   }, []);

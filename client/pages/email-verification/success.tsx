@@ -6,7 +6,7 @@ import {
   useMeLazyQuery
 } from "../../generated/graphql";
 import { setAccessToken } from "../../lib/accessToken";
-import { message, Button } from "antd";
+import { message, Button, Icon } from "antd";
 import Layout from "../../components/common/Layout";
 import ErrorLayout from "../../components/common/ErrorLayout";
 
@@ -17,7 +17,7 @@ const EmailVerificationSuccessPage: React.FC = () => {
     { error: registerError, loading: registerLoading, called: registerCalled }
   ] = useRegisterMutation();
   const [resendVerificationLink] = useResendVerificationLinkMutation();
-  const [getMe] = useMeLazyQuery()
+  const [getMe] = useMeLazyQuery();
   const resendVerificationEmail = async () => {
     try {
       const response = await resendVerificationLink({
@@ -31,7 +31,7 @@ const EmailVerificationSuccessPage: React.FC = () => {
           pathname: "/email-verification",
           query: {
             email: router.query.email,
-            verificationLink: response.data.resendVerificationLink
+            id: response.data.resendVerificationLink
           }
         });
       }
@@ -44,17 +44,17 @@ const EmailVerificationSuccessPage: React.FC = () => {
 
   useEffect(() => {
     let didCancel = false;
-    if (!router.query.verificationLink || !router.query.email) {
+    if (!router.query.id || !router.query.email) {
       router.push("/error", "/");
     }
 
     const fetchData = async () => {
-      const { verificationLink, email } = router.query;
+      const { id, email } = router.query;
       try {
         const response = await register({
           variables: {
             email: email as string,
-            verificationLink: verificationLink as string
+            verificationLink: id as string
           }
         });
 
@@ -73,6 +73,11 @@ const EmailVerificationSuccessPage: React.FC = () => {
             <Button type="link" onClick={resendVerificationEmail}>
               Resend verification link
             </Button>
+            <Icon
+              type="close-circle"
+              style={{ cursor: "pointer" }}
+              onClick={() => message.destroy()}
+            />
           </span>,
           0
         );
