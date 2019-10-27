@@ -8,7 +8,7 @@ import styles from './Home.module.less';
 
 const Home: React.FC = () => {
   return (
-    <Layout>
+    <Layout dark={1}>
       <div className={styles.main}>
         <div className={styles.primaryHeader}>
           <div className={styles.left}>

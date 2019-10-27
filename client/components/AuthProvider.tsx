@@ -27,10 +27,12 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     "/email-verification/success"
   ];
 
+  
   if (loading) {
     // TODO: add load screen
     return <></>;
   }
+
   // not authenticated, redirect unless it's in whitelist
   if (!whitelist.includes(router.route) && !data) {
     router.push("/login");

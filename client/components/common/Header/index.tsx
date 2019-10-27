@@ -1,49 +1,63 @@
-import React from 'react';
-import { useMeQuery } from '../../../generated/graphql';
-import Link from 'next/link';
-import { Layout } from 'antd';
-import { Logout } from '../../auth/Logout';
-import styles from './Header.module.less';
+import React from "react";
+import { useMeQuery } from "../../../generated/graphql";
+import classNames from "classnames";
+import { Layout, Row, Col, Avatar, Dropdown, Menu, Button } from "antd";
+import { Logout } from "../../auth/Logout";
+import styles from "./Header.module.less";
+import { ButtonLink } from "../Button";
+import AnonHeader from "./AnonHeader";
 
 interface Props {
-  dark?: number 
+  dark?: number;
 }
 
-export const Header: React.FC<Props> = () => {
+export const Header: React.FC<Props> = ({ dark }) => {
   const { data } = useMeQuery();
 
-  if (!data || !data.me) {
-    return (
-      <Layout.Header className={styles.header}>
-        <div className={styles.left}>
-          <Link href="/home" as="/home">
-            <a>Home</a>
-          </Link>
-        </div>
-        <div className={styles.right}>
-          <Link href="/login" as="/login">
-            <a>Log In</a>
-          </Link>
+  const headerStyle = classNames(styles.header, {
+    [styles.dark]: dark
+  });
 
-          <Link href="/register" as="/register">
-            <a className={styles.blueLink}>Sign Up</a>
-          </Link>
-        </div>
-      </Layout.Header>
-    );
+  if (!data || !data.me) {
+    return <AnonHeader dark={dark} />
   }
 
-  return (
-    <Layout.Header className={styles.header}>
-      <div className={styles.left}>
-        <Link href="/home" as="/home">
-          <a>Home</a>
-        </Link>
-      </div>
+  const menu = (
+    <Menu >
+      <Menu.Item disabled>
+        {data.me.email}
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item>
+        <Logout>
+          Log Out
+        </Logout>
+      </Menu.Item>
+    </Menu>
+  )
 
-      <div className={styles.right}>
-        <Logout />
-      </div>
+  return (
+    <Layout.Header className={headerStyle}>
+      <Row>
+        <Col span={8}>
+          <Row>
+            <Col span={4}>
+              <ButtonLink path="/">Home</ButtonLink>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={16}>
+          <Row type="flex" justify="end">
+            <Col span={3}>
+              <Dropdown overlay={menu} placement="bottomRight">
+                <Avatar icon="user" alt="user" />
+              </Dropdown>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
     </Layout.Header>
   );
 };
+
+

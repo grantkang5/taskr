@@ -27,9 +27,6 @@ const Layout: React.FC<Props> = ({
         <title>{title}</title>
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        {process.env.NODE_ENV !== 'production' && (
-            <link rel="stylesheet" type="text/css" href={'/_next/static/css/styles.chunk.css?v=' + Date.now()} />
-          )}
       </Head>
 
       {!hide ? (
