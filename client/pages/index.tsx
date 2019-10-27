@@ -11,9 +11,7 @@ import Layout from '../components/common/Layout';
 const Dashboard = () => {
   return (
     <Layout>
-      <div>
-        This is the dashboard
-      </div>
+      <div />
     </Layout>
   );
 };

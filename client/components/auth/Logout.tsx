@@ -2,9 +2,8 @@ import React from 'react';
 import { useLogoutMutation } from '../../generated/graphql';
 import { useRouter } from 'next/router';
 import { setAccessToken } from '../../lib/accessToken';
-import { Button } from 'antd';
 
-export const Logout: React.FC = () => {
+export const Logout: React.FC = ({ children }) => {
   const router = useRouter()
   const [logout, { client }] = useLogoutMutation();
 
@@ -18,8 +17,8 @@ export const Logout: React.FC = () => {
     }
   };
   return (
-    <Button type="primary" onClick={handleClick}>
-      Log out
-    </Button>
+    <div onClick={handleClick}>
+      {children}
+    </div>
   );
 };
