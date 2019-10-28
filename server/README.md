@@ -6,6 +6,7 @@ heroku: http://api.taskr-app.com/
 - [Installation](#Installation)
 - [Getting started](#Getting_started)
 - [Typeorm](#Typeorm)
+- [Mailer](#Mailer)
 - [Making a pull request](#Making_a_pull_request)
 
 ### Installation
@@ -13,9 +14,7 @@ heroku: http://api.taskr-app.com/
 ___
 ### Getting started
 1. Create `.env` file with the following keys in `.env.sample`
-2. Run `yarn createdb` to create local db using postgresql
-3. _(optinal)_ Run `yarn db:seed` to seed the database
-4. Run `yarn dev`
+2. Run `yarn dev`
 ___
 ### Typeorm https://typeorm.io/#/
 Connections to the database are handled using Typeorm and all related configs/settings are under `ormconfig.js`
@@ -40,7 +39,12 @@ export class User extends BaseEntity {
 - `Column` - Maps a column under the associated table
 
 ___
+### Mailer
+Emails are handled by `nodemailer`.
 
+To use or test email sending features,
+you can create an account at https://ethereal.email/ and change your mailer variables to set up the transporter.
+___
 ### Making a pull request
 1. Assign a ticket to yourself on trello and move it to `Doing` column
 2. `git checkout -b server/feature`
