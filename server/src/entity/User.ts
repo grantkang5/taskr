@@ -36,9 +36,10 @@ export class User extends BaseEntity {
   @Column({ nullable: true })
   avatar: string;
 
-  @Column("int", { default: 0 })
+  @Column('int', { default: 0 })
   tokenVersion: number;
   // TODO: make enum. 'website' | 'google'
+
   @Field()
   @Column({ default: 'website' })
   auth: string;
@@ -48,6 +49,9 @@ export class User extends BaseEntity {
 
   @UpdateDateColumn()
   updated_at: Date;
+
+  @OneToMany(() => Project, project => project.ownedBy, { cascade: true })
+  ownedProjects: Project[];
 
   @ManyToMany(() => Project)
   @JoinTable()

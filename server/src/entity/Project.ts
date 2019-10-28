@@ -7,8 +7,7 @@ import {
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToOne,
-  JoinColumn
+  ManyToOne
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { User } from './User';
@@ -32,11 +31,6 @@ export class Project extends BaseEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @Field()
-  @OneToOne(() => User)
-  @JoinColumn()
-  owner: User;
-
   @ManyToMany(() => User)
   users: User[];
 
@@ -45,4 +39,7 @@ export class Project extends BaseEntity {
 
   @OneToMany(() => Label, label => label.project)
   labels: Label[];
+
+  @ManyToOne(() => User, user => user.projects, { onDelete: 'CASCADE' })
+  ownedBy: User;
 }
