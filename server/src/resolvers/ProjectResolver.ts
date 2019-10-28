@@ -3,9 +3,12 @@ import { isAuth } from '../services/auth/isAuth';
 import { Project } from '../entity/Project';
 import { MyContext } from '../services/context';
 import { User } from '../entity/User';
+import { createBaseResolver } from './BaseResolver';
+
+const ProjectBaseResolver = createBaseResolver('Project', Project);
 
 @Resolver()
-export class ProjectResolver {
+export class ProjectResolver extends ProjectBaseResolver {
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
   async createProject(
