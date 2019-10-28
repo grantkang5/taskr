@@ -8,9 +8,10 @@ const textStyle = (mainStyle: string, props: any) => classNames(mainStyle, {
 })
 
 interface Props {
-  children: React.ReactNode,
-  white?: number,
-  style?: object
+  children: React.ReactNode;
+  white?: number;
+  style?: object;
+  onClick?: () => void;
 }
 
 export const Text:React.FC<Props> = ({ children, ...props }) => {
@@ -34,5 +35,11 @@ export const HeaderSubText:React.FC<Props> = ({ children, ...props }) => {
 export const SubText:React.FC<Props> = ({ children, ...props }) => {
   return (
     <p className={textStyle(styles.subText, props)} {...props}>{children}</p>
+  )
+}
+
+export const LinkText:React.FC<Props> = ({ children, ...props }) => {
+  return (
+    <div className={textStyle(styles.linkText, props)} {...props}>{children}</div>
   )
 }

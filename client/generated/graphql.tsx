@@ -43,6 +43,7 @@ export type Mutation = {
   updateUsername: User,
   sendForgotPasswordLink: Scalars['String'],
   forgotPassword: Scalars['Boolean'],
+  changePassword: Scalars['Boolean'],
   revokeRefreshToken: Scalars['Boolean'],
 };
 
@@ -102,6 +103,12 @@ export type MutationForgotPasswordArgs = {
 };
 
 
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'],
+  currentPassword: Scalars['String']
+};
+
+
 export type MutationRevokeRefreshTokenArgs = {
   userId: Scalars['Int']
 };
@@ -132,6 +139,17 @@ export type Auth_GoogleOAuthMutation = (
     { __typename?: 'LoginResponse' }
     & Pick<LoginResponse, 'accessToken'>
   ) }
+);
+
+export type ChangePasswordMutationVariables = {
+  currentPassword: Scalars['String'],
+  newPassword: Scalars['String']
+};
+
+
+export type ChangePasswordMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'changePassword'>
 );
 
 export type ForgotPasswordMutationVariables = {
@@ -183,7 +201,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me: (
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'email'>
+    & Pick<User, 'id' | 'email' | 'username'>
   ) }
 );
 
@@ -232,6 +250,19 @@ export type SendVerificationLinkMutation = (
   & Pick<Mutation, 'sendVerificationLink'>
 );
 
+export type UpdateUsernameMutationVariables = {
+  username: Scalars['String']
+};
+
+
+export type UpdateUsernameMutation = (
+  { __typename?: 'Mutation' }
+  & { updateUsername: (
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email' | 'username'>
+  ) }
+);
+
 
 export const Auth_GoogleOAuthDocument = gql`
     mutation Auth_GoogleOAuth($code: String!) {
@@ -248,6 +279,19 @@ export type Auth_GoogleOAuthMutationFn = ApolloReactCommon.MutationFunction<Auth
 export type Auth_GoogleOAuthMutationHookResult = ReturnType<typeof useAuth_GoogleOAuthMutation>;
 export type Auth_GoogleOAuthMutationResult = ApolloReactCommon.MutationResult<Auth_GoogleOAuthMutation>;
 export type Auth_GoogleOAuthMutationOptions = ApolloReactCommon.BaseMutationOptions<Auth_GoogleOAuthMutation, Auth_GoogleOAuthMutationVariables>;
+export const ChangePasswordDocument = gql`
+    mutation ChangePassword($currentPassword: String!, $newPassword: String!) {
+  changePassword(currentPassword: $currentPassword, newPassword: $newPassword)
+}
+    `;
+export type ChangePasswordMutationFn = ApolloReactCommon.MutationFunction<ChangePasswordMutation, ChangePasswordMutationVariables>;
+
+    export function useChangePasswordMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<ChangePasswordMutation, ChangePasswordMutationVariables>) {
+      return ApolloReactHooks.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument, baseOptions);
+    }
+export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswordMutation>;
+export type ChangePasswordMutationResult = ApolloReactCommon.MutationResult<ChangePasswordMutation>;
+export type ChangePasswordMutationOptions = ApolloReactCommon.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation forgotPassword($email: String!, $forgotPasswordLink: String!, $password: String!) {
   forgotPassword(email: $email, forgotPasswordLink: $forgotPasswordLink, password: $password)
@@ -309,6 +353,7 @@ export const MeDocument = gql`
   me {
     id
     email
+    username
   }
 }
     `;
@@ -376,3 +421,20 @@ export type SendVerificationLinkMutationFn = ApolloReactCommon.MutationFunction<
 export type SendVerificationLinkMutationHookResult = ReturnType<typeof useSendVerificationLinkMutation>;
 export type SendVerificationLinkMutationResult = ApolloReactCommon.MutationResult<SendVerificationLinkMutation>;
 export type SendVerificationLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<SendVerificationLinkMutation, SendVerificationLinkMutationVariables>;
+export const UpdateUsernameDocument = gql`
+    mutation UpdateUsername($username: String!) {
+  updateUsername(username: $username) {
+    id
+    email
+    username
+  }
+}
+    `;
+export type UpdateUsernameMutationFn = ApolloReactCommon.MutationFunction<UpdateUsernameMutation, UpdateUsernameMutationVariables>;
+
+    export function useUpdateUsernameMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<UpdateUsernameMutation, UpdateUsernameMutationVariables>) {
+      return ApolloReactHooks.useMutation<UpdateUsernameMutation, UpdateUsernameMutationVariables>(UpdateUsernameDocument, baseOptions);
+    }
+export type UpdateUsernameMutationHookResult = ReturnType<typeof useUpdateUsernameMutation>;
+export type UpdateUsernameMutationResult = ApolloReactCommon.MutationResult<UpdateUsernameMutation>;
+export type UpdateUsernameMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateUsernameMutation, UpdateUsernameMutationVariables>;
