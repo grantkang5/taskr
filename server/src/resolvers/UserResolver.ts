@@ -3,8 +3,6 @@ import {
   Query,
   Mutation,
   Arg,
-  ObjectType,
-  Field,
   Ctx,
   UseMiddleware,
   Int
@@ -25,20 +23,16 @@ import { isAuth } from '../services/auth/isAuth';
 import { createOAuth2Client, verifyIdToken } from '../services/auth/google';
 import { cloudinary } from "../services/cloudinary";
 import { redis } from '../services/redis';
-import { ImageResponse } from './ImageResponse';
+import { ImageResponse } from './types/ImageResponse';
 import { v4 } from 'uuid'
 import { forgotPasswordEmail } from '../services/mailer/forgotPasswordEmail';
+import { createBaseResolver } from './BaseResolver';
+import { LoginResponse } from './types/LoginResponse';
 
-@ObjectType()
-class LoginResponse {
-  @Field()
-  accessToken: string;
-  @Field(() => User)
-  user: User;
-}
+const UserBaseResolver = createBaseResolver('User', User)
 
 @Resolver()
-export class UserResolver {
+export class UserResolver extends UserBaseResolver {
   @Query(() => User)
   @UseMiddleware(isAuth)
   async me(@Ctx() { payload }: MyContext) {
