@@ -22,17 +22,14 @@ import { rateLimit } from '../services/rate-limit';
 import { sendRefreshToken } from '../services/auth/sendRefreshToken';
 import { isAuth } from '../services/auth/isAuth';
 import { createOAuth2Client, verifyIdToken } from '../services/auth/google';
-import { cloudinary } from "../services/cloudinary";
+import { cloudinary } from '../services/cloudinary';
 import { redis } from '../services/redis';
 import { ImageResponse } from './types/ImageResponse';
-import { v4 } from 'uuid'
-import { createBaseResolver } from './BaseResolver';
+import { v4 } from 'uuid';
 import { LoginResponse } from './types/LoginResponse';
 
-const UserBaseResolver = createBaseResolver('User', User)
-
 @Resolver()
-export class UserResolver extends UserBaseResolver {
+export class UserResolver {
   @Query(() => User)
   @UseMiddleware(isAuth)
   async me(@Ctx() { payload }: MyContext) {
@@ -67,14 +64,16 @@ export class UserResolver extends UserBaseResolver {
     @Arg('password') password: string
   ) {
     try {
-      const user = await User.findOne({ email })
+      const user = await User.findOne({ email });
       if (user) {
         throw new Error('This email is already in use');
       }
-      const unverifiedUser = await redis.hgetall(email)
+      const unverifiedUser = await redis.hgetall(email);
       if (Object.keys(unverifiedUser).length) {
-        this.resendVerificationLink(email)
-        throw new Error('This account has not been validated. Please check your email for the validation link')
+        this.resendVerificationLink(email);
+        throw new Error(
+          'This account has not been validated. Please check your email for the validation link'
+        );
       }
 
       const verificationLink = v4();
@@ -265,14 +264,14 @@ export class UserResolver extends UserBaseResolver {
     @Ctx() { payload }: MyContext
   ) {
     try {
-      const user = await User.findOne({ id: parseInt(payload!.userId) })
-      const res = await cloudinary.uploader.upload(image)
-      user!.avatar = res.public_id
+      const user = await User.findOne({ id: parseInt(payload!.userId) });
+      const res = await cloudinary.uploader.upload(image);
+      user!.avatar = res.public_id;
       await user!.save();
-      return res
+      return res;
     } catch (err) {
-      console.log(err)
-      return err
+      console.log(err);
+      return err;
     }
   }
 
@@ -283,17 +282,17 @@ export class UserResolver extends UserBaseResolver {
     @Ctx() { payload }: MyContext
   ) {
     try {
-      const user = await User.findOne({ id: parseInt(payload!.userId) })
+      const user = await User.findOne({ id: parseInt(payload!.userId) });
       // destroy current user's avatar from storage
-      await cloudinary.uploader.destroy(user!.avatar)
+      await cloudinary.uploader.destroy(user!.avatar);
 
-      const res = await cloudinary.uploader.upload(image)
-      user!.avatar = res.public_id
+      const res = await cloudinary.uploader.upload(image);
+      user!.avatar = res.public_id;
       await user!.save();
-      return res
+      return res;
     } catch (err) {
-      console.log(err)
-      return err
+      console.log(err);
+      return err;
     }
   }
 
@@ -304,12 +303,12 @@ export class UserResolver extends UserBaseResolver {
     @Ctx() { payload }: MyContext
   ) {
     try {
-      const user = await User.findOne({ id: parseInt(payload!.userId) })
+      const user = await User.findOne({ id: parseInt(payload!.userId) });
       user!.username = username;
       const newUser = await user!.save();
-      return newUser
+      return newUser;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return err;
     }
   }
@@ -322,22 +321,22 @@ export class UserResolver extends UserBaseResolver {
   ) {
     try {
       if (payload) {
-        throw new Error("What are you trying to do?")
+        throw new Error('What are you trying to do?');
       }
-      const user = await User.findOne({ email })
+      const user = await User.findOne({ email });
       if (!user) {
-        throw new Error("This user email does not exist")
+        throw new Error('This user email does not exist');
       }
 
       user.tokenVersion++;
       await user.save();
 
       const forgotPasswordLink = v4();
-      await redis.set(`forgot-${email}`, forgotPasswordLink, 'EX', 3600)
-      transporter.sendMail(forgotPasswordEmail(email, forgotPasswordLink))
-      return forgotPasswordLink
+      await redis.set(`forgot-${email}`, forgotPasswordLink, 'EX', 3600);
+      transporter.sendMail(forgotPasswordEmail(email, forgotPasswordLink));
+      return forgotPasswordLink;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return err;
     }
   }
@@ -347,22 +346,22 @@ export class UserResolver extends UserBaseResolver {
   async forgotPassword(
     @Arg('email') email: string,
     @Arg('forgotPasswordLink') forgotPasswordLink: string,
-    @Arg('password') password: string,
+    @Arg('password') password: string
   ) {
     try {
-      const storedLink = await redis.get(`forgot-${email}`)
+      const storedLink = await redis.get(`forgot-${email}`);
       if (storedLink !== forgotPasswordLink) {
-        throw new Error('This link has expired')
+        throw new Error('This link has expired');
       }
-      const user = await User.findOne({ email })
-      if (!user) throw new Error("This user doesn't exist")
+      const user = await User.findOne({ email });
+      if (!user) throw new Error("This user doesn't exist");
       const hashedPassword = await hash(password, 12);
-      user.password = hashedPassword
+      user.password = hashedPassword;
       await user.save();
-      await redis.del(`forgot-${email}`)
-      return true
+      await redis.del(`forgot-${email}`);
+      return true;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return err;
     }
   }
@@ -375,8 +374,8 @@ export class UserResolver extends UserBaseResolver {
     @Ctx() { payload }: MyContext
   ) {
     try {
-      const user = await User.findOne({ id: parseInt(payload!.userId) })
-      if (!user) throw new Error('User not found')
+      const user = await User.findOne({ id: parseInt(payload!.userId) });
+      if (!user) throw new Error('User not found');
       // if user's password from db is NULL
       if (!user.password) {
         throw new Error(
@@ -389,11 +388,11 @@ export class UserResolver extends UserBaseResolver {
         throw new Error('Incorrect password');
       }
       const hashedPassword = await hash(newPassword, 12);
-      user.password = hashedPassword
+      user.password = hashedPassword;
       await user.save();
       return true;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return err;
     }
   }
