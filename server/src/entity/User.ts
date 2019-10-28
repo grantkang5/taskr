@@ -3,15 +3,15 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  ManyToMany,
-  JoinTable,
+  // ManyToMany,
+  // JoinTable,
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
-import { Task } from './Task';
-import { Message } from './Message';
+// import { Task } from './Task';
+// import { Message } from './Message';
 import { Project } from './Project';
 
 @ObjectType()
@@ -44,23 +44,31 @@ export class User extends BaseEntity {
   @Column({ default: 'website' })
   auth: string;
 
+  @Field()
   @CreateDateColumn()
   created_at: Date;
 
+  @Field()
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany(() => Project, project => project.ownedBy, { cascade: true })
+  @Field(() => [Project])
+  @OneToMany(() => Project, project => project.owner, {
+    cascade: true,
+    eager: true
+  })
   ownedProjects: Project[];
 
-  @ManyToMany(() => Project)
-  @JoinTable()
-  projects: Project[];
+  // TODO: probably need eager
+  // @Field(() => [Project])
+  // @ManyToMany(() => Project, project => project.members)
+  // @JoinTable()
+  // projects: Project[];
 
-  @ManyToMany(() => Task)
-  @JoinTable()
-  tasks: Task[];
+  // @ManyToMany(() => Task)
+  // @JoinTable()
+  // tasks: Task[];
 
-  @OneToMany(() => Message, message => message.user)
-  messages: Message[];
+  // @OneToMany(() => Message, message => message.user)
+  // messages: Message[];
 }

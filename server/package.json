@@ -62,7 +62,6 @@
     "build": "tsc --sourceMap false",
     "test": "jest --forceExit",
     "db:start": "docker-compose up --build",
-    "db:create": "createdb taskr-api",
     "db:seed": "fixtures ./src/database/fixtures --config ./ormconfig.js --sync --require=ts-node/register"
   },
   "jest": {

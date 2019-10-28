@@ -5,11 +5,11 @@ type Payload = User | string;
 export const createAccessToken = (payload: Payload) => {
   if (typeof payload === 'string') {
     return sign({ googleIdToken: payload }, process.env.ACCESS_TOKEN_SECRET!, {
-      expiresIn: '15m'
+      expiresIn: process.env.NODE_ENV === 'development' ? '60m' : '15m'
     });
   } else {
     return sign({ userId: payload.id }, process.env.ACCESS_TOKEN_SECRET!, {
-      expiresIn: '15m'
+      expiresIn: process.env.NODE_ENV === 'development' ? '60m' : '15m'
     });
   }
 };
