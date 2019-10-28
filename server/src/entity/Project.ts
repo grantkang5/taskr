@@ -3,16 +3,16 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  ManyToMany,
-  OneToMany,
+  // ManyToMany,
+  // OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { User } from './User';
-import { List } from './List';
-import { Label } from './Label';
+// import { List } from './List';
+// import { Label } from './Label';
 
 @ObjectType()
 @Entity('projects')
@@ -23,23 +23,34 @@ export class Project extends BaseEntity {
 
   @Field()
   @Column()
+  name: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   desc: string;
 
+  @Field()
   @CreateDateColumn()
   created_at: Date;
 
+  @Field()
   @UpdateDateColumn()
   updated_at: Date;
 
-  @ManyToMany(() => User)
-  users: User[];
+  // TODO: maybe need eager
+  // @Field(() => [User])
+  // @ManyToMany(() => User, user => user.projects)
+  // members: User[];
 
-  @OneToMany(() => List, list => list.project)
-  lists: List[];
+  // @OneToMany(() => List, list => list.project)
+  // lists: List[];
 
-  @OneToMany(() => Label, label => label.project)
-  labels: Label[];
+  // @OneToMany(() => Label, label => label.project)
+  // labels: Label[];
 
-  @ManyToOne(() => User, user => user.projects, { onDelete: 'CASCADE' })
-  ownedBy: User;
+  @Field(() => User)
+  @ManyToOne(() => User, user => user.ownedProjects, {
+    onDelete: 'CASCADE'
+  })
+  owner: User;
 }
