@@ -88,7 +88,6 @@ describe("User Resolver", () => {
       });
       expect(res.data).toBeDefined();
       expect(res.errors).toBeUndefined();
-      expect(res.data).toMatchSnapshot();
     });
   });
 
@@ -162,4 +161,33 @@ describe("User Resolver", () => {
       expect(successfulLogin.errors).toBeUndefined();
     });
   });
+
+  describe("Change password mutation", () => {
+    it("should change the user's password", async () => {
+      const res = await mutate({
+        mutation: gql`
+          mutation ChangePassword($currentPassword: String!, $newPassword: String!) {
+            changePassword(currentPassword:$currentPassword, newPassword:$newPassword)
+          }
+        `,
+        variables: { currentPassword: 'password', newPassword: 'password2' }
+      })
+
+      const successfulLogin = await mutate({
+        mutation: gql`
+          mutation Login($email: String!, $password: String!) {
+            login(email:$email, password:$password) {
+              accessToken
+            }
+          }
+        `,
+        variables: { email: 'dev@email.com', password: 'password2' }
+      })
+      
+      expect(res.data).toBeDefined()
+      expect(res.errors).toBeUndefined();
+      expect(successfulLogin.data).toBeDefined();
+      expect(successfulLogin.errors).toBeUndefined();
+    })
+  })
 });

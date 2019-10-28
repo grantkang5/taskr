@@ -374,6 +374,37 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseMiddleware(isAuth, rateLimit(10))
+  async changePassword(
+    @Arg('currentPassword') currentPassword: string,
+    @Arg('newPassword') newPassword: string,
+    @Ctx() { payload }: MyContext
+  ) {
+    try {
+      const user = await User.findOne({ id: parseInt(payload!.userId) })
+      if (!user) throw new Error('User not found')
+      // if user's password from db is NULL
+      if (!user.password) {
+        throw new Error(
+          `This account doesn't have a password set. Do you normally login with google?`
+        );
+      }
+
+      const valid = await compare(currentPassword, user.password);
+      if (!valid) {
+        throw new Error('Incorrect password');
+      }
+      const hashedPassword = await hash(newPassword, 12);
+      user.password = hashedPassword
+      await user.save();
+      return true;
+    } catch (err) {
+      console.log(err)
+      return err;
+    }
+  }
+
+  @Mutation(() => Boolean)
   async revokeRefreshToken(@Arg('userId', () => Int) userId: number) {
     await getConnection()
       .getRepository(User)
