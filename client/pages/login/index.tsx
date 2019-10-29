@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useLoginMutation } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import { setAccessToken } from "../../lib/accessToken";
-import Layout from "../../components/common/Layout";
+import Layout from "../../components/layouts/Layout";
 import { Form, Icon, Input, Button, message } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import AuthLayout from "../../components/auth/AuthLayout";

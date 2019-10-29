@@ -7,8 +7,8 @@ import {
 } from "../../generated/graphql";
 import { setAccessToken } from "../../lib/accessToken";
 import { message, Button, Icon } from "antd";
-import Layout from "../../components/common/Layout";
-import ErrorLayout from "../../components/common/ErrorLayout";
+import Layout from "../../components/layouts/Layout";
+import ErrorLayout from "../../components/layouts/ErrorLayout";
 
 const EmailVerificationSuccessPage: React.FC = () => {
   const router = useRouter();

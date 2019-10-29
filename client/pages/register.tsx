@@ -1,6 +1,6 @@
 import React from 'react';
 import Router from 'next/router';
-import Layout from '../components/common/Layout';
+import Layout from '../components/layouts/Layout';
 import { useSendVerificationLinkMutation } from '../generated/graphql';
 import { message, Form, Input, Icon, Button } from 'antd';
 import AuthLayout from '../components/auth/AuthLayout';

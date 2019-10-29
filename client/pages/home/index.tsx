@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '../../components/common/Layout';
+import Layout from '../../components/layouts/Layout';
 import { HeaderText, HeaderSubText } from '../../components/common/Text';
 import { Button } from 'antd';
 import Link from 'next/link';
