@@ -3,8 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  // ManyToMany,
-  // JoinTable,
+  ManyToMany,
+  JoinTable,
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn
@@ -60,10 +60,10 @@ export class User extends BaseEntity {
   ownedProjects: Project[];
 
   // TODO: probably need eager
-  // @Field(() => [Project])
-  // @ManyToMany(() => Project, project => project.members)
-  // @JoinTable()
-  // projects: Project[];
+  @Field(() => [Project])
+  @ManyToMany(() => Project, project => project.members)
+  @JoinTable()
+  projects: Project[];
 
   // @ManyToMany(() => Task)
   // @JoinTable()
