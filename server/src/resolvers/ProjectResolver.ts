@@ -12,9 +12,9 @@ export class ProjectResolver extends ProjectBaseResolver {
   @Mutation(() => Project)
   @UseMiddleware(isAuth)
   async createProject(
+    @Ctx() { payload }: MyContext,
     @Arg('name') name: string,
-    @Arg('desc') desc: string,
-    @Ctx() { payload }: MyContext
+    @Arg('desc', { nullable: true }) desc?: string
   ) {
     try {
       const user = await User.findOne({ where: { id: payload!.userId } });

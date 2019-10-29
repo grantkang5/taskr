@@ -1,0 +1,15 @@
+entity: Project
+# processor: ../processor/ProjectProcessor
+items:
+  project1:
+    name: 'Taskr'
+    desc: 'this is taskr'
+    owner: '@user1'
+    members:
+      - '@user1'
+      - '@user5'
+  project{2..10}:
+    name: '{{commerce.productName}}'
+    desc: '{{lorem.sentence}}'
+    owner: '@user*'
+    # members:

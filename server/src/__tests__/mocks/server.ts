@@ -1,15 +1,15 @@
-import "dotenv/config";
-import { Response } from "express";
-import { ApolloServer } from "apollo-server-express";
-import { buildSchemaSync } from "type-graphql";
-import { UserResolver } from "../../resolvers/UserResolver";
-import { exec } from "child_process";
-import { sign } from "jsonwebtoken";
-import { Connection, createConnection } from "typeorm";
-import { redis } from "../../services/redis";
+import 'dotenv/config';
+import { Response } from 'express';
+import { ApolloServer } from 'apollo-server-express';
+import { buildSchemaSync } from 'type-graphql';
+import resolvers from '../../resolvers';
+import { exec } from 'child_process';
+import { sign } from 'jsonwebtoken';
+import { Connection, createConnection } from 'typeorm';
+import { redis } from '../../services/redis';
 
 export const testServer = new ApolloServer({
-  schema: buildSchemaSync({ resolvers: [UserResolver] }),
+  schema: buildSchemaSync({ resolvers }),
   context: () => {
     return {
       req: {
@@ -18,7 +18,7 @@ export const testServer = new ApolloServer({
             { userId: 1 },
             process.env.ACCESS_TOKEN_SECRET!,
             {
-              expiresIn: "15m"
+              expiresIn: '15m'
             }
           )}`
         }
@@ -32,7 +32,7 @@ export const testServer = new ApolloServer({
 
 export const createTestDb = async () => {
   try {
-    await exec("yarn db:seed")
+    await exec('yarn db:seed');
     await redis.flushall();
     return await createConnection();
   } catch (err) {
