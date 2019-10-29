@@ -2,39 +2,54 @@ import * as React from "react";
 import Head from "next/head";
 import { Header } from "../Header";
 import styles from "./Layout.module.less";
-import classNames from 'classnames'
+import classNames from "classnames";
+import { Layout as AntdLayout, Row, Col } from "antd";
 
 type Props = {
   title?: string;
   hide?: number;
   dark?: number;
+  sider?: React.ReactNode;
 };
 
-const Layout: React.FunctionComponent<Props> = ({
+const Layout: React.FC<Props> = ({
   children,
   hide,
   dark,
-  title = "This is the default title"
+  sider,
+  title = "Taskr"
 }) => {
   const layoutStyle = classNames(styles.layout, {
     [styles.dark]: dark
-  })
+  });
 
   return (
-    <div className={layoutStyle}>
+    <AntdLayout className={layoutStyle}>
       <Head>
         <title>{title}</title>
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      {!hide ? (
-        <React.Fragment>
-          <Header />
-          <div className={styles.headerSpace} />
-        </React.Fragment>
-      ) : null}
-      {children}
-    </div>
+      {!hide ? <Header dark={dark} /> : null}
+
+      {sider ? (
+        <div className={styles.layoutWithSider}>
+          <Row type="flex" style={{ height: "100%" }}>
+            <Col span={5}>
+              <div className={styles.sider}>{sider}</div>
+            </Col>
+
+            <Col span={16}>
+              <AntdLayout.Content style={{ paddingTop: "40px" }}>
+                {children}
+              </AntdLayout.Content>
+            </Col>
+          </Row>
+        </div>
+      ) : (
+        <AntdLayout.Content>{children}</AntdLayout.Content>
+      )}
+    </AntdLayout>
   );
 };
 

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { render, mount } from "enzyme";
+import { mount } from "enzyme";
 import { act } from "react-dom/test-utils";
 import { MockedProvider, wait } from "@apollo/react-testing";
 import Login from "../../pages/login";

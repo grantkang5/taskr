@@ -1,42 +1,88 @@
-import React from 'react';
-import { useMeQuery } from '../../../generated/graphql';
-import Link from 'next/link';
-import { setAccessToken } from '../../../lib/accessToken';
-import { Logout } from '../../auth/Logout';
-import { useApolloClient } from '@apollo/react-hooks';
+import React from "react";
+import { useMeQuery, useLogoutMutation } from "../../../generated/graphql";
+import classNames from "classnames";
+import { Layout, Row, Col, Avatar, Dropdown, Menu, Icon } from "antd";
+import styles from "./Header.module.less";
+import { ButtonLink } from "../Button";
+import AnonHeader from "./AnonHeader";
+import { useRouter } from "next/router";
+import { setAccessToken } from "../../../lib/accessToken";
 
-import styles from './Header.module.less'
+interface Props {
+  dark?: number;
+}
 
-export const Header: React.FC = () => {
-  const { data, loading } = useMeQuery();
-  // const [logout, { client }] = useLogoutMutation();
+export const Header: React.FC<Props> = ({ dark }) => {
+  const router = useRouter();
+  const { data } = useMeQuery();
+  const [logout, { client }] = useLogoutMutation();
 
-  let body: any = null;
+  const headerStyle = classNames(styles.header, {
+    [styles.dark]: dark
+  });
 
-  if (loading) {
-    body = null;
-  } else if (data && data.me) {
-    body = <div>you are logged in as: {data.me.email}</div>;
-  } else {
-    body = <div>not logged in</div>;
+  if (!data || !data.me) {
+    return <AnonHeader dark={dark} />;
   }
 
-  return (
-    <header className={styles.header}>
-      <div className={styles.left}>
-        <Link href="/">
-          <a>Home</a>
-        </Link>
-      </div>
-      <div className={styles.right}>
-        <Link href="/login">
-          <a>Log In</a>
-        </Link>
+  const handleMenuClick = async ({ key }: { key: string }) => {
+    switch(key) {
+      case "settings": {
+        router.push('/settings')
+        break;
+      }
+      case "logout": {
+        const logoutResponse = await logout();
+        if (logoutResponse) {
+          setAccessToken('');
+          await client!.resetStore();
+          router.push('/login')
+          break;
+        }
+      }
 
-        <Link href="/register">
-          <a>Sign Up</a>  
-        </Link>
-      </div>
-    </header>
+      default:
+        return;
+    }
+  };
+
+  const menu = (
+    <Menu onClick={handleMenuClick}>
+      <Menu.Item disabled>
+        {data.me.username} ({data.me.email})
+      </Menu.Item>
+      <Menu.Divider />
+      <Menu.Item key="settings">
+        <Icon type="setting" />
+        Settings
+      </Menu.Item>
+      <Menu.Item key="logout">
+        <Icon type="logout" />
+        Log Out
+      </Menu.Item>
+    </Menu>
+  );
+
+  return (
+    <Layout.Header className={headerStyle}>
+      <Row>
+        <Col span={8}>
+          <Row>
+            <Col span={4}>
+              <ButtonLink path="/">Home</ButtonLink>
+            </Col>
+          </Row>
+        </Col>
+        <Col span={16}>
+          <Row type="flex" justify="end">
+            <Col span={3}>
+              <Dropdown overlay={menu} placement="bottomRight">
+                <Avatar icon="user" alt="user" />
+              </Dropdown>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Layout.Header>
   );
 };

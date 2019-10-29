@@ -1,39 +1,17 @@
+@import "../../../assets/themes.less";
+
 .header {
-  width: 100%;
-  padding: 11px 110px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #1C1D21;
-  position: fixed;
-  top: 0;
-  z-index: 1;
-  box-sizing: border-box;
-  height: 60px;
+  text-align: center;
+  font-size: 1.05rem;
+  background-color: #fff;
+  box-shadow: 0 2px 8px #f0f1f2;
 
-  .left {
-    display: flex;
-    align-items: center;
-
-    a {
-      margin-right: 42px;
-      color: #FFF;
-      font-size: 18px;
-    }
+  &.dark {
+    background-color: @dark;
+    box-shadow: none;
   }
 
-  .right {
-    display: flex;
-    align-items: center;
-
-    a {
-      margin-left: 42px;
-      color: #FFF;  
-      font-size: 18px;
-    }
+  .headerContent {
+    float: right;
   }
-}
-
-.header:after {
-  margin-top: 60px;
 }

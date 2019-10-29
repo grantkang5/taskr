@@ -3,8 +3,10 @@ processor: ../processor/UserProcessor
 items:
   user1:
     email: 'dev@email.com'
+    username: 'dev'
     password: 'password'
   user{2..10}:
     email: '{{internet.email}}'
+    username: '{{name.firstName}}'
     password: '{{internet.password}}'
  

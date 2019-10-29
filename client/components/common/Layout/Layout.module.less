@@ -7,12 +7,20 @@ body {
   width: 100vw;
   box-sizing: border-box;
   margin: 0;
+  background-color: #FFF;
+
+  &.dark {
+    background-color: #1C1D21;
+  }
 }
 
-.dark {
-  background-color: #1C1D21;
-}
+.layoutWithSider {
+  height: 100%;
+  width: 100%;
 
-.headerSpace {
-  margin-top: 60px;
+  .sider {
+    height: 100%;
+    width: 100%;
+    padding: 40px 25px 40px 0;
+  }
 }

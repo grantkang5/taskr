@@ -13,19 +13,21 @@ export class User extends BaseEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   password: string;
 
   @Field()
-  @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  @Column()
+  username: string;
 
   @Field()
-  @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  @Column({ nullable: true })
+  avatar: string;
 
-  // Associations
-  @Field(() => Project)
-  @ManyToMany(() => Project, project => project.users)
-  projects: Promise<Project>;
-  }
+  @Column("int", { default: 0 })
+  tokenVersion: number;
+  // TODO: make enum. 'website' | 'google'
+  @Field()
+  @Column({ default: 'website' })
+  auth: string;
+}
