@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/Cellar/node/12.11.1/bin/node /usr/local/Cellar/yarn/1.19.1/libexec/bin/yarn.js add -D @types/cloudinary
+  /usr/local/Cellar/node/12.11.1/bin/node /usr/local/Cellar/yarn/1.19.1/libexec/bin/yarn.js add -D @types/nodemailer-express-handlebars
 
 PATH: 
   /Users/grantkang/.rvm/gems/ruby-2.4.1/bin:/Users/grantkang/.rvm/gems/ruby-2.4.1@global/bin:/Users/grantkang/.rvm/rubies/ruby-2.4.1/bin:/Library/Frameworks/Python.framework/Versions/3.7/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/grantkang/Library/Android/sdk/emulator:/Users/grantkang/Library/Android/sdk/tools:/Users/grantkang/Library/Android/sdk/tools/bin:/Users/grantkang/Library/Android/sdk/platform-tools:/opt/yarn-[1.3.2]/bin:/Users/grantkang/Library/Android/sdk/emulator:/Users/grantkang/Library/Android/sdk/tools:/Users/grantkang/Library/Android/sdk/tools/bin:/Users/grantkang/Library/Android/sdk/platform-tools:/Users/grantkang/.rvm/bin
@@ -14,7 +14,7 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@types%2fcloudinary: Not found
+  Error: https://registry.yarnpkg.com/@types%2fnodemailer-express-handlebars: Not found
       at Request.params.callback [as _callback] (/usr/local/Cellar/yarn/1.19.1/libexec/lib/cli.js:66926:18)
       at Request.self.callback (/usr/local/Cellar/yarn/1.19.1/libexec/lib/cli.js:140564:22)
       at Request.emit (events.js:210:5)
@@ -45,6 +45,7 @@ npm manifest:
       "@types/node": "^12.7.5",
       "@types/nodemailer": "^6.2.1",
       "@types/pg-connection-string": "^2.0.0",
+      "@types/uuid": "^3.4.5",
       "apollo-server-testing": "^2.9.6",
       "babel-core": "^6.26.3",
       "babel-jest": "^24.9.0",
@@ -75,12 +76,14 @@ npm manifest:
       "ioredis": "^4.14.1",
       "jsonwebtoken": "^8.5.1",
       "nodemailer": "^6.3.1",
+      "nodemailer-express-handlebars": "^3.1.0",
       "pg": "^7.12.1",
       "pg-connection-string": "^2.1.0",
       "reflect-metadata": "^0.1.10",
       "ts-node": "8.4.1",
       "type-graphql": "^0.17.5",
-      "typeorm": "^0.2.19"
+      "typeorm": "^0.2.19",
+      "uuid": "^3.3.3"
     },
     "scripts": {
       "dev": "concurrently \"yarn db:start\" \"nodemon --exec ts-node src/index.ts\"",
@@ -771,6 +774,13 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-1.0.1.tgz#0a851d3bd96498fa25c33ab7278ed3bd65f06c3e"
     integrity sha512-l42BggppR6zLmpfU6fq9HEa2oGPEI8yrSPL3GITjfRInppYFahObbIQOQK3UGxEnyQpltZLaPe75046NOZQikw==
   
+  "@types/uuid@^3.4.5":
+    version "3.4.5"
+    resolved "https://registry.yarnpkg.com/@types/uuid/-/uuid-3.4.5.tgz#d4dc10785b497a1474eae0ba7f0cb09c0ddfd6eb"
+    integrity sha512-MNL15wC3EKyw1VLF+RoVO4hJJdk9t/Hlv3rt1OL65Qvuadm4BYo6g9ZJQqoq7X8NBFSsQXgAujWciovh2lpVjA==
+    dependencies:
+      "@types/node" "*"
+  
   "@types/validator@10.11.3":
     version "10.11.3"
     resolved "https://registry.yarnpkg.com/@types/validator/-/validator-10.11.3.tgz#945799bef24a953c5bc02011ca8ad79331a3ef25"
@@ -1156,6 +1166,11 @@ Lockfile:
     version "2.0.1"
     resolved "https://registry.yarnpkg.com/arrify/-/arrify-2.0.1.tgz#c9655e9331e0abcd588d2a7cad7e9956f66701fa"
     integrity sha512-3duEwti880xqi4eAMN8AyR4a0ByT90zoYdLlevfrvU43vb0YZwZVfxOgxWrLXXXpyugL0hNZc9G6BiB5B3nUug==
+  
+  asap@~2.0.6:
+    version "2.0.6"
+    resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.6.tgz#e50347611d7e690943208bbdafebcbc2fb866d46"
+    integrity sha1-5QNHYR1+aQlDIIu9r+vLwvuGbUY=
   
   asn1@~0.2.3:
     version "0.2.4"
@@ -2776,6 +2791,17 @@ Lockfile:
       jest-matcher-utils "^24.9.0"
       jest-message-util "^24.9.0"
       jest-regex-util "^24.9.0"
+  
+  express-handlebars@^3.0.0:
+    version "3.1.0"
+    resolved "https://registry.yarnpkg.com/express-handlebars/-/express-handlebars-3.1.0.tgz#c177ee9a81f6a2abada6b550b77b3e30c6bc0796"
+    integrity sha512-7QlaXnSREMmN5P2o4gmpUZDfJlLtfBka9d6r7/ccXaU7rPp76odw9YYtwZYdIiha2JqwiaG6o2Wu6NZJQ0u7Fg==
+    dependencies:
+      glob "^7.1.3"
+      graceful-fs "^4.1.2"
+      handlebars "^4.1.2"
+      object.assign "^4.1.0"
+      promise "^8.0.2"
   
   express@^4.17.1:
     version "4.17.1"
@@ -4835,6 +4861,13 @@ Lockfile:
       semver "^5.3.0"
       tar "^4"
   
+  nodemailer-express-handlebars@^3.1.0:
+    version "3.1.0"
+    resolved "https://registry.yarnpkg.com/nodemailer-express-handlebars/-/nodemailer-express-handlebars-3.1.0.tgz#e80da7528cfd30a8dd49c002642854edcab72c68"
+    integrity sha512-JLt+lAlo/D3TfpVnDY+imLHAAonX5L9FEHaczyiPxWCH259bsfxEjPSWl/rWgnvcoFT8uC/hwHi/I0ScFmHlIQ==
+    dependencies:
+      express-handlebars "^3.0.0"
+  
   nodemailer@^6.3.1:
     version "6.3.1"
     resolved "https://registry.yarnpkg.com/nodemailer/-/nodemailer-6.3.1.tgz#2784beebac6b9f014c424c54dbdcc5c4d1221346"
@@ -4957,7 +4990,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/object-inspect/-/object-inspect-1.6.0.tgz#c70b6cbf72f274aab4c34c0c82f5167bf82cf15b"
     integrity sha512-GJzfBZ6DgDAmnuaM3104jR4s1Myxr3Y3zfIyN4z3UdqN69oSRacNK8UhnobDdC+7J2AHCjGwxQubNJfE70SXXQ==
   
-  object-keys@^1.0.12, object-keys@^1.1.1:
+  object-keys@^1.0.11, object-keys@^1.0.12, object-keys@^1.1.1:
     version "1.1.1"
     resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.1.1.tgz#1c47f272df277f3b1daf061677d9c82e2322c60e"
     integrity sha512-NuAESUOUMrlIXOfHKzD6bpPu3tYt3xvjNdRIQ+FeT0lNb4K8WR70CaDxhuNguS2XG+GjkyMwOzsN5ZktImfhLA==
@@ -4973,6 +5006,16 @@ Lockfile:
     integrity sha1-95xEk68MU3e1n+OdOV5BBC3QRbs=
     dependencies:
       isobject "^3.0.0"
+  
+  object.assign@^4.1.0:
+    version "4.1.0"
+    resolved "https://registry.yarnpkg.com/object.assign/-/object.assign-4.1.0.tgz#968bf1100d7956bb3ca086f006f846b3bc4008da"
+    integrity sha512-exHJeq6kBKj58mqGyTQ9DFvrZC/eR6OwxzoM9YRoGBqrXYonaFyGiFMuc9VZrXf7DarreEwMpurG3dd+CNyW5w==
+    dependencies:
+      define-properties "^1.1.2"
+      function-bind "^1.1.1"
+      has-symbols "^1.0.0"
+      object-keys "^1.0.11"
   
   object.getownpropertydescriptors@^2.0.3:
     version "2.0.3"
@@ -5332,6 +5375,13 @@ Lockfile:
     version "2.0.1"
     resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
     integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
+  
+  promise@^8.0.2:
+    version "8.0.3"
+    resolved "https://registry.yarnpkg.com/promise/-/promise-8.0.3.tgz#f592e099c6cddc000d538ee7283bb190452b0bf6"
+    integrity sha512-HeRDUL1RJiLhyA0/grn+PTShlBAcLuh/1BJGtrvjwbvRDCTLLMEz9rOGCV+R3vHY4MixIuoMEd9Yq/XvsTPcjw==
+    dependencies:
+      asap "~2.0.6"
   
   prompts@^2.0.1:
     version "2.2.1"
@@ -6628,7 +6678,7 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/utils-merge/-/utils-merge-1.0.1.tgz#9f95710f50a267947b2ccc124741c1028427e713"
     integrity sha1-n5VxD1CiZ5R7LMwSR0HBAoQn5xM=
   
-  uuid@^3.1.0, uuid@^3.3.2:
+  uuid@^3.1.0, uuid@^3.3.2, uuid@^3.3.3:
     version "3.3.3"
     resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.3.tgz#4568f0216e78760ee1dbf3a4d2cf53e224112866"
     integrity sha512-pW0No1RGHgzlpHJO1nsVrHKpOEIxkGg1xB+v0ZmdNH5OAeAwzAVrCnI2/6Mtx+Uys6iaylxa+D3g4j63IKKjSQ==
