@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  // ManyToMany,
+  ManyToMany,
   // OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
@@ -37,20 +37,20 @@ export class Project extends BaseEntity {
   @UpdateDateColumn()
   updated_at: Date;
 
+  @Field(() => User)
+  @ManyToOne(() => User, user => user.ownedProjects, {
+    onDelete: 'CASCADE'
+  })
+  owner: User;
+
   // TODO: maybe need eager
-  // @Field(() => [User])
-  // @ManyToMany(() => User, user => user.projects)
-  // members: User[];
+  @Field(() => [User])
+  @ManyToMany(() => User, user => user.projects)
+  members: User[];
 
   // @OneToMany(() => List, list => list.project)
   // lists: List[];
 
   // @OneToMany(() => Label, label => label.project)
   // labels: Label[];
-
-  @Field(() => User)
-  @ManyToOne(() => User, user => user.ownedProjects, {
-    onDelete: 'CASCADE'
-  })
-  owner: User;
 }
