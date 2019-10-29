@@ -1,5 +1,5 @@
 import React from 'react';
-import Layout from '../../components/common/Layout';
+import Layout from '../../components/layouts/Layout';
 
 /**
  * Route: '/user' ie. '/grantkang'

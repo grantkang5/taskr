@@ -8,7 +8,7 @@ import {
 } from "../../../generated/graphql";
 import EmailVerificationSuccessPage from "../../../pages/email-verification/success";
 import { GraphQLError } from "graphql";
-import ErrorLayout from "../../../components/common/ErrorLayout";
+import ErrorLayout from "../../../components/layouts/ErrorLayout";
 
 describe("Pages", () => {
   describe("EmailVerificationSuccessPage", () => {

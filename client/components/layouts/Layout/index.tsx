@@ -1,6 +1,6 @@
 import * as React from "react";
 import Head from "next/head";
-import { Header } from "../Header";
+import { Header } from "../../common/Header";
 import styles from "./Layout.module.less";
 import classNames from "classnames";
 import { Layout as AntdLayout, Row, Col } from "antd";

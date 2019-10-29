@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Layout from "../../components/common/Layout";
+import Layout from "../../components/layouts/Layout";
 import { SubText } from "../../components/common/Text";
 import { Button, message, PageHeader, Empty } from "antd";
 import { useRouter } from "next/router";

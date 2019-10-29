@@ -1,18 +1,16 @@
-import React, { useState, useRef, useEffect } from "react";
-import { Layout as AntdLayout, Button, Icon, Input, message } from "antd";
+import React, { useState } from "react";
+import { message } from "antd";
 import { useRouter } from "next/router";
-import ChangePassword from "../../components/common/SettingsLayout/ChangePassword";
-import SettingsLayout from "../../components/common/SettingsLayout";
-const { Sider } = AntdLayout;
-
-import styles from "./Settings.module.less";
+import ChangePassword from "../../components/layouts/SettingsLayout/ChangePassword";
+import SettingsLayout from "../../components/layouts/SettingsLayout";
 import { SubText, LinkText } from "../../components/common/Text";
 import {
   useMeQuery,
   useUpdateUsernameMutation,
-  MeDocument
 } from "../../generated/graphql";
 import { EditButton } from "../../components/common/Input";
+
+import styles from "./Settings.module.less";
 
 const SettingsPage: React.FC = () => {
   const { data } = useMeQuery();
@@ -36,7 +34,7 @@ const SettingsPage: React.FC = () => {
           ...values,
           username: response.data.updateUsername.username
         });
-        message.success(`Your password has been changed successfully`);
+        message.success(`Your username has been changed successfully`);
       }
     } catch (err) {
       err.graphQLErrors
