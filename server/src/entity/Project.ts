@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { User } from './User';
 
@@ -21,9 +21,9 @@ export class Project extends BaseEntity {
     @UpdateDateColumn({name: 'updated_at'})
     updatedAt: Date;
 
-    // Assoications
-
+    // Associations
+    @Field(() =>  User)
     @ManyToMany(() => User, user => user.projects)
     @JoinTable()
-    users: User[];
+    users: Promise<User>;
 }
