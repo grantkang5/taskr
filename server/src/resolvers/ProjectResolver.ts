@@ -3,7 +3,9 @@ import { isAuth } from '../services/auth/isAuth';
 import { Project } from '../entity/Project';
 import { MyContext } from '../services/context';
 import { User } from '../entity/User';
+import { rateLimit } from '../services/rate-limit';
 import { createBaseResolver } from './BaseResolver';
+import { v4 } from 'uuid';
 
 const ProjectBaseResolver = createBaseResolver('Project', Project);
 
@@ -57,5 +59,23 @@ export class ProjectResolver extends ProjectBaseResolver {
       console.log(err);
       return err;
     }
+  }
+
+  @Mutation(() => String)
+  @UseMiddleware(isAuth, rateLimit(10))
+  async sendInvitationLink(
+      @Arg('id', () => Int) id: number,
+      @Arg('email') email: string,
+      @Ctx() { payload }: MyContext,
+  ) {
+      try {
+          const project = await Project.findOne({ where: { id } });
+          if (!project) throw new Error('Project does not exist');
+          const inviter = await User.findOne({ where: { id: payload!.userId } });
+          const user = await User.findOne( {email} );
+          if (!user) throw new Error('This user does not exist')
+
+          const invitationLink = v4();
+      }
   }
 }
