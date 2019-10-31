@@ -3,13 +3,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  ManyToMany,
-  JoinTable,
+  // ManyToMany,
+  // JoinTable,
   OneToMany,
   CreateDateColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { ObjectType, Field, Int } from 'type-graphql';
+import { ObjectType, Field, ID } from 'type-graphql';
 // import { Task } from './Task';
 // import { Message } from './Message';
 import { Project } from './Project';
@@ -17,7 +17,7 @@ import { Project } from './Project';
 @ObjectType()
 @Entity('users')
 export class User extends BaseEntity {
-  @Field(() => Int)
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -60,10 +60,10 @@ export class User extends BaseEntity {
   ownedProjects: Project[];
 
   // TODO: probably need eager
-  @Field(() => [Project])
-  @ManyToMany(() => Project, project => project.members)
-  @JoinTable()
-  projects: Project[];
+  // @Field(() => [Project])
+  // @ManyToMany(() => Project, project => project.members)
+  // @JoinTable()
+  // projects: Project[];
 
   // @ManyToMany(() => Task)
   // @JoinTable()

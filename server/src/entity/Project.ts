@@ -3,15 +3,15 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  ManyToMany,
-  // OneToMany,
+  // ManyToMany,
+  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { User } from './User';
-// import { List } from './List';
+import { List } from './List';
 // import { Label } from './Label';
 
 @ObjectType()
@@ -44,12 +44,16 @@ export class Project extends BaseEntity {
   owner: User;
 
   // TODO: maybe need eager
-  @Field(() => [User])
-  @ManyToMany(() => User, user => user.projects)
-  members: User[];
+  // @Field(() => [User])
+  // @ManyToMany(() => User, user => user.projects)
+  // members: User[];
 
-  // @OneToMany(() => List, list => list.project)
-  // lists: List[];
+  @Field(() => List)
+  @OneToMany(() => List, list => list.project, {
+    cascade: true,
+    eager: true
+  })
+  lists: List[];
 
   // @OneToMany(() => Label, label => label.project)
   // labels: Label[];
