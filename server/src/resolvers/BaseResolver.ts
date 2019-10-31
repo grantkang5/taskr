@@ -17,7 +17,7 @@ export function createBaseResolver<T extends typeof BaseEntity>(
   abstract class BaseResolver {
     protected items: T[] = [];
 
-    @Query(() => [Entity], { name: `getAll${suffix}` })
+    @Query(() => [Entity], { name: `getAll${suffix}s` })
     @UseMiddleware(isAuth)
     async getAll() {
       try {
@@ -34,6 +34,7 @@ export function createBaseResolver<T extends typeof BaseEntity>(
     async get(@Arg("id", () => Int) id: number) {
       try {
         const entity = await Entity.findOne({ where: { id } });
+        if (!entity) throw new Error(`This ${suffix} doesn't exist`)
         return entity;
       } catch (err) {
         console.log(err);

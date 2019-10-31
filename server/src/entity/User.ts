@@ -1,10 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity } from 'typeorm';
-import { ObjectType, Field, Int } from 'type-graphql';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  BaseEntity,
+  ManyToMany,
+  JoinTable
+} from "typeorm";
+import { ObjectType, Field, ID } from "type-graphql";
+import { Team } from "./Team";
 
 @ObjectType()
-@Entity('users')
+@Entity("users")
 export class User extends BaseEntity {
-  @Field(() => Int)
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -27,6 +35,11 @@ export class User extends BaseEntity {
   tokenVersion: number;
   // TODO: make enum. 'website' | 'google'
   @Field()
-  @Column({ default: 'website' })
+  @Column({ default: "website" })
   auth: string;
+
+  @Field(() => [Team])
+  @ManyToMany(() => Team, team => team.members)
+  @JoinTable()
+  teams: Team[];
 }

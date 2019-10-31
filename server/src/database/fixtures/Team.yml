@@ -1,0 +1,10 @@
+entity: Team
+items:
+  team1:
+    name: '{{company.companyName}}'
+    members:
+      - '@user1'
+      - '@user2'
+      - '@user3'
+      - '@user4'
+ 

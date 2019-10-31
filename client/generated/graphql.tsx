@@ -9,7 +9,10 @@ export type Scalars = {
   Boolean: boolean,
   Int: number,
   Float: number,
+  /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
+  DateTime: any,
 };
+
 
 export type ImageResponse = {
    __typename?: 'ImageResponse',
@@ -32,6 +35,8 @@ export type LoginResponse = {
 
 export type Mutation = {
    __typename?: 'Mutation',
+  deleteTeam: Team,
+  deleteUser: User,
   sendVerificationLink: Scalars['String'],
   resendVerificationLink: Scalars['String'],
   register: LoginResponse,
@@ -45,6 +50,21 @@ export type Mutation = {
   forgotPassword: Scalars['Boolean'],
   changePassword: Scalars['Boolean'],
   revokeRefreshToken: Scalars['Boolean'],
+  createTeam: Team,
+  sendTeamInviteLink: Scalars['String'],
+  acceptTeamInviteLink: Scalars['Boolean'],
+  deleteTeamMember: Scalars['Boolean'],
+  updateTeam: Team,
+};
+
+
+export type MutationDeleteTeamArgs = {
+  id: Scalars['Int']
+};
+
+
+export type MutationDeleteUserArgs = {
+  id: Scalars['Int']
 };
 
 
@@ -113,10 +133,63 @@ export type MutationRevokeRefreshTokenArgs = {
   userId: Scalars['Int']
 };
 
+
+export type MutationCreateTeamArgs = {
+  name: Scalars['String']
+};
+
+
+export type MutationSendTeamInviteLinkArgs = {
+  email: Scalars['String'],
+  teamId: Scalars['Int']
+};
+
+
+export type MutationAcceptTeamInviteLinkArgs = {
+  teamInviteLink: Scalars['String'],
+  email: Scalars['String']
+};
+
+
+export type MutationDeleteTeamMemberArgs = {
+  userId: Scalars['Int'],
+  teamId: Scalars['Int']
+};
+
+
+export type MutationUpdateTeamArgs = {
+  name: Scalars['String'],
+  teamId: Scalars['Int']
+};
+
 export type Query = {
    __typename?: 'Query',
+  getAllTeams: Array<Team>,
+  getTeam: Team,
+  getAllUsers: Array<User>,
+  getUser: User,
   me: User,
   login_googleOAuth: Scalars['String'],
+  getUserTeams: Array<Team>,
+};
+
+
+export type QueryGetTeamArgs = {
+  id: Scalars['Int']
+};
+
+
+export type QueryGetUserArgs = {
+  id: Scalars['Int']
+};
+
+export type Team = {
+   __typename?: 'Team',
+  id: Scalars['Int'],
+  name: Scalars['String'],
+  created_at: Scalars['DateTime'],
+  updated_at: Scalars['DateTime'],
+  members: Array<User>,
 };
 
 export type User = {
@@ -126,7 +199,45 @@ export type User = {
   username: Scalars['String'],
   avatar: Scalars['String'],
   auth: Scalars['String'],
+  teams: Array<Team>,
 };
+
+export type CreateTeamMutationVariables = {
+  name: Scalars['String']
+};
+
+
+export type CreateTeamMutation = (
+  { __typename?: 'Mutation' }
+  & { createTeam: (
+    { __typename?: 'Team' }
+    & Pick<Team, 'id' | 'name'>
+  ) }
+);
+
+export type GetTeamQueryVariables = {
+  id: Scalars['Int']
+};
+
+
+export type GetTeamQuery = (
+  { __typename?: 'Query' }
+  & { getTeam: (
+    { __typename?: 'Team' }
+    & Pick<Team, 'id' | 'name'>
+  ) }
+);
+
+export type GetUserTeamsQueryVariables = {};
+
+
+export type GetUserTeamsQuery = (
+  { __typename?: 'Query' }
+  & { getUserTeams: Array<(
+    { __typename?: 'Team' }
+    & Pick<Team, 'id' | 'name'>
+  )> }
+);
 
 export type Auth_GoogleOAuthMutationVariables = {
   code: Scalars['String']
@@ -264,6 +375,58 @@ export type UpdateUsernameMutation = (
 );
 
 
+export const CreateTeamDocument = gql`
+    mutation CreateTeam($name: String!) {
+  createTeam(name: $name) {
+    id
+    name
+  }
+}
+    `;
+export type CreateTeamMutationFn = ApolloReactCommon.MutationFunction<CreateTeamMutation, CreateTeamMutationVariables>;
+
+    export function useCreateTeamMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateTeamMutation, CreateTeamMutationVariables>) {
+      return ApolloReactHooks.useMutation<CreateTeamMutation, CreateTeamMutationVariables>(CreateTeamDocument, baseOptions);
+    }
+export type CreateTeamMutationHookResult = ReturnType<typeof useCreateTeamMutation>;
+export type CreateTeamMutationResult = ApolloReactCommon.MutationResult<CreateTeamMutation>;
+export type CreateTeamMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateTeamMutation, CreateTeamMutationVariables>;
+export const GetTeamDocument = gql`
+    query GetTeam($id: Int!) {
+  getTeam(id: $id) {
+    id
+    name
+  }
+}
+    `;
+
+    export function useGetTeamQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetTeamQuery, GetTeamQueryVariables>) {
+      return ApolloReactHooks.useQuery<GetTeamQuery, GetTeamQueryVariables>(GetTeamDocument, baseOptions);
+    }
+      export function useGetTeamLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetTeamQuery, GetTeamQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<GetTeamQuery, GetTeamQueryVariables>(GetTeamDocument, baseOptions);
+      }
+      
+export type GetTeamQueryHookResult = ReturnType<typeof useGetTeamQuery>;
+export type GetTeamQueryResult = ApolloReactCommon.QueryResult<GetTeamQuery, GetTeamQueryVariables>;
+export const GetUserTeamsDocument = gql`
+    query GetUserTeams {
+  getUserTeams {
+    id
+    name
+  }
+}
+    `;
+
+    export function useGetUserTeamsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserTeamsQuery, GetUserTeamsQueryVariables>) {
+      return ApolloReactHooks.useQuery<GetUserTeamsQuery, GetUserTeamsQueryVariables>(GetUserTeamsDocument, baseOptions);
+    }
+      export function useGetUserTeamsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserTeamsQuery, GetUserTeamsQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<GetUserTeamsQuery, GetUserTeamsQueryVariables>(GetUserTeamsDocument, baseOptions);
+      }
+      
+export type GetUserTeamsQueryHookResult = ReturnType<typeof useGetUserTeamsQuery>;
+export type GetUserTeamsQueryResult = ApolloReactCommon.QueryResult<GetUserTeamsQuery, GetUserTeamsQueryVariables>;
 export const Auth_GoogleOAuthDocument = gql`
     mutation Auth_GoogleOAuth($code: String!) {
   auth_googleOAuth(code: $code) {
