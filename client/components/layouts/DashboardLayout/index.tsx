@@ -1,17 +1,10 @@
-import React from "react";
-import Layout from "../components/layouts/Layout";
+import { useModal } from "../../modals";
+import { useGetUserTeamsQuery } from "../../../generated/graphql";
 import { Menu, Icon, Skeleton } from "antd";
+import { MenuItemIcon } from "../../common/Menu";
+import Layout from "../Layout";
 
-import "./App.module.less";
-import { MenuItemIcon } from "../components/common/Menu";
-import { useModal } from "../components/modals";
-import { useGetUserTeamsQuery } from "../generated/graphql";
-/**
- * Route: '/'
- * Api: Query currentUser's projects / Activity / Cards
- */
-
-const Dashboard = () => {
+const DashboardLayout: React.FC = ({ children }) => {
   const { showModal } = useModal();
   const { data, loading } = useGetUserTeamsQuery();
 
@@ -73,9 +66,9 @@ const Dashboard = () => {
         </>
       }
     >
-      <div />
+      {children}
     </Layout>
   );
 };
 
-export default Dashboard;
+export default DashboardLayout;

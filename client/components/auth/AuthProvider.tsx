@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useMeQuery } from "../generated/graphql";
+import { useMeQuery } from "../../generated/graphql";
 import { useRouter } from "next/router";
 
 interface Props {
