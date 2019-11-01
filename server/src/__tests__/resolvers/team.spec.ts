@@ -21,12 +21,12 @@ describe("Team Resolver", () => {
     name: faker.random.word()
   };
 
-  describe("GetTeam query", () => {
-    it("should retrieve a team from the db using teamId", async () => {
+  describe("GetUserTeam query", () => {
+    it("should retrieve a team from the user using teamId", async () => {
       const res = await query({
         query: gql`
-          query GetTeam($id: Int!) {
-            getTeam(id: $id) {
+          query GetUserTeam($id: ID!) {
+            getUserTeam(id: $id) {
               id
               name
             }
@@ -42,12 +42,12 @@ describe("Team Resolver", () => {
     });
   });
 
-  describe("GetAllTeams query", () => {
-    it("should retrieve all teams from the db", async () => {
+  describe("GetUserTeams query", () => {
+    it("should retrieve all teams from the user", async () => {
       const res = await query({
         query: gql`
-          {
-            getAllTeams {
+          query GetUserTeams {
+            getUserTeams {
               id
               name
             }
@@ -64,7 +64,7 @@ describe("Team Resolver", () => {
     it("should remove a team from the db using teamId", async () => {
       const res = await mutate({
         mutation: gql`
-          mutation DeleteTeam($id: Int!) {
+          mutation DeleteTeam($id: ID!) {
             deleteTeam(id: $id) {
               id
               name
@@ -94,8 +94,7 @@ describe("Team Resolver", () => {
           name: mockTeam.name
         }
       });
-      
-      
+
       const team = await Team.findOne({ where: { name: mockTeam.name } });
 
       expect(res.data).toBeDefined();
