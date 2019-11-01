@@ -73,7 +73,6 @@ const TeamInviteSuccessPage: React.FC = () => {
   };
 
   if (!loading && !data) {
-    console.log(router);
     return (
       <Layout hide={1}>
         <HeaderText>
