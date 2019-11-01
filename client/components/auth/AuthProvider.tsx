@@ -11,12 +11,14 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
   const { data, loading } = useMeQuery();
 
   useEffect(() => {
-    if (data && data.me && whitelist.includes(router.route)) {
-      router.push('/error', '/')
+    if (data && whiteList.includes(router.route)) {
+      router.push("/error", "/");
     }
-  }, [data])
+  }, [data]);
 
-  const whitelist = [
+  const anonList = ["/invite/team/success"];
+
+  const whiteList = [
     "/login",
     "/register",
     "/home",
@@ -27,14 +29,17 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     "/email-verification/success"
   ];
 
-  
   if (loading) {
     // TODO: add load screen
     return <></>;
   }
 
-  // not authenticated, redirect unless it's in whitelist
-  if (!whitelist.includes(router.route) && !data) {
+  // not authenticated, redirect unless it's in whiteList
+  if (
+    !data &&
+    !whiteList.includes(router.route) &&
+    !anonList.includes(router.route)
+  ) {
     router.push("/login");
     return <></>;
   }
