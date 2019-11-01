@@ -60,7 +60,7 @@ export const Header: React.FC<Props> = ({ dark }) => {
       </Menu.Item>
       <Menu.Item key="logout">
         <Icon type="logout" />
-        <span>Log out</span>>
+        <span>Log out</span>
       </Menu.Item>
     </Menu>
   );

@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import styles from "./TeamInvite.module.less";
 import Layout from "../../../components/layouts/Layout";
 import {
   useMeQuery,
@@ -75,24 +76,22 @@ const TeamInviteSuccessPage: React.FC = () => {
   if (!loading && !data) {
     return (
       <Layout hide={1}>
-        <HeaderText>
-          Looks like you're not logged into your Taskr account.
-        </HeaderText>
-        <SubText>
-          You must be logged into your Taskr account to accept the invitation.
-        </SubText>
+        <div className={styles.container}>
+          <HeaderText>
+            Looks like you're not logged into your Taskr account.
+          </HeaderText>
+          <SubText>
+            You must be logged into your Taskr account to accept the invitation.
+          </SubText>
 
-        <Row>
-          <Col span={8}>
-            <Button type="primary" onClick={handleSignup}>
+          <div className={styles.buttonContainer}>
+            <Button type="primary" onClick={handleSignup} size="large">
               Sign up
             </Button>
-          </Col>
 
-          <Col span={8}>
-            <Button onClick={handleLogin}>Log in</Button>
-          </Col>
-        </Row>
+            <Button onClick={handleLogin} size="large">Log in</Button>
+          </div>
+        </div>
       </Layout>
     );
   }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { Modal, Form, Input, Icon, message } from "antd";
 import { useModal } from ".";
 import { FormComponentProps } from "antd/lib/form";
@@ -9,6 +9,22 @@ const CreateTeamModal: React.FC<FormComponentProps> = ({ form }) => {
   const { hideModal } = useModal();
   const [createTeam, { loading }] = useCreateTeamMutation();
   const unmount = () => hideModal();
+
+  const handleEnterPress = useCallback(e => {
+    const { keyCode } = e;
+    if (keyCode === 13 && form.isFieldTouched('name')) {
+      handleSubmit()
+    }
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleEnterPress)
+
+    return () => {
+      window.removeEventListener('keydown', handleEnterPress)
+    }
+  }, [handleEnterPress])
+ 
 
   const handleSubmit = () => {
     const { validateFields } = form;
