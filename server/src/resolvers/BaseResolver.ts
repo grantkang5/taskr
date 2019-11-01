@@ -3,8 +3,8 @@ import {
   Query,
   UseMiddleware,
   Arg,
-  Int,
-  Mutation
+  Mutation,
+  ID
 } from "type-graphql";
 import { BaseEntity } from "typeorm";
 import { isAuth } from "../services/auth/isAuth";
@@ -31,7 +31,7 @@ export function createBaseResolver<T extends typeof BaseEntity>(
 
     @Query(() => Entity, { name: `get${suffix}` })
     @UseMiddleware(isAuth)
-    async get(@Arg("id", () => Int) id: number) {
+    async get(@Arg("id", () => ID) id: number) {
       try {
         const entity = await Entity.findOne({ where: { id } });
         if (!entity) throw new Error(`This ${suffix} doesn't exist`)
@@ -44,7 +44,7 @@ export function createBaseResolver<T extends typeof BaseEntity>(
 
     @Mutation(() => Entity, { name: `delete${suffix}` })
     @UseMiddleware(isAuth)
-    async delete(@Arg("id", () => Int) id: number) {
+    async delete(@Arg("id", () => ID) id: number) {
       try {
         const entity = await Entity.findOne({ where: { id } });
         if (!entity) {

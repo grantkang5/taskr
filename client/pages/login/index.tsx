@@ -31,7 +31,15 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
 
           if (response && response.data) {
             setAccessToken(response.data.login.accessToken);
-            router.push("/error", "/");
+            if (router.query.returnUrl) {
+              const { returnUrl, ...queryParams } = router.query
+              router.push({
+                pathname: returnUrl as string,
+                query: { ...queryParams }
+              })
+            } else {
+              router.push('/error', '/')
+            }
           }
         } catch (err) {
           showForgotPassword(true);

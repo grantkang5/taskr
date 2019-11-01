@@ -4,6 +4,7 @@ import { useModal } from ".";
 import { FormComponentProps } from "antd/lib/form";
 import { useCreateTeamMutation, GetUserTeamsDocument } from "../../generated/graphql";
 
+
 const CreateTeamModal: React.FC<FormComponentProps> = ({ form }) => {
   const { hideModal } = useModal();
   const [createTeam, { loading }] = useCreateTeamMutation();

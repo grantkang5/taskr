@@ -7,8 +7,8 @@ import {
   UseMiddleware,
   Ctx,
   Mutation,
-  Int,
-  Query
+  Query,
+  ID
 } from "type-graphql";
 import { isAuth } from "../services/auth/isAuth";
 import { v4 } from "uuid";
@@ -16,13 +16,37 @@ import { MyContext } from "../services/context";
 import { User } from "../entity/User";
 import { redis } from "../services/redis";
 import { transporter } from "../services/emails/transporter";
-import { teamInviteEmail } from "../services/emails/teamInvite";
+import { teamInviteEmail } from "../services/emails/teamInviteEmail";
 import { rateLimit } from "../services/rate-limit";
 
 const TeamBaseResolver = createBaseResolver("Team", Team);
 
 @Resolver()
 export class TeamResolver extends TeamBaseResolver {
+  @Query(() => Team)
+  @UseMiddleware(isAuth)
+  async getUserTeam(
+    @Arg("id", () => ID) id: number,
+    @Ctx() { payload }: MyContext
+  ) {
+    try {
+      const team = await Team.createQueryBuilder("team")
+        .innerJoinAndSelect("team.members", "user", "user.id = :userId", {
+          userId: payload!.userId
+        })
+        .where("team.id = :teamId", { teamId: id })
+        .getOne();
+      if (!team)
+        throw new Error(
+          `This team doesn't exist or you don't have access to this team`
+        );
+      return team;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+
   @Query(() => [Team])
   @UseMiddleware(isAuth)
   async getUserTeams(@Ctx() { payload }: MyContext) {
@@ -58,7 +82,7 @@ export class TeamResolver extends TeamBaseResolver {
   @Mutation(() => String)
   @UseMiddleware(isAuth, rateLimit(30))
   async sendTeamInviteLink(
-    @Arg("teamId", () => Int) teamId: number,
+    @Arg("teamId", () => ID) teamId: number,
     @Arg("email") email: string,
     @Ctx() { payload }: MyContext
   ) {
@@ -67,18 +91,18 @@ export class TeamResolver extends TeamBaseResolver {
       const team = await Team.findOne({ where: { id: teamId } });
       if (!team) throw new Error(`This team doesn't exist`);
 
-      const teamInviteLink = v4();
-      await redis.hmset(`team-invite-${email}`, { id: teamId, teamInviteLink });
+      const link = v4();
+      await redis.hmset(`team-invite-${email}`, { id: teamId, link });
       await redis.expire(`team-invite-${email}`, 3600);
       transporter.sendMail(
         teamInviteEmail({
           sender: me!.username,
           email,
           teamName: team.name,
-          teamInviteLink
+          link
         })
       );
-      return teamInviteLink;
+      return link;
     } catch (err) {
       console.log(err);
       return err;
@@ -86,19 +110,21 @@ export class TeamResolver extends TeamBaseResolver {
   }
 
   @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
   async acceptTeamInviteLink(
     @Arg("email") email: string,
-    @Arg("teamInviteLink") teamInviteLink: string
+    @Arg("teamInviteLink") teamInviteLink: string,
+    @Ctx() { payload }: MyContext
   ) {
     try {
-      const { teamInviteLink: storedLink, teamId } = await redis.hgetall(
+      const { link: storedLink, id: teamId } = await redis.hgetall(
         `team-invite-${email}`
       );
       if (storedLink !== teamInviteLink) {
         throw new Error("This link has expired");
       }
 
-      const user = await User.findOne({ email });
+      const user = await User.findOne({ id: payload!.userId });
       if (!user) throw new Error(`This user doesn't exist`);
       const team = await Team.findOne({ where: { id: teamId } });
       if (!team) throw new Error(`This team doesn't exist`);
@@ -115,8 +141,8 @@ export class TeamResolver extends TeamBaseResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async deleteTeamMember(
-    @Arg("teamId", () => Int) teamId: number,
-    @Arg("userId", () => Int) userId: number
+    @Arg("teamId", () => ID) teamId: number,
+    @Arg("userId", () => ID) userId: number
   ) {
     try {
       const team = await Team.findOne({ where: { id: teamId } });
@@ -136,7 +162,7 @@ export class TeamResolver extends TeamBaseResolver {
   @Mutation(() => Team)
   @UseMiddleware(isAuth)
   async updateTeam(
-    @Arg("teamId", () => Int) teamId: number,
+    @Arg("teamId", () => ID) teamId: number,
     @Arg("name") name: string
   ) {
     try {
