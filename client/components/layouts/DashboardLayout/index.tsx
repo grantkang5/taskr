@@ -3,12 +3,18 @@ import { useGetUserTeamsQuery } from "../../../generated/graphql";
 import { Menu, Icon, Skeleton } from "antd";
 import { MenuItemIcon } from "../../common/Menu";
 import Layout from "../Layout";
+import { useRouter } from "next/router";
 
 const DashboardLayout: React.FC = ({ children }) => {
+  const router = useRouter();
   const { showModal } = useModal();
   const { data, loading } = useGetUserTeamsQuery();
-
   const showCreateTeamModal = () => showModal("createTeam");
+
+  const handleTeamClick = (teamId: string | number) => () => {
+    router.push({ pathname: `/team/${teamId}` })
+  }
+
   return (
     <Layout
       sider={
@@ -44,7 +50,9 @@ const DashboardLayout: React.FC = ({ children }) => {
                 <Skeleton active />
               ) : (
                 data.getUserTeams.map(team => (
-                  <Menu.Item key={team.id}>{team.name}</Menu.Item>
+                  <Menu.Item key={team.id} onClick={handleTeamClick(team.id)}>
+                    {team.name}
+                  </Menu.Item>
                 ))
               )}
             </Menu.SubMenu>

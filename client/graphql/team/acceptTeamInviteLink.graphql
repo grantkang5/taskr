@@ -1,0 +1,3 @@
+mutation AcceptTeamInviteLink($email: String!, $teamInviteLink: String!) {
+  acceptTeamInviteLink(email:$email, teamInviteLink:$teamInviteLink)
+}

@@ -54,11 +54,13 @@ export const Header: React.FC<Props> = ({ dark }) => {
       <Menu.Divider />
       <Menu.Item key="settings">
         <Icon type="setting" />
-        Settings
+        <span>
+          Settings  
+        </span>
       </Menu.Item>
       <Menu.Item key="logout">
         <Icon type="logout" />
-        Log Out
+        <span>Log out</span>>
       </Menu.Item>
     </Menu>
   );

@@ -59,12 +59,12 @@ export type Mutation = {
 
 
 export type MutationDeleteTeamArgs = {
-  id: Scalars['Int']
+  id: Scalars['ID']
 };
 
 
 export type MutationDeleteUserArgs = {
-  id: Scalars['Int']
+  id: Scalars['ID']
 };
 
 
@@ -80,6 +80,8 @@ export type MutationResendVerificationLinkArgs = {
 
 
 export type MutationRegisterArgs = {
+  password?: Maybe<Scalars['String']>,
+  registerKey?: Maybe<Scalars['String']>,
   verificationLink: Scalars['String'],
   email: Scalars['String']
 };
@@ -130,7 +132,7 @@ export type MutationChangePasswordArgs = {
 
 
 export type MutationRevokeRefreshTokenArgs = {
-  userId: Scalars['Int']
+  userId: Scalars['ID']
 };
 
 
@@ -141,7 +143,7 @@ export type MutationCreateTeamArgs = {
 
 export type MutationSendTeamInviteLinkArgs = {
   email: Scalars['String'],
-  teamId: Scalars['Int']
+  teamId: Scalars['ID']
 };
 
 
@@ -152,14 +154,14 @@ export type MutationAcceptTeamInviteLinkArgs = {
 
 
 export type MutationDeleteTeamMemberArgs = {
-  userId: Scalars['Int'],
-  teamId: Scalars['Int']
+  userId: Scalars['ID'],
+  teamId: Scalars['ID']
 };
 
 
 export type MutationUpdateTeamArgs = {
   name: Scalars['String'],
-  teamId: Scalars['Int']
+  teamId: Scalars['ID']
 };
 
 export type Query = {
@@ -170,22 +172,28 @@ export type Query = {
   getUser: User,
   me: User,
   login_googleOAuth: Scalars['String'],
+  getUserTeam: Team,
   getUserTeams: Array<Team>,
 };
 
 
 export type QueryGetTeamArgs = {
-  id: Scalars['Int']
+  id: Scalars['ID']
 };
 
 
 export type QueryGetUserArgs = {
-  id: Scalars['Int']
+  id: Scalars['ID']
+};
+
+
+export type QueryGetUserTeamArgs = {
+  id: Scalars['ID']
 };
 
 export type Team = {
    __typename?: 'Team',
-  id: Scalars['Int'],
+  id: Scalars['ID'],
   name: Scalars['String'],
   created_at: Scalars['DateTime'],
   updated_at: Scalars['DateTime'],
@@ -194,13 +202,24 @@ export type Team = {
 
 export type User = {
    __typename?: 'User',
-  id: Scalars['Int'],
+  id: Scalars['ID'],
   email: Scalars['String'],
   username: Scalars['String'],
   avatar: Scalars['String'],
   auth: Scalars['String'],
   teams: Array<Team>,
 };
+
+export type AcceptTeamInviteLinkMutationVariables = {
+  email: Scalars['String'],
+  teamInviteLink: Scalars['String']
+};
+
+
+export type AcceptTeamInviteLinkMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'acceptTeamInviteLink'>
+);
 
 export type CreateTeamMutationVariables = {
   name: Scalars['String']
@@ -215,14 +234,14 @@ export type CreateTeamMutation = (
   ) }
 );
 
-export type GetTeamQueryVariables = {
-  id: Scalars['Int']
+export type GetUserTeamQueryVariables = {
+  id: Scalars['ID']
 };
 
 
-export type GetTeamQuery = (
+export type GetUserTeamQuery = (
   { __typename?: 'Query' }
-  & { getTeam: (
+  & { getUserTeam: (
     { __typename?: 'Team' }
     & Pick<Team, 'id' | 'name'>
   ) }
@@ -237,6 +256,17 @@ export type GetUserTeamsQuery = (
     { __typename?: 'Team' }
     & Pick<Team, 'id' | 'name'>
   )> }
+);
+
+export type SendTeamInviteLinkMutationVariables = {
+  email: Scalars['String'],
+  teamId: Scalars['ID']
+};
+
+
+export type SendTeamInviteLinkMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'sendTeamInviteLink'>
 );
 
 export type Auth_GoogleOAuthMutationVariables = {
@@ -318,7 +348,9 @@ export type MeQuery = (
 
 export type RegisterMutationVariables = {
   email: Scalars['String'],
-  verificationLink: Scalars['String']
+  verificationLink: Scalars['String'],
+  registerKey?: Maybe<Scalars['String']>,
+  password?: Maybe<Scalars['String']>
 };
 
 
@@ -375,6 +407,19 @@ export type UpdateUsernameMutation = (
 );
 
 
+export const AcceptTeamInviteLinkDocument = gql`
+    mutation AcceptTeamInviteLink($email: String!, $teamInviteLink: String!) {
+  acceptTeamInviteLink(email: $email, teamInviteLink: $teamInviteLink)
+}
+    `;
+export type AcceptTeamInviteLinkMutationFn = ApolloReactCommon.MutationFunction<AcceptTeamInviteLinkMutation, AcceptTeamInviteLinkMutationVariables>;
+
+    export function useAcceptTeamInviteLinkMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AcceptTeamInviteLinkMutation, AcceptTeamInviteLinkMutationVariables>) {
+      return ApolloReactHooks.useMutation<AcceptTeamInviteLinkMutation, AcceptTeamInviteLinkMutationVariables>(AcceptTeamInviteLinkDocument, baseOptions);
+    }
+export type AcceptTeamInviteLinkMutationHookResult = ReturnType<typeof useAcceptTeamInviteLinkMutation>;
+export type AcceptTeamInviteLinkMutationResult = ApolloReactCommon.MutationResult<AcceptTeamInviteLinkMutation>;
+export type AcceptTeamInviteLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<AcceptTeamInviteLinkMutation, AcceptTeamInviteLinkMutationVariables>;
 export const CreateTeamDocument = gql`
     mutation CreateTeam($name: String!) {
   createTeam(name: $name) {
@@ -391,24 +436,24 @@ export type CreateTeamMutationFn = ApolloReactCommon.MutationFunction<CreateTeam
 export type CreateTeamMutationHookResult = ReturnType<typeof useCreateTeamMutation>;
 export type CreateTeamMutationResult = ApolloReactCommon.MutationResult<CreateTeamMutation>;
 export type CreateTeamMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateTeamMutation, CreateTeamMutationVariables>;
-export const GetTeamDocument = gql`
-    query GetTeam($id: Int!) {
-  getTeam(id: $id) {
+export const GetUserTeamDocument = gql`
+    query GetUserTeam($id: ID!) {
+  getUserTeam(id: $id) {
     id
     name
   }
 }
     `;
 
-    export function useGetTeamQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetTeamQuery, GetTeamQueryVariables>) {
-      return ApolloReactHooks.useQuery<GetTeamQuery, GetTeamQueryVariables>(GetTeamDocument, baseOptions);
+    export function useGetUserTeamQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserTeamQuery, GetUserTeamQueryVariables>) {
+      return ApolloReactHooks.useQuery<GetUserTeamQuery, GetUserTeamQueryVariables>(GetUserTeamDocument, baseOptions);
     }
-      export function useGetTeamLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetTeamQuery, GetTeamQueryVariables>) {
-        return ApolloReactHooks.useLazyQuery<GetTeamQuery, GetTeamQueryVariables>(GetTeamDocument, baseOptions);
+      export function useGetUserTeamLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserTeamQuery, GetUserTeamQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<GetUserTeamQuery, GetUserTeamQueryVariables>(GetUserTeamDocument, baseOptions);
       }
       
-export type GetTeamQueryHookResult = ReturnType<typeof useGetTeamQuery>;
-export type GetTeamQueryResult = ApolloReactCommon.QueryResult<GetTeamQuery, GetTeamQueryVariables>;
+export type GetUserTeamQueryHookResult = ReturnType<typeof useGetUserTeamQuery>;
+export type GetUserTeamQueryResult = ApolloReactCommon.QueryResult<GetUserTeamQuery, GetUserTeamQueryVariables>;
 export const GetUserTeamsDocument = gql`
     query GetUserTeams {
   getUserTeams {
@@ -427,6 +472,19 @@ export const GetUserTeamsDocument = gql`
       
 export type GetUserTeamsQueryHookResult = ReturnType<typeof useGetUserTeamsQuery>;
 export type GetUserTeamsQueryResult = ApolloReactCommon.QueryResult<GetUserTeamsQuery, GetUserTeamsQueryVariables>;
+export const SendTeamInviteLinkDocument = gql`
+    mutation SendTeamInviteLink($email: String!, $teamId: ID!) {
+  sendTeamInviteLink(email: $email, teamId: $teamId)
+}
+    `;
+export type SendTeamInviteLinkMutationFn = ApolloReactCommon.MutationFunction<SendTeamInviteLinkMutation, SendTeamInviteLinkMutationVariables>;
+
+    export function useSendTeamInviteLinkMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SendTeamInviteLinkMutation, SendTeamInviteLinkMutationVariables>) {
+      return ApolloReactHooks.useMutation<SendTeamInviteLinkMutation, SendTeamInviteLinkMutationVariables>(SendTeamInviteLinkDocument, baseOptions);
+    }
+export type SendTeamInviteLinkMutationHookResult = ReturnType<typeof useSendTeamInviteLinkMutation>;
+export type SendTeamInviteLinkMutationResult = ApolloReactCommon.MutationResult<SendTeamInviteLinkMutation>;
+export type SendTeamInviteLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<SendTeamInviteLinkMutation, SendTeamInviteLinkMutationVariables>;
 export const Auth_GoogleOAuthDocument = gql`
     mutation Auth_GoogleOAuth($code: String!) {
   auth_googleOAuth(code: $code) {
@@ -531,8 +589,8 @@ export const MeDocument = gql`
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeQueryResult = ApolloReactCommon.QueryResult<MeQuery, MeQueryVariables>;
 export const RegisterDocument = gql`
-    mutation Register($email: String!, $verificationLink: String!) {
-  register(email: $email, verificationLink: $verificationLink) {
+    mutation Register($email: String!, $verificationLink: String!, $registerKey: String, $password: String) {
+  register(email: $email, verificationLink: $verificationLink, registerKey: $registerKey, password: $password) {
     accessToken
   }
 }
