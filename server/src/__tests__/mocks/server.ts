@@ -1,15 +1,16 @@
-import 'dotenv/config';
-import { Response } from 'express';
-import { ApolloServer } from 'apollo-server-express';
-import { buildSchemaSync } from 'type-graphql';
-import resolvers from '../../resolvers';
-import { exec } from 'child_process';
-import { sign } from 'jsonwebtoken';
-import { Connection, createConnection } from 'typeorm';
-import { redis } from '../../services/redis';
+import "dotenv/config";
+import { Response } from "express";
+import { ApolloServer } from "apollo-server-express";
+import { buildSchemaSync } from "type-graphql";
+import { exec } from "child_process";
+import { sign } from "jsonwebtoken";
+import { Connection, createConnection } from "typeorm";
+import { redis } from "../../services/redis";
+import { UserResolver } from "../../resolvers/UserResolver";
+import { TeamResolver } from "../../resolvers/TeamResolver";
 
 export const testServer = new ApolloServer({
-  schema: buildSchemaSync({ resolvers }),
+  schema: buildSchemaSync({ resolvers: [UserResolver, TeamResolver] }),
   context: () => {
     return {
       req: {

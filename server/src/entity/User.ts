@@ -9,15 +9,14 @@ import {
   CreateDateColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { ObjectType, Field, Int } from 'type-graphql';
-// import { Task } from './Task';
-// import { Message } from './Message';
+import { ObjectType, Field, ID } from 'type-graphql';
 import { Project } from './Project';
+import { Team } from "./Team";
 
 @ObjectType()
-@Entity('users')
+@Entity("users")
 export class User extends BaseEntity {
-  @Field(() => Int)
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -41,7 +40,7 @@ export class User extends BaseEntity {
   // TODO: make enum. 'website' | 'google'
 
   @Field()
-  @Column({ default: 'website' })
+  @Column({ default: "website" })
   auth: string;
 
   @Field()
@@ -59,16 +58,13 @@ export class User extends BaseEntity {
   })
   ownedProjects: Project[];
 
-  // TODO: probably need eager
   @Field(() => [Project])
   @ManyToMany(() => Project, project => project.members)
   @JoinTable()
   projects: Project[];
 
-  // @ManyToMany(() => Task)
-  // @JoinTable()
-  // tasks: Task[];
-
-  // @OneToMany(() => Message, message => message.user)
-  // messages: Message[];
+  @Field(() => [Team])
+  @ManyToMany(() => Team, team => team.members)
+  @JoinTable()
+  teams: Team[];
 }

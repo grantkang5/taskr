@@ -1,5 +1,15 @@
-mutation Register($email: String!, $verificationLink: String!) {
-  register(email:$email, verificationLink:$verificationLink) {
+mutation Register(
+  $email: String!
+  $verificationLink: String!
+  $registerKey: String,
+  $password: String
+) {
+  register(
+    email: $email
+    verificationLink: $verificationLink
+    registerKey: $registerKey
+    password: $password
+  ) {
     accessToken
   }
 }

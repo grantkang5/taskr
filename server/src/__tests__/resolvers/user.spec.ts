@@ -107,6 +107,7 @@ describe("User Resolver", () => {
 
   describe("ForgotPassword mutation", () => {
     it("should send a link to user's email and then update the user's password", async () => {
+      jest.setTimeout(20000)
       const res = await mutate({
         mutation: gql`
           mutation SendForgotPasswordLink($email: String!) {
