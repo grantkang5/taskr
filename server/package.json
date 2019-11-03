@@ -69,6 +69,7 @@
       "^.+\\.ts?$": "ts-jest"
     },
     "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(js?|ts?)$",
+    "testEnvironment": "node",
     "testPathIgnorePatterns": [
       "/node_modules",
       "/src/__tests__/mocks/*"
