@@ -1,14 +1,14 @@
-import { createTestClient } from 'apollo-server-testing';
-import { gql } from 'apollo-server-express';
+import { createTestClient } from "apollo-server-testing";
+import { gql } from "apollo-server-express";
 
-import { testServer, createTestDb, closeTestDb } from '../mocks/server';
-import { Connection } from 'typeorm';
-import faker from 'faker';
-import { Project } from '../../entity/Project';
+import { testServer, createTestDb, closeTestDb } from "../mocks/server";
+import { Connection } from "typeorm";
+import faker from "faker";
+import { Project } from "../../entity/Project";
 
-const { mutate } = createTestClient(testServer);
+const { query, mutate } = createTestClient(testServer);
 
-describe('Project Resolver', () => {
+describe("Project Resolver", () => {
   let connection: Connection;
   beforeAll(async () => {
     connection = await createTestDb();
@@ -22,8 +22,47 @@ describe('Project Resolver', () => {
     desc: faker.lorem.sentence()
   };
 
-  describe('Create project', () => {
-    it('should create a project into the db', async () => {
+  describe("GetUserProject query", () => {
+    it("should retrieve a project from the user using projectId", async () => {
+      const res = await query({
+        query: gql`
+          query GetUserProject($id: ID!) {
+            getUserProject(id: $id) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: 1
+        }
+      });
+
+      expect(res.data).toBeDefined();
+      expect(res.errors).toBeUndefined();
+    });
+  });
+
+  describe("GetUserProjects query", () => {
+    it("should retrieve all projects from the user", async () => {
+      const res = await query({
+        query: gql`
+          query GetUserProjects {
+            getUserProjects {
+              id
+              name
+            }
+          }
+        `
+      });
+
+      expect(res.data).toBeDefined();
+      expect(res.errors).toBeUndefined();
+    });
+  });
+
+  describe("Create project", () => {
+    it("should create a project into the db", async () => {
       const createProject = await mutate({
         mutation: gql`
           mutation CreateProject($name: String!, $desc: String) {
@@ -43,16 +82,15 @@ describe('Project Resolver', () => {
     });
   });
 
-  const updatedProject = {
-    name: faker.commerce.productName(),
-    desc: faker.lorem.sentence()
-  };
-
-  describe('Update Project', () => {
-    it('should update a project in the db', async () => {
+  describe("Update Project", () => {
+    it("should update a project in the db", async () => {
+      const updatedProject = {
+        name: faker.commerce.productName(),
+        desc: faker.lorem.sentence()
+      };
       const res = await mutate({
         mutation: gql`
-          mutation UpdateProject($id: Int!, $name: String, $desc: String) {
+          mutation UpdateProject($id: ID!, $name: String, $desc: String) {
             updateProject(id: $id, name: $name, desc: $desc)
           }
         `,
@@ -70,4 +108,25 @@ describe('Project Resolver', () => {
       expect(res.errors).toBeUndefined();
     });
   });
+
+  describe("Delete Project", () => {
+    it("should delete a project in the db", async () => {
+      const res = await mutate({
+        mutation: gql`
+          mutation DeleteProject($id: ID!) {
+            deleteProject(id: $id) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: 2
+        }
+      })
+
+      expect(res.data).toBeDefined();
+      expect(res.errors).toBeUndefined();
+    })
+  })
 });
