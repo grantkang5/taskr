@@ -1,0 +1,11 @@
+entity: Project
+# processor: ../processor/ProjectProcessor
+items:
+  project1:
+    name: 'Mello'
+    desc: 'this is mello'
+    owner: '@user1'
+    members:
+      - '@user1'
+      - '@user2'
+      - '@user3'

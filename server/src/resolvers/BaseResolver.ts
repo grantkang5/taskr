@@ -48,7 +48,7 @@ export function createBaseResolver<T extends typeof BaseEntity>(
       try {
         const entity = await Entity.findOne({ where: { id } });
         if (!entity) {
-          throw new Error(`Could not find ${suffix}`)
+          throw new Error(`Could not find ${suffix}`);
         }
         entity.remove();
         return entity;

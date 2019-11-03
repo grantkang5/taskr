@@ -12,27 +12,24 @@ import { User } from "../entity/User";
 import {
   createAccessToken,
   createRefreshToken
-} from "../services/auth/createTokens";
-import { MyContext } from "../services/context";
-import { getConnection } from "typeorm";
-import { transporter } from "../services/emails/transporter";
-import { verificationEmail } from "../services/emails/verificationEmail";
-import { forgotPasswordEmail } from "../services/emails/forgotPassword";
-import { rateLimit } from "../services/rate-limit";
-import { sendRefreshToken } from "../services/auth/sendRefreshToken";
-import { isAuth } from "../services/auth/isAuth";
-import { createOAuth2Client, verifyIdToken } from "../services/auth/google";
-import { cloudinary } from "../services/cloudinary";
-import { redis } from "../services/redis";
-import { ImageResponse } from "./types/ImageResponse";
-import { v4 } from "uuid";
-import { createBaseResolver } from "./BaseResolver";
-import { LoginResponse } from "./types/LoginResponse";
-
-const UserBaseResolver = createBaseResolver("User", User);
+} from '../services/auth/createTokens';
+import { MyContext } from '../services/context';
+import { getConnection } from 'typeorm';
+import { transporter } from '../services/emails/transporter';
+import { verificationEmail } from '../services/emails/verificationEmail';
+import { forgotPasswordEmail } from '../services/emails/forgotPassword';
+import { rateLimit } from '../services/rate-limit';
+import { sendRefreshToken } from '../services/auth/sendRefreshToken';
+import { isAuth } from '../services/auth/isAuth';
+import { createOAuth2Client, verifyIdToken } from '../services/auth/google';
+import { cloudinary } from '../services/cloudinary';
+import { redis } from '../services/redis';
+import { ImageResponse } from './types/ImageResponse';
+import { v4 } from 'uuid';
+import { LoginResponse } from './types/LoginResponse';
 
 @Resolver()
-export class UserResolver extends UserBaseResolver {
+export class UserResolver {
   @Query(() => User)
   @UseMiddleware(isAuth)
   async me(@Ctx() { payload }: MyContext) {
@@ -352,7 +349,7 @@ export class UserResolver extends UserBaseResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseMiddleware(rateLimit(5))
+  @UseMiddleware(rateLimit(10))
   async forgotPassword(
     @Arg("email") email: string,
     @Arg("forgotPasswordLink") forgotPasswordLink: string,
