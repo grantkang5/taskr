@@ -8,9 +8,12 @@ import { Connection, createConnection } from "typeorm";
 import { redis } from "../../services/redis";
 import { UserResolver } from "../../resolvers/UserResolver";
 import { TeamResolver } from "../../resolvers/TeamResolver";
+import { ProjectResolver } from "../../resolvers/ProjectResolver";
 
 export const testServer = new ApolloServer({
-  schema: buildSchemaSync({ resolvers: [UserResolver, TeamResolver] }),
+  schema: buildSchemaSync({
+    resolvers: [UserResolver, TeamResolver, ProjectResolver]
+  }),
   context: () => {
     return {
       req: {
@@ -19,7 +22,7 @@ export const testServer = new ApolloServer({
             { userId: 1 },
             process.env.ACCESS_TOKEN_SECRET!,
             {
-              expiresIn: '15m'
+              expiresIn: "15m"
             }
           )}`
         }
@@ -33,7 +36,7 @@ export const testServer = new ApolloServer({
 
 export const createTestDb = async () => {
   try {
-    await exec('yarn db:seed');
+    await exec("yarn db:seed");
     await redis.flushall();
     return await createConnection();
   } catch (err) {
