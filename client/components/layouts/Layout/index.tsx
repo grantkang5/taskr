@@ -37,15 +37,6 @@ const Layout: React.FC<Props> = ({
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <style jsx global>
-        {`
-          .ant-dropdown-menu-item > .anticon:first-child,
-          .ant-dropdown-menu-submenu-title > .anticon:first-child {
-            min-width: 12px;
-            margin-right: 8px;
-          }
-        `}
-      </style>
       {!hide ? <Header dark={dark} /> : null}
 
       {sider ? (

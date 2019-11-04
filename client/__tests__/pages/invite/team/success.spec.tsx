@@ -70,7 +70,7 @@ describe("Pages", () => {
       );
 
       await act(async () => {
-        await wait(0);
+        await wait(10);
       });
 
       expect(acceptTeamInviteLinkCalled).toBe(true);

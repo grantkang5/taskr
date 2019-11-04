@@ -11,7 +11,7 @@ import AuthLayout from "../components/auth/AuthLayout";
 import { FormComponentProps } from "antd/lib/form";
 import GoogleLogin from "../components/auth/GoogleLogin";
 
-import "./App.module.less";
+import "./App.less";
 import { setAccessToken } from "../lib/accessToken";
 
 const Register: React.FC<FormComponentProps> = ({ form }) => {

@@ -6,7 +6,7 @@ import {
   useAcceptTeamInviteLinkMutation
 } from "../../../generated/graphql";
 import { HeaderText, SubText } from "../../../components/common/Text";
-import { Row, Col, Button, message } from "antd";
+import { Button, message } from "antd";
 import { useRouter } from "next/router";
 
 /**
