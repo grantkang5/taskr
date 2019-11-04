@@ -4,15 +4,13 @@ import {
   Column,
   BaseEntity,
   ManyToMany,
-  // OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { User } from './User';
-// import { List } from './List';
-// import { Label } from './Label';
+import { Team } from './Team';
 
 @ObjectType()
 @Entity('projects')
@@ -48,9 +46,9 @@ export class Project extends BaseEntity {
   @ManyToMany(() => User, user => user.projects)
   members: User[];
 
-  // @OneToMany(() => List, list => list.project)
-  // lists: List[];
-
-  // @OneToMany(() => Label, label => label.project)
-  // labels: Label[];
+  @Field(() => Team)
+  @ManyToOne(() => Team, team => team.projects, {
+    cascade: true
+  })
+  team: Team
 }

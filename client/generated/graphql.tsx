@@ -35,8 +35,8 @@ export type LoginResponse = {
 
 export type Mutation = {
    __typename?: 'Mutation',
+  deleteProject: Project,
   deleteTeam: Team,
-  deleteUser: User,
   sendVerificationLink: Scalars['String'],
   resendVerificationLink: Scalars['String'],
   register: LoginResponse,
@@ -55,15 +55,19 @@ export type Mutation = {
   acceptTeamInviteLink: Scalars['Boolean'],
   deleteTeamMember: Scalars['Boolean'],
   updateTeam: Team,
+  createProject: Project,
+  updateProject: Scalars['Boolean'],
+  sendProjectInviteLink: Scalars['String'],
+  acceptProjectInviteLink: Scalars['Boolean'],
 };
 
 
-export type MutationDeleteTeamArgs = {
+export type MutationDeleteProjectArgs = {
   id: Scalars['ID']
 };
 
 
-export type MutationDeleteUserArgs = {
+export type MutationDeleteTeamArgs = {
   id: Scalars['ID']
 };
 
@@ -164,16 +168,59 @@ export type MutationUpdateTeamArgs = {
   teamId: Scalars['ID']
 };
 
+
+export type MutationCreateProjectArgs = {
+  desc?: Maybe<Scalars['String']>,
+  name: Scalars['String']
+};
+
+
+export type MutationUpdateProjectArgs = {
+  desc?: Maybe<Scalars['String']>,
+  name?: Maybe<Scalars['String']>,
+  id: Scalars['ID']
+};
+
+
+export type MutationSendProjectInviteLinkArgs = {
+  email: Scalars['String'],
+  projectId: Scalars['ID']
+};
+
+
+export type MutationAcceptProjectInviteLinkArgs = {
+  projectInviteLink: Scalars['String'],
+  email: Scalars['String']
+};
+
+export type Project = {
+   __typename?: 'Project',
+  id: Scalars['Int'],
+  name: Scalars['String'],
+  desc?: Maybe<Scalars['String']>,
+  created_at: Scalars['DateTime'],
+  updated_at: Scalars['DateTime'],
+  owner: User,
+  members: Array<User>,
+};
+
 export type Query = {
    __typename?: 'Query',
+  getAllProjects: Array<Project>,
+  getProject: Project,
   getAllTeams: Array<Team>,
   getTeam: Team,
-  getAllUsers: Array<User>,
-  getUser: User,
   me: User,
   login_googleOAuth: Scalars['String'],
   getUserTeam: Team,
   getUserTeams: Array<Team>,
+  getUserProject: Project,
+  getUserProjects: Array<Project>,
+};
+
+
+export type QueryGetProjectArgs = {
+  id: Scalars['ID']
 };
 
 
@@ -182,12 +229,12 @@ export type QueryGetTeamArgs = {
 };
 
 
-export type QueryGetUserArgs = {
+export type QueryGetUserTeamArgs = {
   id: Scalars['ID']
 };
 
 
-export type QueryGetUserTeamArgs = {
+export type QueryGetUserProjectArgs = {
   id: Scalars['ID']
 };
 
@@ -207,8 +254,72 @@ export type User = {
   username: Scalars['String'],
   avatar: Scalars['String'],
   auth: Scalars['String'],
+  created_at: Scalars['DateTime'],
+  updated_at: Scalars['DateTime'],
+  ownedProjects: Array<Project>,
+  projects: Array<Project>,
   teams: Array<Team>,
 };
+
+export type AcceptProjectInviteLinkMutationVariables = {
+  email: Scalars['String'],
+  projectInviteLink: Scalars['String']
+};
+
+
+export type AcceptProjectInviteLinkMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'acceptProjectInviteLink'>
+);
+
+export type CreateProjectMutationVariables = {
+  name: Scalars['String'],
+  desc?: Maybe<Scalars['String']>
+};
+
+
+export type CreateProjectMutation = (
+  { __typename?: 'Mutation' }
+  & { createProject: (
+    { __typename?: 'Project' }
+    & Pick<Project, 'id' | 'name'>
+  ) }
+);
+
+export type GetUserProjectQueryVariables = {
+  id: Scalars['ID']
+};
+
+
+export type GetUserProjectQuery = (
+  { __typename?: 'Query' }
+  & { getUserProject: (
+    { __typename?: 'Project' }
+    & Pick<Project, 'id' | 'name'>
+  ) }
+);
+
+export type GetUserProjectsQueryVariables = {};
+
+
+export type GetUserProjectsQuery = (
+  { __typename?: 'Query' }
+  & { getUserProjects: Array<(
+    { __typename?: 'Project' }
+    & Pick<Project, 'id' | 'name'>
+  )> }
+);
+
+export type SendProjectInviteLinkMutationVariables = {
+  email: Scalars['String'],
+  projectId: Scalars['ID']
+};
+
+
+export type SendProjectInviteLinkMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'sendProjectInviteLink'>
+);
 
 export type AcceptTeamInviteLinkMutationVariables = {
   email: Scalars['String'],
@@ -407,6 +518,84 @@ export type UpdateUsernameMutation = (
 );
 
 
+export const AcceptProjectInviteLinkDocument = gql`
+    mutation AcceptProjectInviteLink($email: String!, $projectInviteLink: String!) {
+  acceptProjectInviteLink(email: $email, projectInviteLink: $projectInviteLink)
+}
+    `;
+export type AcceptProjectInviteLinkMutationFn = ApolloReactCommon.MutationFunction<AcceptProjectInviteLinkMutation, AcceptProjectInviteLinkMutationVariables>;
+
+    export function useAcceptProjectInviteLinkMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AcceptProjectInviteLinkMutation, AcceptProjectInviteLinkMutationVariables>) {
+      return ApolloReactHooks.useMutation<AcceptProjectInviteLinkMutation, AcceptProjectInviteLinkMutationVariables>(AcceptProjectInviteLinkDocument, baseOptions);
+    }
+export type AcceptProjectInviteLinkMutationHookResult = ReturnType<typeof useAcceptProjectInviteLinkMutation>;
+export type AcceptProjectInviteLinkMutationResult = ApolloReactCommon.MutationResult<AcceptProjectInviteLinkMutation>;
+export type AcceptProjectInviteLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<AcceptProjectInviteLinkMutation, AcceptProjectInviteLinkMutationVariables>;
+export const CreateProjectDocument = gql`
+    mutation CreateProject($name: String!, $desc: String) {
+  createProject(name: $name, desc: $desc) {
+    id
+    name
+  }
+}
+    `;
+export type CreateProjectMutationFn = ApolloReactCommon.MutationFunction<CreateProjectMutation, CreateProjectMutationVariables>;
+
+    export function useCreateProjectMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateProjectMutation, CreateProjectMutationVariables>) {
+      return ApolloReactHooks.useMutation<CreateProjectMutation, CreateProjectMutationVariables>(CreateProjectDocument, baseOptions);
+    }
+export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
+export type CreateProjectMutationResult = ApolloReactCommon.MutationResult<CreateProjectMutation>;
+export type CreateProjectMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export const GetUserProjectDocument = gql`
+    query GetUserProject($id: ID!) {
+  getUserProject(id: $id) {
+    id
+    name
+  }
+}
+    `;
+
+    export function useGetUserProjectQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserProjectQuery, GetUserProjectQueryVariables>) {
+      return ApolloReactHooks.useQuery<GetUserProjectQuery, GetUserProjectQueryVariables>(GetUserProjectDocument, baseOptions);
+    }
+      export function useGetUserProjectLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserProjectQuery, GetUserProjectQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<GetUserProjectQuery, GetUserProjectQueryVariables>(GetUserProjectDocument, baseOptions);
+      }
+      
+export type GetUserProjectQueryHookResult = ReturnType<typeof useGetUserProjectQuery>;
+export type GetUserProjectQueryResult = ApolloReactCommon.QueryResult<GetUserProjectQuery, GetUserProjectQueryVariables>;
+export const GetUserProjectsDocument = gql`
+    query GetUserProjects {
+  getUserProjects {
+    id
+    name
+  }
+}
+    `;
+
+    export function useGetUserProjectsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetUserProjectsQuery, GetUserProjectsQueryVariables>) {
+      return ApolloReactHooks.useQuery<GetUserProjectsQuery, GetUserProjectsQueryVariables>(GetUserProjectsDocument, baseOptions);
+    }
+      export function useGetUserProjectsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetUserProjectsQuery, GetUserProjectsQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<GetUserProjectsQuery, GetUserProjectsQueryVariables>(GetUserProjectsDocument, baseOptions);
+      }
+      
+export type GetUserProjectsQueryHookResult = ReturnType<typeof useGetUserProjectsQuery>;
+export type GetUserProjectsQueryResult = ApolloReactCommon.QueryResult<GetUserProjectsQuery, GetUserProjectsQueryVariables>;
+export const SendProjectInviteLinkDocument = gql`
+    mutation SendProjectInviteLink($email: String!, $projectId: ID!) {
+  sendProjectInviteLink(email: $email, projectId: $projectId)
+}
+    `;
+export type SendProjectInviteLinkMutationFn = ApolloReactCommon.MutationFunction<SendProjectInviteLinkMutation, SendProjectInviteLinkMutationVariables>;
+
+    export function useSendProjectInviteLinkMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SendProjectInviteLinkMutation, SendProjectInviteLinkMutationVariables>) {
+      return ApolloReactHooks.useMutation<SendProjectInviteLinkMutation, SendProjectInviteLinkMutationVariables>(SendProjectInviteLinkDocument, baseOptions);
+    }
+export type SendProjectInviteLinkMutationHookResult = ReturnType<typeof useSendProjectInviteLinkMutation>;
+export type SendProjectInviteLinkMutationResult = ApolloReactCommon.MutationResult<SendProjectInviteLinkMutation>;
+export type SendProjectInviteLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<SendProjectInviteLinkMutation, SendProjectInviteLinkMutationVariables>;
 export const AcceptTeamInviteLinkDocument = gql`
     mutation AcceptTeamInviteLink($email: String!, $teamInviteLink: String!) {
   acceptTeamInviteLink(email: $email, teamInviteLink: $teamInviteLink)

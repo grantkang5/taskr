@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn, ManyToMany, OneToMany } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { User } from './User';
+import { Project } from './Project';
 
 @ObjectType()
 @Entity('teams')
@@ -26,4 +27,10 @@ export class Team extends BaseEntity {
     eager: true
   })
   members: User[]
+
+  @Field(() => [Project])
+  @OneToMany(() => Project, project => project.team, {
+    eager: true
+  })
+  projects: Project[]
 }
