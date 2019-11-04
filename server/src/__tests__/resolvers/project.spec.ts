@@ -22,6 +22,27 @@ describe("Project Resolver", () => {
     desc: faker.lorem.sentence()
   };
 
+  describe("Create project", () => {
+    it("should create a project into the db", async () => {
+      const createProject = await mutate({
+        mutation: gql`
+          mutation CreateProject($name: String!, $desc: String) {
+            createProject(name: $name, desc: $desc) {
+              name
+            }
+          }
+        `,
+        variables: { name: mockProject.name, desc: mockProject.desc }
+      });
+
+      const project = await Project.findOne({ name: mockProject.name });
+
+      expect(project!.name).toEqual(mockProject.name);
+      expect(createProject.data).toBeDefined();
+      expect(createProject.errors).toBeUndefined();
+    });
+  });
+
   describe("GetUserProject query", () => {
     it("should retrieve a project from the user using projectId", async () => {
       const res = await query({
@@ -34,7 +55,7 @@ describe("Project Resolver", () => {
           }
         `,
         variables: {
-          id: 1
+          id: 2
         }
       });
 
@@ -61,27 +82,6 @@ describe("Project Resolver", () => {
     });
   });
 
-  describe("Create project", () => {
-    it("should create a project into the db", async () => {
-      const createProject = await mutate({
-        mutation: gql`
-          mutation CreateProject($name: String!, $desc: String) {
-            createProject(name: $name, desc: $desc) {
-              name
-            }
-          }
-        `,
-        variables: { name: mockProject.name, desc: mockProject.desc }
-      });
-
-      const project = await Project.findOne({ name: mockProject.name });
-
-      expect(project!.name).toEqual(mockProject.name);
-      expect(createProject.data).toBeDefined();
-      expect(createProject.errors).toBeUndefined();
-    });
-  });
-
   describe("Update Project", () => {
     it("should update a project in the db", async () => {
       const updatedProject = {
@@ -95,7 +95,7 @@ describe("Project Resolver", () => {
           }
         `,
         variables: {
-          id: 1,
+          id: 2,
           name: updatedProject.name,
           desc: updatedProject.desc
         }
