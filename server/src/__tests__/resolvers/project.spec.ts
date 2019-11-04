@@ -100,7 +100,7 @@ describe("Project Resolver", () => {
           desc: updatedProject.desc
         }
       });
-      const project = await Project.findOne({ where: { id: 1 } });
+      const project = await Project.findOne({ where: { id: 2 } });
 
       expect(project!.name).toEqual(updatedProject.name);
       expect(project!.desc).toEqual(updatedProject.desc);
