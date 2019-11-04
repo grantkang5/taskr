@@ -18,6 +18,7 @@ import { redis } from "../services/redis";
 import { projectInviteEmail } from "../services/emails/projectInviteEmail";
 import { transporter } from "../services/emails/transporter";
 import { Team } from "../entity/Team";
+import { generateProjectLink } from "../services/links";
 
 const ProjectBaseResolver = createBaseResolver("Project", Project);
 
@@ -82,7 +83,7 @@ export class ProjectResolver extends ProjectBaseResolver {
       if (teamId) {
         let team = await Team.findOne({ where: { id: teamId } });
         if (!team) throw new Error(`This team doesn't exist`);
-        project.team = team
+        project.team = team;
       }
       project.members = [user!];
       return await project.save();
@@ -189,6 +190,44 @@ export class ProjectResolver extends ProjectBaseResolver {
       return true;
     } catch (err) {
       console.log(err);
+      return err;
+    }
+  }
+
+  @Query(() => String)
+  async getPublicProjectLink(@Arg("projectId", () => ID) projectId: number) {
+    try {
+      const project = await Project.findOne({ where: { id: projectId } });
+      if (!project) throw new Error(`This project doesn't exist`);
+      const publicLink = generateProjectLink(project.id)
+      return `${process.env.CLIENT_URL}/invite/project/public?project=${project.id}&id=${publicLink}`;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async acceptPublicProjectLink(
+    @Arg("link") link: String,
+    @Arg("projectId", () => ID) projectId: number,
+    @Ctx() { payload }: MyContext
+  ) {
+    try {
+      const me = await User.findOne({ where: { id: payload!.userId } });
+      if (!me) throw new Error(`This user doesn't exist`)
+      const project = await Project.findOne({ relations: ["members"], where: { id: projectId } })
+      if (!project) throw new Error(`This project doesn't exist`)
+      const publicLink = generateProjectLink(project.id)
+      if (publicLink !== link) {
+        throw new Error(`This link is either incorrect or has expired`)
+      }
+      project.members = [...project.members, me];
+      await project.save();
+      return true
+    } catch (err) {
+      console.log(err)
       return err;
     }
   }
