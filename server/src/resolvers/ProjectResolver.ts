@@ -17,6 +17,7 @@ import { v4 } from "uuid";
 import { redis } from "../services/redis";
 import { projectInviteEmail } from "../services/emails/projectInviteEmail";
 import { transporter } from "../services/emails/transporter";
+import { Team } from "../entity/Team";
 
 const ProjectBaseResolver = createBaseResolver("Project", Project);
 
@@ -55,8 +56,8 @@ export class ProjectResolver extends ProjectBaseResolver {
         relations: ["projects"],
         where: { id: payload!.userId }
       });
-      if (!user) throw new Error(`This user doesn't exist`)
-      return user.projects
+      if (!user) throw new Error(`This user doesn't exist`);
+      return user.projects;
     } catch (err) {
       console.log(err);
       return err;
@@ -68,7 +69,8 @@ export class ProjectResolver extends ProjectBaseResolver {
   async createProject(
     @Ctx() { payload }: MyContext,
     @Arg("name") name: string,
-    @Arg("desc", { nullable: true }) desc?: string
+    @Arg("desc", { nullable: true }) desc?: string,
+    @Arg("teamId", () => ID, { nullable: true }) teamId?: number
   ) {
     try {
       const user = await User.findOne({ where: { id: payload!.userId } });
@@ -77,6 +79,11 @@ export class ProjectResolver extends ProjectBaseResolver {
         desc,
         owner: user
       });
+      if (teamId) {
+        let team = await Team.findOne({ where: { id: teamId } });
+        if (!team) throw new Error(`This team doesn't exist`);
+        project.team = team
+      }
       project.members = [user!];
       return await project.save();
     } catch (err) {
@@ -90,7 +97,8 @@ export class ProjectResolver extends ProjectBaseResolver {
   async updateProject(
     @Arg("id", () => ID) id: number,
     @Arg("name", { nullable: true }) name?: string,
-    @Arg("desc", { nullable: true }) desc?: string
+    @Arg("desc", { nullable: true }) desc?: string,
+    @Arg("teamId", () => ID, { nullable: true }) teamId?: number
   ) {
     try {
       const project = await Project.findOne({ where: { id } });
@@ -103,6 +111,12 @@ export class ProjectResolver extends ProjectBaseResolver {
 
       if (desc && project.desc !== desc) {
         project.desc = desc;
+      }
+
+      if (teamId) {
+        const team = await Team.findOne({ where: { id: teamId } });
+        if (!team) throw new Error(`This team doesn't exist`);
+        project.team = team;
       }
 
       await project.save();

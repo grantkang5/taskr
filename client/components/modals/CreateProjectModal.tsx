@@ -2,27 +2,28 @@ import React from "react";
 import { Modal, Form, Input, Icon, message } from "antd";
 import { useModal } from ".";
 import { FormComponentProps } from "antd/lib/form";
-import { useCreateTeamMutation, GetUserTeamsDocument } from "../../generated/graphql";
+import { useCreateTeamMutation, GetUserTeamsDocument, GetUserProjectsDocument, useCreateProjectMutation } from "../../generated/graphql";
 
 
-const CreateTeamModal: React.FC<FormComponentProps> = ({ form }) => {
+const CreateProjectModal: React.FC<FormComponentProps> = ({ form }) => {
   const { hideModal } = useModal();
-  const [createTeam, { loading }] = useCreateTeamMutation();
+  const [createProject, { loading }] = useCreateProjectMutation();
   const unmount = () => hideModal();
 
   const handleSubmit = () => {
     const { validateFields } = form;
-    validateFields(async (validationErrors, { name }) => {
+    validateFields(async (validationErrors, { name, desc }) => {
       if (!validationErrors) {
         try {
-          const response = await createTeam({
+          const response = await createProject({
             variables: {
-              name
+              name,
+              desc
             },
-            refetchQueries: [{ query: GetUserTeamsDocument }]
+            refetchQueries: [{ query: GetUserProjectsDocument }]
           })
           if (response && response.data) {
-            message.success(`Your team ${name} has been created`)
+            message.success(`Your project ${name} has been created`)
           }
           unmount();
         } catch (err) {
@@ -37,27 +38,34 @@ const CreateTeamModal: React.FC<FormComponentProps> = ({ form }) => {
   const { getFieldDecorator } = form;
   return (
     <Modal
-      title="Create a Team"
+      title="Create a Project"
       visible={true}
       confirmLoading={loading}
       onOk={handleSubmit}
       onCancel={unmount}
-      okText={'Create team'}
+      okText={'Create project'}
     >
       <Form>
         <Form.Item hasFeedback label="Team name" required>
           {getFieldDecorator("name", {
-            rules: [{ required: true, message: "Team name is required" }]
+            rules: [{ required: true, message: "Project name is required" }]
           })(
             <Input
-              prefix={<Icon type="team" style={{ color: "rgba(0,0,0,.25" }} />}
-              placeholder="Team name"
+              prefix={<Icon type="project" style={{ color: "rgba(0,0,0,.25" }} />}
+              placeholder="Project name"
             />
           )}
+        </Form.Item>
+
+        <Form.Item label="Project description">
+            {getFieldDecorator("desc", {
+            })(
+              <Input.TextArea />
+            )}
         </Form.Item>
       </Form>
     </Modal>
   );
 };
 
-export default Form.create({ name: "createTeam" })(CreateTeamModal);
+export default Form.create({ name: "createProject" })(CreateProjectModal);

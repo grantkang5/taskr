@@ -1,18 +1,24 @@
 import { useModal } from "../../modals";
-import { useGetUserTeamsQuery } from "../../../generated/graphql";
+import { useGetUserTeamsQuery, useGetUserProjectsQuery } from "../../../generated/graphql";
 import { Menu, Icon, Skeleton } from "antd";
 import { MenuItemIcon } from "../../common/Menu";
 import Layout from "../Layout";
 import { useRouter } from "next/router";
+import DashboardProjects from "./DashboardProjects";
 
 const DashboardLayout: React.FC = ({ children }) => {
   const router = useRouter();
   const { showModal } = useModal();
-  const { data, loading } = useGetUserTeamsQuery();
+  const { data: teamData, loading: teamLoading } = useGetUserTeamsQuery();
+  const { data: projectData, loading: projectLoading } = useGetUserProjectsQuery();
   const showCreateTeamModal = () => showModal("createTeam");
+  const showCreateProjectModal = () => showModal("createProject")
 
   const handleTeamClick = (teamId: string | number) => () => {
     router.push({ pathname: `/team/${teamId}` })
+  }
+  const handleProjectClick = (projectId: string | number) => () => {
+    router.push({ pathname: `project/${projectId}` })
   }
 
   return (
@@ -33,9 +39,17 @@ const DashboardLayout: React.FC = ({ children }) => {
                 </span>
               }
             >
-              <Menu.Item>
-                <Icon type="project" /> Project 1
-              </Menu.Item>
+              {
+                projectLoading || !projectData ? (
+                  <Skeleton active />
+                ) : (
+                  projectData.getUserProjects.map(project => (
+                    <Menu.Item key={project.id} onClick={handleProjectClick(project.id)}>
+                      {project.name}
+                    </Menu.Item>
+                  ))
+                )
+              }
             </Menu.SubMenu>
             <Menu.SubMenu
               key="teams"
@@ -46,10 +60,10 @@ const DashboardLayout: React.FC = ({ children }) => {
                 </span>
               }
             >
-              {loading || !data ? (
+              {teamLoading || !teamData ? (
                 <Skeleton active />
               ) : (
-                data.getUserTeams.map(team => (
+                teamData.getUserTeams.map(team => (
                   <Menu.Item key={team.id} onClick={handleTeamClick(team.id)}>
                     {team.name}
                   </Menu.Item>
@@ -62,6 +76,7 @@ const DashboardLayout: React.FC = ({ children }) => {
                 label="Create Project"
                 iconType="plus-square"
                 leftIcon="project"
+                onClick={showCreateProjectModal}
               />
               <MenuItemIcon
                 label="Create Team"
@@ -74,7 +89,11 @@ const DashboardLayout: React.FC = ({ children }) => {
         </>
       }
     >
-      {children}
+      {
+        !projectLoading && projectData && projectData.getUserProjects ? (
+          <DashboardProjects />
+        ) : <Skeleton active />
+      }
     </Layout>
   );
 };
