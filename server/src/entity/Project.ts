@@ -48,7 +48,7 @@ export class Project extends BaseEntity {
 
   @Field(() => Team)
   @ManyToOne(() => Team, team => team.projects, {
-    cascade: true
+    onDelete: 'CASCADE'
   })
   team: Team
 }
