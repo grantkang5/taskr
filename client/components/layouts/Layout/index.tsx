@@ -13,7 +13,7 @@ type Props = {
 };
 
 /**
- * 
+ *
  * @param {1 | 0} hide (Number) Hides the header if 1
  * @param {1 | 0} dark (Number) Makes layout background dark if 1
  * @param {React.ReactNode} (ReactNode) sider Enables sider element
@@ -36,14 +36,6 @@ const Layout: React.FC<Props> = ({
         <title>{title}</title>
         <meta charSet="utf-8" />
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <style jsx global>
-          {`
-            .ant-dropdown-menu-item > .anticon:first-child, .ant-dropdown-menu-submenu-title > .anticon:first-child {
-              min-width: 12px;
-              margin-right: 8px
-            }
-          `}
-        </style>
       </Head>
       {!hide ? <Header dark={dark} /> : null}
 

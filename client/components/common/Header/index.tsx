@@ -26,17 +26,17 @@ export const Header: React.FC<Props> = ({ dark }) => {
   }
 
   const handleMenuClick = async ({ key }: { key: string }) => {
-    switch(key) {
+    switch (key) {
       case "settings": {
-        router.push('/settings')
+        router.push("/settings");
         break;
       }
       case "logout": {
         const logoutResponse = await logout();
         if (logoutResponse) {
-          setAccessToken('');
+          setAccessToken("");
           await client!.resetStore();
-          router.push('/login')
+          router.push("/login");
           break;
         }
       }
@@ -53,14 +53,16 @@ export const Header: React.FC<Props> = ({ dark }) => {
       </Menu.Item>
       <Menu.Divider />
       <Menu.Item key="settings">
-        <Icon type="setting" />
         <span>
-          Settings  
+          <Icon type="setting" />
+          <span>Settings</span>
         </span>
       </Menu.Item>
       <Menu.Item key="logout">
-        <Icon type="logout" />
-        <span>Log out</span>>
+        <span>
+          <Icon type="logout" />
+          <span>Log out</span>
+        </span>
       </Menu.Item>
     </Menu>
   );

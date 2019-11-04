@@ -11,7 +11,7 @@ import AuthLayout from "../components/auth/AuthLayout";
 import { FormComponentProps } from "antd/lib/form";
 import GoogleLogin from "../components/auth/GoogleLogin";
 
-import "./App.module.less";
+import "./App.less";
 import { setAccessToken } from "../lib/accessToken";
 
 const Register: React.FC<FormComponentProps> = ({ form }) => {
@@ -92,6 +92,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
         <Form onSubmit={handleSubmit}>
           <Form.Item hasFeedback>
             {getFieldDecorator("email", {
+              initialValue: router.query.email ? router.query.email : '',
               rules: [
                 { required: true, message: "Email field is required" },
                 { type: "email", message: "Not a a valid email address" }

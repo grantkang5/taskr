@@ -1,4 +1,4 @@
-import "./App.module.less";
+import "./App.less";
 import App from "next/app";
 import React from "react";
 import { ApolloProvider } from "@apollo/react-hooks";
@@ -9,7 +9,6 @@ import { ModalProvider } from "../components/modals";
 interface Props {
   apolloClient: any;
 }
-
 
 class MyApp extends App<Props> {
   render() {

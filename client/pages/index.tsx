@@ -2,7 +2,7 @@ import React from "react";
 import Layout from "../components/layouts/Layout";
 import { Menu, Icon, Skeleton } from "antd";
 
-import "./App.module.less";
+import "./App.less";
 import { MenuItemIcon } from "../components/common/Menu";
 import { useModal } from "../components/modals";
 import { useGetUserTeamsQuery } from "../generated/graphql";
