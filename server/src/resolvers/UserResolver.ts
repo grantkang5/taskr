@@ -135,6 +135,7 @@ export class UserResolver {
         password: storedPassword
       } = await redis.hgetall(key);
       if (verificationLink !== storedLink) {
+        console.log(verificationLink, storedLink)
         throw new Error("This link has expired");
       }
 

@@ -22,7 +22,7 @@ export const projectInviteEmail = ({
             header: `${sender} has sent you a project invite to ${projectName}`,
             body: `You've been invited as a project member to ${projectName}. You will have access to all tasks and messages shared in the project.`,
             cta: 'Accept project invitation',
-            link: `${process.env.CLIENT_URL}/invite/project//success?email=${email}&id=${link}`,
+            link: `${process.env.CLIENT_URL}/invite/project/success?email=${email}&id=${link}`,
             footer: 'This email will be invalid after 1 hour from being sent'
         })
     };

@@ -29,13 +29,13 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
       }
 
       if (router.query.returnUrl) {
-        const { returnUrl, ...queryParams } = router.query;
+        const { returnUrl, registerKey, ...queryParams } = router.query;
         try {
           const response = await register({
             variables: {
               email,
               verificationLink: queryParams.id as string,
-              registerKey: "team-invite",
+              registerKey: registerKey as string,
               password
             }
           });

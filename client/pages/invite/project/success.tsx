@@ -1,37 +1,32 @@
 import React, { useEffect } from "react";
-import styles from "./TeamInvite.module.less";
 import Layout from "../../../components/layouts/Layout";
+import { useRouter } from "next/router";
 import {
   useMeQuery,
-  useAcceptTeamInviteLinkMutation
+  useAcceptProjectInviteLinkMutation
 } from "../../../generated/graphql";
 import { message } from "antd";
-import { useRouter } from "next/router";
 import AnonLayout from "../../../components/layouts/AnonLayout";
 
-/**
- * @route '/invite/team/success
- * @routeQuery { email: string, id: string }
- */
-
-const TeamInviteSuccessPage: React.FC = () => {
+const ProjectInviteSuccessPage: React.FC = () => {
   const router = useRouter();
   const { data, loading } = useMeQuery();
-  const [acceptTeamInviteLink] = useAcceptTeamInviteLinkMutation();
+  const [acceptProjectInviteLink] = useAcceptProjectInviteLinkMutation();
 
   useEffect(() => {
     let didCancel = false;
     if (!router.query.id || !router.query.email) {
       router.push("/error", "/");
     }
+
     if (!loading && data) {
       const fetchData = async () => {
         const { id, email } = router.query;
         try {
-          const response = await acceptTeamInviteLink({
+          const response = await acceptProjectInviteLink({
             variables: {
               email: email as string,
-              teamInviteLink: id as string
+              projectInviteLink: id as string
             }
           });
           if (response && response.data) {
@@ -45,34 +40,34 @@ const TeamInviteSuccessPage: React.FC = () => {
       };
 
       fetchData();
-
-      return () => {
-        didCancel = true;
-      };
     }
+
+    return () => {
+      didCancel = true;
+    };
   }, [data]);
 
   const handleSignup = () => {
     router.push({
       pathname: "/register",
       query: {
-        returnUrl: "/invite/team/success",
-        registerKey: "team-invite",
+        returnUrl: "/invite/project/success",
+        registerKey: "project-invite",
         ...router.query
       }
-    });
-  };
+    })
+  }
 
   const handleLogin = () => {
     router.push({
       pathname: "/login",
       query: {
-        returnUrl: "/invite/team/success",
-        registerKey: "team-invite",
+        returnUrl: "/invite/project/success",
+        registerKey: "project-invite",
         ...router.query
       }
-    });
-  };
+    })
+  }
 
   if (!loading && !data) {
     return <AnonLayout handleSignup={handleSignup} handleLogin={handleLogin} />;
@@ -85,4 +80,4 @@ const TeamInviteSuccessPage: React.FC = () => {
   );
 };
 
-export default TeamInviteSuccessPage;
+export default ProjectInviteSuccessPage;

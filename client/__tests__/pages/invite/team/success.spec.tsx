@@ -7,6 +7,7 @@ import {
 } from "../../../../generated/graphql";
 import TeamInviteSuccessPage from "../../../../pages/invite/team/success";
 import { act } from "react-dom/test-utils";
+import AnonLayout from "../../../../components/layouts/AnonLayout";
 
 describe("Pages", () => {
   describe("TeamInviteSuccessPage", () => {
@@ -88,7 +89,11 @@ describe("Pages", () => {
         await wait(0);
       });
 
-      expect(wrapper.contains(<button>Sign up</button>));
+      expect(
+        wrapper.contains(
+          <AnonLayout handleSignup={() => null} handleLogin={() => null} />
+        )
+      );
     });
   });
 });

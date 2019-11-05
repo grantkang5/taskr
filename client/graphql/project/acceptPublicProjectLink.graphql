@@ -1,0 +1,3 @@
+mutation AcceptPublicProjectLink($link: String!, $projectId: ID!) {
+  acceptPublicProjectLink(link: $link, projectId: $projectId)
+}

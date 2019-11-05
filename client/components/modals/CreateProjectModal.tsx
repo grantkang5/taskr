@@ -1,14 +1,29 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { Modal, Form, Input, Icon, message } from "antd";
 import { useModal } from ".";
 import { FormComponentProps } from "antd/lib/form";
-import { useCreateTeamMutation, GetUserTeamsDocument, GetUserProjectsDocument, useCreateProjectMutation } from "../../generated/graphql";
+import { GetUserProjectsDocument, useCreateProjectMutation } from "../../generated/graphql";
 
 
 const CreateProjectModal: React.FC<FormComponentProps> = ({ form }) => {
   const { hideModal } = useModal();
   const [createProject, { loading }] = useCreateProjectMutation();
   const unmount = () => hideModal();
+
+  const handleEnterPress = useCallback(e => {
+    const {keyCode} = e;
+    if (keyCode === 13 && form.isFieldTouched('name')) {
+      handleSubmit();
+    }
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleEnterPress)
+
+    return () => {
+      window.removeEventListener('keydown', handleEnterPress)
+    }
+  }, [handleEnterPress])
 
   const handleSubmit = () => {
     const { validateFields } = form;

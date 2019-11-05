@@ -59,6 +59,7 @@ export type Mutation = {
   updateProject: Scalars['Boolean'],
   sendProjectInviteLink: Scalars['String'],
   acceptProjectInviteLink: Scalars['Boolean'],
+  acceptPublicProjectLink: Scalars['Boolean'],
 };
 
 
@@ -170,12 +171,14 @@ export type MutationUpdateTeamArgs = {
 
 
 export type MutationCreateProjectArgs = {
+  teamId?: Maybe<Scalars['ID']>,
   desc?: Maybe<Scalars['String']>,
   name: Scalars['String']
 };
 
 
 export type MutationUpdateProjectArgs = {
+  teamId?: Maybe<Scalars['ID']>,
   desc?: Maybe<Scalars['String']>,
   name?: Maybe<Scalars['String']>,
   id: Scalars['ID']
@@ -193,6 +196,12 @@ export type MutationAcceptProjectInviteLinkArgs = {
   email: Scalars['String']
 };
 
+
+export type MutationAcceptPublicProjectLinkArgs = {
+  projectId: Scalars['ID'],
+  link: Scalars['String']
+};
+
 export type Project = {
    __typename?: 'Project',
   id: Scalars['Int'],
@@ -202,6 +211,7 @@ export type Project = {
   updated_at: Scalars['DateTime'],
   owner: User,
   members: Array<User>,
+  team: Team,
 };
 
 export type Query = {
@@ -216,6 +226,7 @@ export type Query = {
   getUserTeams: Array<Team>,
   getUserProject: Project,
   getUserProjects: Array<Project>,
+  getPublicProjectLink: Scalars['String'],
 };
 
 
@@ -238,6 +249,11 @@ export type QueryGetUserProjectArgs = {
   id: Scalars['ID']
 };
 
+
+export type QueryGetPublicProjectLinkArgs = {
+  projectId: Scalars['ID']
+};
+
 export type Team = {
    __typename?: 'Team',
   id: Scalars['ID'],
@@ -245,6 +261,7 @@ export type Team = {
   created_at: Scalars['DateTime'],
   updated_at: Scalars['DateTime'],
   members: Array<User>,
+  projects: Array<Project>,
 };
 
 export type User = {
@@ -272,6 +289,17 @@ export type AcceptProjectInviteLinkMutation = (
   & Pick<Mutation, 'acceptProjectInviteLink'>
 );
 
+export type AcceptPublicProjectLinkMutationVariables = {
+  link: Scalars['String'],
+  projectId: Scalars['ID']
+};
+
+
+export type AcceptPublicProjectLinkMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'acceptPublicProjectLink'>
+);
+
 export type CreateProjectMutationVariables = {
   name: Scalars['String'],
   desc?: Maybe<Scalars['String']>
@@ -284,6 +312,16 @@ export type CreateProjectMutation = (
     { __typename?: 'Project' }
     & Pick<Project, 'id' | 'name'>
   ) }
+);
+
+export type GetPublicProjectLinkQueryVariables = {
+  projectId: Scalars['ID']
+};
+
+
+export type GetPublicProjectLinkQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'getPublicProjectLink'>
 );
 
 export type GetUserProjectQueryVariables = {
@@ -531,6 +569,19 @@ export type AcceptProjectInviteLinkMutationFn = ApolloReactCommon.MutationFuncti
 export type AcceptProjectInviteLinkMutationHookResult = ReturnType<typeof useAcceptProjectInviteLinkMutation>;
 export type AcceptProjectInviteLinkMutationResult = ApolloReactCommon.MutationResult<AcceptProjectInviteLinkMutation>;
 export type AcceptProjectInviteLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<AcceptProjectInviteLinkMutation, AcceptProjectInviteLinkMutationVariables>;
+export const AcceptPublicProjectLinkDocument = gql`
+    mutation AcceptPublicProjectLink($link: String!, $projectId: ID!) {
+  acceptPublicProjectLink(link: $link, projectId: $projectId)
+}
+    `;
+export type AcceptPublicProjectLinkMutationFn = ApolloReactCommon.MutationFunction<AcceptPublicProjectLinkMutation, AcceptPublicProjectLinkMutationVariables>;
+
+    export function useAcceptPublicProjectLinkMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AcceptPublicProjectLinkMutation, AcceptPublicProjectLinkMutationVariables>) {
+      return ApolloReactHooks.useMutation<AcceptPublicProjectLinkMutation, AcceptPublicProjectLinkMutationVariables>(AcceptPublicProjectLinkDocument, baseOptions);
+    }
+export type AcceptPublicProjectLinkMutationHookResult = ReturnType<typeof useAcceptPublicProjectLinkMutation>;
+export type AcceptPublicProjectLinkMutationResult = ApolloReactCommon.MutationResult<AcceptPublicProjectLinkMutation>;
+export type AcceptPublicProjectLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<AcceptPublicProjectLinkMutation, AcceptPublicProjectLinkMutationVariables>;
 export const CreateProjectDocument = gql`
     mutation CreateProject($name: String!, $desc: String) {
   createProject(name: $name, desc: $desc) {
@@ -547,6 +598,21 @@ export type CreateProjectMutationFn = ApolloReactCommon.MutationFunction<CreateP
 export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
 export type CreateProjectMutationResult = ApolloReactCommon.MutationResult<CreateProjectMutation>;
 export type CreateProjectMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export const GetPublicProjectLinkDocument = gql`
+    query GetPublicProjectLink($projectId: ID!) {
+  getPublicProjectLink(projectId: $projectId)
+}
+    `;
+
+    export function useGetPublicProjectLinkQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>) {
+      return ApolloReactHooks.useQuery<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>(GetPublicProjectLinkDocument, baseOptions);
+    }
+      export function useGetPublicProjectLinkLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>(GetPublicProjectLinkDocument, baseOptions);
+      }
+      
+export type GetPublicProjectLinkQueryHookResult = ReturnType<typeof useGetPublicProjectLinkQuery>;
+export type GetPublicProjectLinkQueryResult = ApolloReactCommon.QueryResult<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>;
 export const GetUserProjectDocument = gql`
     query GetUserProject($id: ID!) {
   getUserProject(id: $id) {
