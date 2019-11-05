@@ -1,5 +1,5 @@
 entity: Project
-# processor: ../processor/ProjectProcessor
+processor: ../processor/ProjectProcessor
 items:
   project1:
     name: 'Taskr'
@@ -8,8 +8,23 @@ items:
     members:
       - '@user1'
       - '@user5'
-  project{2..10}:
-    name: '{{commerce.productName}}'
-    desc: '{{lorem.sentence}}'
-    owner: '@user*'
-    # members:
+  project2:
+    name: 'Dorya'
+    desc: 'dorya!'
+    owner: '@user2'
+    members:
+      - '@user2'
+      - '@user1'
+      - '@user3'
+  project3:
+    name: 'Products'
+    desc: 'some products'
+    owner: '@user3'
+    members:
+      - '@user2'
+      - '@user4'
+  # project{4..10}:
+  #   name: '{{commerce.productName}}'
+  #   desc: '{{lorem.sentence}}'
+  #   owner: '@user*'
+  # members:

@@ -29,6 +29,9 @@ export class Project extends BaseEntity {
   @Column({ nullable: true })
   desc: string;
 
+  @Column({ type: 'double precision', default: 0 })
+  lastPos: number;
+
   @Field()
   @CreateDateColumn()
   created_at: Date;

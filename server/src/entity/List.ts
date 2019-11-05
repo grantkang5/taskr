@@ -5,7 +5,8 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne
+  ManyToOne,
+  BeforeInsert
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Project } from './Project';
@@ -14,6 +15,17 @@ import { Project } from './Project';
 @ObjectType()
 @Entity('lists')
 export class List extends BaseEntity {
+  @BeforeInsert()
+  async generatePos() {
+    try {
+      this.project.lastPos += 16384;
+      await this.project.save();
+      this.pos = this.project.lastPos;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;

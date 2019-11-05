@@ -22,18 +22,11 @@ export class ListResolver extends ListBaseResolver {
         throw new Error('Project does not exist');
       }
 
-      let newListPos = buffer;
-
-      // if not first list on project
-      if (project.lists.length) {
-        newListPos = project.lists[project.lists.length - 1].pos + buffer;
-      }
-
       const list = await List.create({
         name,
-        project,
-        pos: newListPos
+        project
       }).save();
+      project.save();
       return list;
     } catch (err) {
       console.log(err);
@@ -85,13 +78,10 @@ export class ListResolver extends ListBaseResolver {
       // move target to bottom of list
       if (belowId === undefined) {
         // get pos of last list
-        const lastList = targetList.project.lists.find(
-          list => list.id === parseInt(aboveId!)
-        );
-        if (!lastList) {
-          throw new Error('Last list does not exist');
-        }
-        targetList.pos = lastList.pos + buffer;
+        targetList.pos = targetList.project.lastPos + buffer;
+
+        // do you need to save loaded project manually? probably not
+        // await targetList.project.save();
       }
 
       // move target to top of list
