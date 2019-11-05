@@ -221,7 +221,7 @@ export type Query = {
   getAllTeams: Array<Team>,
   getTeam: Team,
   me: User,
-  login_googleOAuth: Scalars['String'],
+  loginGoogleOAuth: Scalars['String'],
   getUserTeam: Team,
   getUserTeams: Array<Team>,
   getUserProject: Project,
@@ -237,6 +237,11 @@ export type QueryGetProjectArgs = {
 
 export type QueryGetTeamArgs = {
   id: Scalars['ID']
+};
+
+
+export type QueryLoginGoogleOAuthArgs = {
+  returnUrl?: Maybe<Scalars['String']>
 };
 
 
@@ -454,14 +459,6 @@ export type ForgotPasswordMutation = (
   & Pick<Mutation, 'forgotPassword'>
 );
 
-export type Google_OAuthQueryVariables = {};
-
-
-export type Google_OAuthQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'login_googleOAuth'>
-);
-
 export type LoginMutationVariables = {
   email: Scalars['String'],
   password: Scalars['String']
@@ -474,6 +471,16 @@ export type LoginMutation = (
     { __typename?: 'LoginResponse' }
     & Pick<LoginResponse, 'accessToken'>
   ) }
+);
+
+export type LoginGoogleOAuthQueryVariables = {
+  returnUrl?: Maybe<Scalars['String']>
+};
+
+
+export type LoginGoogleOAuthQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'loginGoogleOAuth'>
 );
 
 export type LogoutMutationVariables = {};
@@ -781,21 +788,6 @@ export type ForgotPasswordMutationFn = ApolloReactCommon.MutationFunction<Forgot
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = ApolloReactCommon.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = ApolloReactCommon.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
-export const Google_OAuthDocument = gql`
-    query Google_OAuth {
-  login_googleOAuth
-}
-    `;
-
-    export function useGoogle_OAuthQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<Google_OAuthQuery, Google_OAuthQueryVariables>) {
-      return ApolloReactHooks.useQuery<Google_OAuthQuery, Google_OAuthQueryVariables>(Google_OAuthDocument, baseOptions);
-    }
-      export function useGoogle_OAuthLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<Google_OAuthQuery, Google_OAuthQueryVariables>) {
-        return ApolloReactHooks.useLazyQuery<Google_OAuthQuery, Google_OAuthQueryVariables>(Google_OAuthDocument, baseOptions);
-      }
-      
-export type Google_OAuthQueryHookResult = ReturnType<typeof useGoogle_OAuthQuery>;
-export type Google_OAuthQueryResult = ApolloReactCommon.QueryResult<Google_OAuthQuery, Google_OAuthQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -811,6 +803,21 @@ export type LoginMutationFn = ApolloReactCommon.MutationFunction<LoginMutation, 
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = ApolloReactCommon.MutationResult<LoginMutation>;
 export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LoginGoogleOAuthDocument = gql`
+    query LoginGoogleOAuth($returnUrl: String) {
+  loginGoogleOAuth(returnUrl: $returnUrl)
+}
+    `;
+
+    export function useLoginGoogleOAuthQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>) {
+      return ApolloReactHooks.useQuery<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>(LoginGoogleOAuthDocument, baseOptions);
+    }
+      export function useLoginGoogleOAuthLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>(LoginGoogleOAuthDocument, baseOptions);
+      }
+      
+export type LoginGoogleOAuthQueryHookResult = ReturnType<typeof useLoginGoogleOAuthQuery>;
+export type LoginGoogleOAuthQueryResult = ApolloReactCommon.QueryResult<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout

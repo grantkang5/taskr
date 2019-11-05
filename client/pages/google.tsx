@@ -1,14 +1,15 @@
-import React, { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { setAccessToken } from '../lib/accessToken';
-import { useAuth_GoogleOAuthMutation } from '../generated/graphql';
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { setAccessToken } from "../lib/accessToken";
+import { useAuth_GoogleOAuthMutation } from "../generated/graphql";
 
 const GoogleOAuth: React.FC = () => {
   const [auth] = useAuth_GoogleOAuthMutation();
-  const router = useRouter()
-
+  const router = useRouter();
+  console.log(router);
   useEffect(() => {
-    const { code }: { code?: string } = router.query;
+    const { code, state }: { code?: string; state?: string } = router.query;
+
     if (code) {
       const fetchGoogleUser = async () => {
         const response = await auth({
@@ -17,7 +18,18 @@ const GoogleOAuth: React.FC = () => {
 
         if (response && response.data) {
           setAccessToken(response.data.auth_googleOAuth.accessToken);
-          window.location.href = process.env.CLIENT_URL!;
+          if (state) {
+            const routeQuery = JSON.parse(router.query.state as string)
+            const { returnUrl, ...queryParams } = routeQuery
+            router.push({
+              pathname: returnUrl,
+              query: {
+                ...queryParams
+              }
+            })
+          } else {
+            window.location.href = process.env.CLIENT_URL!;
+          }
         }
       };
       fetchGoogleUser();

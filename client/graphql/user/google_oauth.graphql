@@ -1,3 +1,0 @@
-query Google_OAuth {
-  login_googleOAuth
-}
