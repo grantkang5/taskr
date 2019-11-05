@@ -42,21 +42,6 @@ export class UserResolver {
     }
   }
 
-  @Query(() => String)
-  async login_googleOAuth() {
-    const client = await createOAuth2Client();
-
-    const scopes = ["openid", "email"];
-
-    const url = client.generateAuthUrl({
-      access_type: "offline",
-      scope: scopes,
-      prompt: "consent"
-    });
-
-    return url;
-  }
-
   @Mutation(() => String)
   @UseMiddleware(rateLimit(10))
   async sendVerificationLink(
@@ -134,23 +119,21 @@ export class UserResolver {
         link: storedLink,
         password: storedPassword
       } = await redis.hgetall(key);
+
       if (verificationLink !== storedLink) {
-        console.log(verificationLink, storedLink)
         throw new Error("This link has expired");
       }
 
       const username = email.split("@")[0];
-
       const user = await User.create({
         email,
         password: registerKey ? await hash(password, 12) : storedPassword,
         username,
         auth: "website"
       }).save();
-      await redis.del(email);
+      await redis.del(key);
 
       sendRefreshToken(res, createRefreshToken(user));
-
       return {
         accessToken: createAccessToken(user),
         user
@@ -208,6 +191,24 @@ export class UserResolver {
     // send empty string for refreshtoken
     sendRefreshToken(res, "");
     return true;
+  }
+
+  @Query(() => String)
+  async loginGoogleOAuth(
+    @Arg("returnUrl", { nullable: true }) returnUrl?: string
+  ) {
+    const client = await createOAuth2Client();
+
+    const scopes = ["openid", "email"];
+
+    const url = client.generateAuthUrl({
+      access_type: "offline",
+      scope: scopes,
+      prompt: "consent",
+      state: returnUrl || undefined
+    });
+
+    return url;
   }
 
   @Mutation(() => LoginResponse)

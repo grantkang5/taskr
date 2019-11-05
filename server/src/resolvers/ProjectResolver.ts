@@ -174,7 +174,6 @@ export class ProjectResolver extends ProjectBaseResolver {
         `project-invite-${email}`
       );
       if (storedLink !== projectInviteLink) {
-        console.log(storedLink, projectInviteLink)
         throw new Error("This link has expired");
       }
 
