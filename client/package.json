@@ -9,7 +9,7 @@
     "start:dev": "next start",
     "codegen": "graphql-codegen --config codegen.yml",
     "lint": "tslint --project tsconfig.json",
-    "test": "jest",
+    "test": "jest --silent",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"
   },
