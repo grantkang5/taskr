@@ -22,7 +22,14 @@ const ProjectInviteSuccessPage: React.FC = () => {
       errorMessage(err)
     }
   });
-  const [acceptProjectInviteLink] = useAcceptProjectInviteLinkMutation();
+  const [acceptProjectInviteLink] = useAcceptProjectInviteLinkMutation({
+    variables: {
+      email: router.query.email as string,
+      projectInviteLink: router.query.id as string
+    },
+    onCompleted: () => router.push({ pathname: "/" }),
+    onError: (err) => errorMessage(err)
+  });
 
   useEffect(() => {
     let didCancel = false;
@@ -32,22 +39,8 @@ const ProjectInviteSuccessPage: React.FC = () => {
 
     if (!loading && data && validated && !validateLoading) {
       const fetchData = async () => {
-        const { id, email } = router.query;
-        try {
-          const response = await acceptProjectInviteLink({
-            variables: {
-              email: email as string,
-              projectInviteLink: id as string
-            }
-          });
-          if (response && response.data) {
-            router.push({ pathname: "/" });
-          }
-        } catch (err) {
-          errorMessage(err);
-        }
+        await acceptProjectInviteLink();
       };
-
       fetchData();
     }
 

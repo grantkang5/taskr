@@ -11,26 +11,22 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
   const [
     sendForgotPasswordLink,
     { loading }
-  ] = useSendForgotPasswordLinkMutation();
+  ] = useSendForgotPasswordLinkMutation({
+    variables: {
+      email: form.getFieldValue("email")
+    },
+    onCompleted: () => {
+      message.success("An email has been sent to reset your password");
+    },
+    onError: err => errorMessage(err)
+  });
+
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     const { validateFields } = form;
-    validateFields(async (validationErrors, { email }) => {
+    validateFields(async (validationErrors) => {
       if (!validationErrors) {
-        try {
-          const response = await sendForgotPasswordLink({
-            variables: { email }
-          });
-
-          if (response && response.data) {
-            message.success(
-              "An email has been sent to reset your password",
-              2.5
-            );
-          }
-        } catch (err) {
-          errorMessage(err)
-        }
+        const response = await sendForgotPasswordLink();
       }
     });
   };

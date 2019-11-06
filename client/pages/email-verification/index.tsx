@@ -8,27 +8,25 @@ import { errorMessage } from "../../lib/messageHandler";
 
 const EmailVerificationPage = () => {
   const router = useRouter();
-  const [resendVerificationLink] = useResendVerificationLinkMutation();
-  const resendVerificationEmail = async () => {
-    try {
-      const response = await resendVerificationLink({
-        variables: {
-          email: router.query.email as string
+  const [resendVerificationLink] = useResendVerificationLinkMutation({
+    variables: {
+      email: router.query.email as string
+    },
+    onCompleted: (data) => {
+      router.push({
+        pathname: "/email-verification",
+        query: {
+          email: router.query.email,
+          id: data.resendVerificationLink
         }
-      });
-      if (response && response.data) {
-        router.push({
-          pathname: "/email-verification",
-          query: {
-            email: router.query.email,
-            id: response.data.resendVerificationLink
-          }
-        });
-        message.success('Email verification sent', 2)
-      }
-    } catch (err) {
-      errorMessage(err)
-    }
+      })
+      message.success('Email verification sent')
+    },
+    onError: (err) => errorMessage(err)
+  });
+
+  const resendVerificationEmail = async () => {
+    await resendVerificationLink();
   };
 
   useEffect(() => {

@@ -5,31 +5,25 @@ import { useChangePasswordMutation } from "../../../generated/graphql";
 import { errorMessage } from "../../../lib/messageHandler";
 
 const ChangePassword: React.FC<FormComponentProps> = ({ form }) => {
-  const [changePassword, { loading }] = useChangePasswordMutation();
+  const [changePassword, { loading }] = useChangePasswordMutation({
+    onCompleted: () => {
+      message.success(`Your password has changed for the next time you login`);
+      form.resetFields();
+    },
+    onError: err => errorMessage(err)
+  });
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
-
-    const { validateFields, resetFields } = form;
+    const { validateFields } = form;
     validateFields(
       async (validationErrors, { currentPassword, newPassword }) => {
         if (!validationErrors) {
-          try {
-            const response = await changePassword({
-              variables: {
-                currentPassword,
-                newPassword
-              }
-            });
-
-            if (response && response.data) {
-              message.success(
-                `Your password has changed for the next time you login`
-              );
-              resetFields();
+          await changePassword({
+            variables: {
+              currentPassword,
+              newPassword
             }
-          } catch (err) {
-            errorMessage(err)
-          }
+          });
         }
       }
     );
@@ -47,7 +41,7 @@ const ChangePassword: React.FC<FormComponentProps> = ({ form }) => {
   const { getFieldDecorator } = form;
 
   return (
-    <Form onSubmit={handleSubmit} style={{ width: '350px' }}>
+    <Form onSubmit={handleSubmit} style={{ width: "350px" }}>
       <Form.Item hasFeedback>
         {getFieldDecorator("currentPassword", {
           rules: [

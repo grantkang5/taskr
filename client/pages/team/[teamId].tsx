@@ -5,7 +5,7 @@ import {
   useGetUserTeamQuery
 } from "../../generated/graphql";
 import { useRouter } from "next/router";
-import { Button, Input, message } from "antd";
+import { Button, Input, message, Skeleton } from "antd";
 import { errorMessage } from "../../lib/messageHandler";
 
 const Team: React.FC = () => {
@@ -16,26 +16,28 @@ const Team: React.FC = () => {
       id: router.query.teamId as string
     }
   });
-  const [sendTeamInviteLink] = useSendTeamInviteLinkMutation();
+  const [sendTeamInviteLink] = useSendTeamInviteLinkMutation({
+    onCompleted: () => {
+      message.success(`A team invitation has been sent to ${value}`);
+    },
+    onError: err => errorMessage(err)
+  });
 
   const handleInviteMember = async () => {
-    try {
-      const res = await sendTeamInviteLink({
-        variables: {
-          teamId: router.query.teamId as string,
-          email: value
-        }
-      });
-      if (res && res.data) {
-        message.success(`A team invitation has been sent to ${value}`);
+    await sendTeamInviteLink({
+      variables: {
+        teamId: router.query.teamId as string,
+        email: value
       }
-    } catch (err) {
-      errorMessage(err)
-    }
+    });
   };
 
   if (loading && !data) {
-    return null;
+    return (
+      <DashboardLayout>
+        <Skeleton active />
+      </DashboardLayout>
+    );
   }
 
   return (

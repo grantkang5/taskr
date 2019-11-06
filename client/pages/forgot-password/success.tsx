@@ -10,35 +10,31 @@ import { errorMessage } from "../../lib/messageHandler";
 
 const ForgotPasswordSuccessPage: React.FC<FormComponentProps> = ({ form }) => {
   const router = useRouter();
-  const [forgotPassword, { loading }] = useForgotPasswordMutation();
+  const [forgotPassword, { loading }] = useForgotPasswordMutation({
+    variables: {
+      email: router.query.email as string,
+      forgotPasswordLink: router.query.id as string,
+      password: form.getFieldValue("password")
+    },
+    onCompleted: () => {
+      message.success(`Your password has been changed`);
+      router.push("/login");
+    },
+    onError: err => errorMessage(err)
+  });
 
   useEffect(() => {
     if (!router.query.id || !router.query.email) {
       router.push("/error", "/");
     }
   }, []);
+
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     const { validateFields } = form;
-
-    validateFields(async (validationErrors, { password }) => {
+    validateFields(async (validationErrors) => {
       if (!validationErrors) {
-        try {
-          const response = await forgotPassword({
-            variables: {
-              email: router.query.email as string,
-              password,
-              forgotPasswordLink: router.query.id as string
-            }
-          });
-
-          if (response && response.data) {
-            message.success(`Your password has been changed`, 2.5);
-            router.push("/login");
-          }
-        } catch (err) {
-          errorMessage(err)
-        }
+        forgotPassword();
       }
     });
   };
