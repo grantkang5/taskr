@@ -2,36 +2,37 @@ import * as React from "react";
 import { mount } from "enzyme";
 import { MockedProvider, wait } from "@apollo/react-testing";
 import {
-  AcceptTeamInviteLinkDocument,
   MeDocument,
-  ValidateLinkDocument
+  ValidateLinkDocument,
+  AcceptProjectInviteLinkDocument
 } from "../../../../generated/graphql";
-import TeamInviteSuccessPage from "../../../../pages/invite/team/success";
+import ProjectInviteSuccessPage from "../../../../pages/invite/project/success";
 import { act } from "react-dom/test-utils";
-import AnonLayout from "../../../../components/layouts/AnonLayout";
 import { GraphQLError } from "graphql";
 import ErrorLayout from "../../../../components/layouts/ErrorLayout";
+import AnonLayout from "../../../../components/layouts/AnonLayout";
 
 describe("Pages", () => {
-  describe("TeamInviteSuccessPage", () => {
+  describe("ProjectInviteSuccessPage", () => {
     const mockQuery = {
-      id: 178,
-      email: "dev@email.com",
+      email: "dev2@email.com",
       username: "dev",
-      teamInviteLink: "abc",
-      key: "team-invite-dev@email.com"
+      projectInviteLink: "qwe",
+      id: 123,
+      key: "project-invite-dev2@email.com"
     };
+
     const useRouter = jest.spyOn(require("next/router"), "useRouter");
     useRouter.mockImplementation(() => ({
-      route: "/email-verification/success",
+      route: "/invite/project/success",
       query: {
         email: mockQuery.email,
-        id: mockQuery.teamInviteLink
+        id: mockQuery.projectInviteLink
       },
       // tslint:disable-next-line: no-empty
       push: () => {}
     }));
-    let acceptTeamInviteLinkCalled = false;
+    let acceptProjectInviteLinkCalled = false;
     const meQuery = {
       request: {
         query: MeDocument
@@ -52,7 +53,7 @@ describe("Pages", () => {
         query: ValidateLinkDocument,
         variables: {
           key: mockQuery.key,
-          link: mockQuery.teamInviteLink
+          link: mockQuery.projectInviteLink
         }
       },
       result: {
@@ -62,32 +63,31 @@ describe("Pages", () => {
         loading: false
       }
     };
-
-    const acceptTeamLinkInviteQuery = {
+    const acceptProjectLinkQuery = {
       request: {
-        query: AcceptTeamInviteLinkDocument,
+        query: AcceptProjectInviteLinkDocument,
         variables: {
           email: mockQuery.email,
-          teamInviteLink: mockQuery.teamInviteLink
+          projectInviteLink: mockQuery.projectInviteLink
         }
       },
       result: () => {
-        acceptTeamInviteLinkCalled = true;
+        acceptProjectInviteLinkCalled = true;
         return {
           data: {
-            acceptTeamInviteLink: mockQuery.teamInviteLink
+            acceptProjectInviteLink: mockQuery.projectInviteLink
           }
         };
       }
     };
 
-    it("fires acceptTeamInvite mutation on mount", async () => {
+    it("fires acceptProjectInviteLink mutation on mount", async () => {
       const wrapper = mount(
         <MockedProvider
-          mocks={[meQuery, validateLinkQuery, acceptTeamLinkInviteQuery]}
+          mocks={[meQuery, validateLinkQuery, acceptProjectLinkQuery]}
           addTypename={false}
         >
-          <TeamInviteSuccessPage />
+          <ProjectInviteSuccessPage />
         </MockedProvider>
       );
 
@@ -95,7 +95,7 @@ describe("Pages", () => {
         await wait(10);
       });
 
-      expect(acceptTeamInviteLinkCalled).toBe(true);
+      expect(acceptProjectInviteLinkCalled).toBe(true);
       wrapper.unmount();
     });
 
@@ -103,26 +103,27 @@ describe("Pages", () => {
       const errorQuery = {
         ...validateLinkQuery,
         result: {
-          errors: [new GraphQLError('This link has expired')]
+          errors: [new GraphQLError(`This link has expired`)]
         }
-      }
+      };
+
       const wrapper = mount(
-        <MockedProvider mocks={[errorQuery]}>
-          <TeamInviteSuccessPage />
+        <MockedProvider mocks={[errorQuery]} addTypename={false}>
+          <ProjectInviteSuccessPage />
         </MockedProvider>
       );
 
       await act(async () => {
-        await wait(0)
-      })
+        await wait(0);
+      });
 
-      expect(wrapper.contains(<ErrorLayout />))
-    })
+      expect(wrapper.contains(<ErrorLayout />));
+    });
 
     it("should render an auth form if user is not authenticated", async () => {
       const wrapper = mount(
-        <MockedProvider mocks={[validateLinkQuery]}>
-          <TeamInviteSuccessPage />
+        <MockedProvider mocks={[validateLinkQuery]} addTypename={false}>
+          <ProjectInviteSuccessPage />
         </MockedProvider>
       );
 

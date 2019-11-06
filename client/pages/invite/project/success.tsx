@@ -54,7 +54,7 @@ const ProjectInviteSuccessPage: React.FC = () => {
     return () => {
       didCancel = true;
     };
-  }, [data]);
+  }, [data, validated]);
 
   const handleSignup = () => {
     router.push({
