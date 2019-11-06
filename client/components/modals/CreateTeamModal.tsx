@@ -2,52 +2,53 @@ import React, { useCallback, useEffect } from "react";
 import { Modal, Form, Input, Icon, message } from "antd";
 import { useModal } from ".";
 import { FormComponentProps } from "antd/lib/form";
-import { useCreateTeamMutation, GetUserTeamsDocument } from "../../generated/graphql";
+import {
+  useCreateTeamMutation,
+  GetUserTeamsDocument
+} from "../../generated/graphql";
 import { errorMessage } from "../../lib/messageHandler";
-
 
 const CreateTeamModal: React.FC<FormComponentProps> = ({ form }) => {
   const { hideModal } = useModal();
-  const [createTeam, { loading }] = useCreateTeamMutation();
+  const [createTeam, { loading }] = useCreateTeamMutation({
+    onCompleted: () => {
+      message.success(
+        `Your team ${form.getFieldValue("name")} has been created`
+      );
+      unmount();
+    },
+    onError: err => errorMessage(err),
+    refetchQueries: [{ query: GetUserTeamsDocument }]
+  });
   const unmount = () => hideModal();
 
   const handleEnterPress = useCallback(e => {
     const { keyCode } = e;
-    if (keyCode === 13 && form.isFieldTouched('name')) {
-      handleSubmit()
+    if (keyCode === 13 && form.isFieldTouched("name")) {
+      handleSubmit();
     }
-  }, [])
+  }, []);
 
   useEffect(() => {
-    window.addEventListener('keydown', handleEnterPress)
+    window.addEventListener("keydown", handleEnterPress);
 
     return () => {
-      window.removeEventListener('keydown', handleEnterPress)
-    }
-  }, [handleEnterPress])
- 
+      window.removeEventListener("keydown", handleEnterPress);
+    };
+  }, [handleEnterPress]);
 
   const handleSubmit = () => {
     const { validateFields } = form;
     validateFields(async (validationErrors, { name }) => {
       if (!validationErrors) {
-        try {
-          const response = await createTeam({
-            variables: {
-              name
-            },
-            refetchQueries: [{ query: GetUserTeamsDocument }]
-          })
-          if (response && response.data) {
-            message.success(`Your team ${name} has been created`)
+        createTeam({
+          variables: {
+            name
           }
-          unmount();
-        } catch (err) {
-          errorMessage(err)
-        }
+        });
       }
-    })
-  }
+    });
+  };
 
   const { getFieldDecorator } = form;
   return (
@@ -57,7 +58,7 @@ const CreateTeamModal: React.FC<FormComponentProps> = ({ form }) => {
       confirmLoading={loading}
       onOk={handleSubmit}
       onCancel={unmount}
-      okText={'Create team'}
+      okText={"Create team"}
     >
       <Form>
         <Form.Item hasFeedback label="Team name" required>

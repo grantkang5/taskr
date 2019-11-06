@@ -4,10 +4,7 @@ import { useRouter } from "next/router";
 import ChangePassword from "../../components/layouts/SettingsLayout/ChangePassword";
 import SettingsLayout from "../../components/layouts/SettingsLayout";
 import { SubText, LinkText } from "../../components/common/Text";
-import {
-  useMeQuery,
-  useUpdateUsernameMutation,
-} from "../../generated/graphql";
+import { useMeQuery, useUpdateUsernameMutation } from "../../generated/graphql";
 import { EditButton } from "../../components/common/Input";
 
 import styles from "./Settings.module.less";
@@ -24,23 +21,17 @@ const SettingsPage: React.FC = () => {
   const [updateUsername] = useUpdateUsernameMutation({
     variables: {
       username: values.username
-    }
+    },
+    onCompleted: userNameData => {
+      setValues({
+        ...values,
+        username: userNameData.updateUsername.username
+      });
+    },
+    onError: err => errorMessage(err)
   });
 
-  const handleUpdateUsername = async () => {
-    try {
-      const response = await updateUsername();
-      if (response && response.data) {
-        setValues({
-          ...values,
-          username: response.data.updateUsername.username
-        });
-        message.success(`Your username has been changed successfully`);
-      }
-    } catch (err) {
-      errorMessage(err)
-    }
-  };
+  const handleUpdateUsername = async () => updateUsername();
 
   const handleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
     const { name, value } = e.currentTarget;

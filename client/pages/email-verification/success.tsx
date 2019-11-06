@@ -16,29 +16,60 @@ const EmailVerificationSuccessPage: React.FC = () => {
   const [
     register,
     { error: registerError, loading: registerLoading, called: registerCalled }
-  ] = useRegisterMutation();
-  const [resendVerificationLink] = useResendVerificationLinkMutation();
-  const [getMe] = useMeLazyQuery();
-  const resendVerificationEmail = async () => {
-    try {
-      const response = await resendVerificationLink({
-        variables: {
-          email: router.query.email as string
+  ] = useRegisterMutation({
+    variables: {
+      email: router.query.email as string,
+      verificationLink: router.query.id as string
+    },
+    onCompleted: data => {
+      setAccessToken(data.register.accessToken);
+      getMe();
+    },
+    onError: err => {
+      message.warning(
+        <span>
+          <span>
+            The validation link you used has expired or is no longer valid.
+          </span>
+          <Button type="link" onClick={resendVerificationEmail}>
+            Resend verification link
+          </Button>
+          <Icon
+            type="close-circle"
+            style={{ cursor: "pointer" }}
+            onClick={() => message.destroy()}
+          />
+        </span>,
+        0
+      );
+      router.push("/");
+    }
+  });
+  const [resendVerificationLink] = useResendVerificationLinkMutation({
+    variables: {
+      email: router.query.email as string
+    },
+    onCompleted: data => {
+      router.push({
+        pathname: "/email-verification",
+        query: {
+          email: router.query.email,
+          id: data.resendVerificationLink
         }
       });
-      await message.destroy();
-      if (response && response.data) {
-        router.push({
-          pathname: "/email-verification",
-          query: {
-            email: router.query.email,
-            id: response.data.resendVerificationLink
-          }
-        });
-      }
-    } catch (err) {
-      errorMessage(err)
+    },
+    onError: err => errorMessage(err)
+  });
+  const [getMe] = useMeLazyQuery({
+    onCompleted: () => {
+      message.success(`Congratulations! Welcome to Taskr`, 2.5);
+      router.push({ pathname: "/" });
     }
+  });
+
+  const resendVerificationEmail = async () => {
+    await resendVerificationLink();
+    await message.destroy();
   };
 
   useEffect(() => {
@@ -48,44 +79,9 @@ const EmailVerificationSuccessPage: React.FC = () => {
     }
 
     const fetchData = async () => {
-      const { id, email } = router.query;
-      try {
-        const response = await register({
-          variables: {
-            email: email as string,
-            verificationLink: id as string
-          }
-        });
-
-        setAccessToken(response.data!.register.accessToken);
-        await getMe();
-        message.success(`Congratulations! Welcome to Taskr`, 2.5);
-        router.push({
-          pathname: "/"
-        });
-      } catch (err) {
-        message.warning(
-          <span>
-            <span>
-              The validation link you used has expired or is no longer valid.
-            </span>
-            <Button type="link" onClick={resendVerificationEmail}>
-              Resend verification link
-            </Button>
-            <Icon
-              type="close-circle"
-              style={{ cursor: "pointer" }}
-              onClick={() => message.destroy()}
-            />
-          </span>,
-          0
-        );
-        router.push("/");
-      }
+      await register();
     };
-
     fetchData();
-
     return () => {
       didCancel = true;
     };

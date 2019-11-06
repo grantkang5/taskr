@@ -28,7 +28,16 @@ const TeamInviteSuccessPage: React.FC = () => {
       errorMessage(err);
     }
   });
-  const [acceptTeamInviteLink] = useAcceptTeamInviteLinkMutation();
+  const [acceptTeamInviteLink] = useAcceptTeamInviteLinkMutation({
+    variables: {
+      email: router.query.email as string,
+      teamInviteLink: router.query.id as string
+    },
+    onCompleted: () => {
+      router.push({ pathname: "/" });
+    },
+    onError: err => errorMessage(err)
+  });
 
   useEffect(() => {
     let didCancel = false;
@@ -38,24 +47,9 @@ const TeamInviteSuccessPage: React.FC = () => {
 
     if (!loading && data && validated && !validateLoading) {
       const fetchData = async () => {
-        const { id, email } = router.query;
-        try {
-          const response = await acceptTeamInviteLink({
-            variables: {
-              email: email as string,
-              teamInviteLink: id as string
-            }
-          });
-          if (response && response.data) {
-            router.push({ pathname: "/" });
-          }
-        } catch (err) {
-          errorMessage(err);
-        }
+        await acceptTeamInviteLink();
       };
-
       fetchData();
-
       return () => {
         didCancel = true;
       };

@@ -13,16 +13,26 @@ import ErrorLayout from "../../../components/layouts/ErrorLayout";
 const PublicProjectInvitePage: React.FC = () => {
   const router = useRouter();
   const { data, loading } = useMeQuery();
-  const { data: validated, loading: validateLoading } = useValidatePublicProjectLinkQuery({
+  const {
+    data: validated,
+    loading: validateLoading
+  } = useValidatePublicProjectLinkQuery({
     variables: {
       projectId: router.query.project as string,
       link: router.query.id as string
     },
-    onError: (err) => {
-      errorMessage(err)
+    onError: err => {
+      errorMessage(err);
     }
   });
-  const [acceptProjectLink] = useAcceptPublicProjectLinkMutation();
+  const [acceptProjectLink] = useAcceptPublicProjectLinkMutation({
+    variables: {
+      link: router.query.id as string,
+      projectId: router.query.project as string
+    },
+    onCompleted: () => router.push({ pathname: "/" }),
+    onError: err => errorMessage(err)
+  });
 
   useEffect(() => {
     let didCancel = false;
@@ -31,19 +41,7 @@ const PublicProjectInvitePage: React.FC = () => {
     }
     if (!loading && data && validated && !validateLoading) {
       const fetchData = async () => {
-        try {
-          const response = await acceptProjectLink({
-            variables: {
-              link: router.query.id as string,
-              projectId: router.query.project as string
-            }
-          });
-          if (response && response.data) {
-            router.push({ pathname: "/" });
-          }
-        } catch (err) {
-          errorMessage(err)
-        }
+        await acceptProjectLink();
       };
       fetchData();
     }
@@ -56,8 +54,8 @@ const PublicProjectInvitePage: React.FC = () => {
   const handleSignup = () => {
     router.push({
       pathname: "/register"
-    })
-  }
+    });
+  };
 
   const handleLogin = () => {
     router.push({
@@ -66,11 +64,13 @@ const PublicProjectInvitePage: React.FC = () => {
         returnUrl: "/invite/project/public",
         ...router.query
       }
-    })
-  }
+    });
+  };
 
   if (!validated && !validateLoading) {
-    return <ErrorLayout message={"This link has expired, ask for a new one :D"} />
+    return (
+      <ErrorLayout message={"This link has expired, ask for a new one :D"} />
+    );
   }
 
   if (!loading && !data) {
