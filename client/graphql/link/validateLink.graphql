@@ -1,0 +1,3 @@
+query ValidateLink($key: String!, $link: String!) {
+  validateLink(key:$key, link:$link)
+}

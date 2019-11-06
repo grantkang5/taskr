@@ -1,5 +1,5 @@
 import React from "react";
-import Router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import Layout from "../components/layouts/Layout";
 import {
   useSendVerificationLinkMutation,
@@ -13,6 +13,7 @@ import GoogleLogin from "../components/auth/GoogleLogin";
 
 import "./App.less";
 import { setAccessToken } from "../lib/accessToken";
+import { errorMessage } from "../lib/messageHandler";
 
 const Register: React.FC<FormComponentProps> = ({ form }) => {
   const router = useRouter();
@@ -48,9 +49,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
             query: { ...queryParams }
           });
         } catch (err) {
-          err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2)
-            : message.error(err.message, 2);
+          errorMessage(err)
         }
       } else {
         try {
@@ -67,9 +66,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
             });
           }
         } catch (err) {
-          err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2)
-            : message.error(err.message, 2);
+          errorMessage(err)
         }
       }
     });

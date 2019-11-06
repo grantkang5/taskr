@@ -3,14 +3,25 @@ import Layout from "../../../components/layouts/Layout";
 import { useRouter } from "next/router";
 import {
   useMeQuery,
-  useAcceptPublicProjectLinkMutation
+  useAcceptPublicProjectLinkMutation,
+  useValidatePublicProjectLinkQuery
 } from "../../../generated/graphql";
-import { message } from "antd";
 import AnonLayout from "../../../components/layouts/AnonLayout";
+import { errorMessage } from "../../../lib/messageHandler";
+import ErrorLayout from "../../../components/layouts/ErrorLayout";
 
 const PublicProjectInvitePage: React.FC = () => {
   const router = useRouter();
   const { data, loading } = useMeQuery();
+  const { data: validated, loading: validateLoading } = useValidatePublicProjectLinkQuery({
+    variables: {
+      projectId: router.query.project as string,
+      link: router.query.id as string
+    },
+    onError: (err) => {
+      errorMessage(err)
+    }
+  });
   const [acceptProjectLink] = useAcceptPublicProjectLinkMutation();
 
   useEffect(() => {
@@ -18,7 +29,7 @@ const PublicProjectInvitePage: React.FC = () => {
     if (!router.query.project || !router.query.id) {
       router.push("/error", "/");
     }
-    if (!loading && data) {
+    if (!loading && data && validated && !validateLoading) {
       const fetchData = async () => {
         try {
           const response = await acceptProjectLink({
@@ -31,9 +42,7 @@ const PublicProjectInvitePage: React.FC = () => {
             router.push({ pathname: "/" });
           }
         } catch (err) {
-          err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2.5)
-            : message.error("An unknown error has occurred", 2);
+          errorMessage(err)
         }
       };
       fetchData();
@@ -58,6 +67,10 @@ const PublicProjectInvitePage: React.FC = () => {
         ...router.query
       }
     })
+  }
+
+  if (!validated && !validateLoading) {
+    return <ErrorLayout message={"This link has expired, ask for a new one :D"} />
   }
 
   if (!loading && !data) {

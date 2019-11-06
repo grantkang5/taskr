@@ -6,6 +6,7 @@ import { FormComponentProps } from "antd/lib/form";
 import { useForgotPasswordMutation } from "../../generated/graphql";
 import { SubText } from "../../components/common/Text";
 import { useRouter } from "next/router";
+import { errorMessage } from "../../lib/messageHandler";
 
 const ForgotPasswordSuccessPage: React.FC<FormComponentProps> = ({ form }) => {
   const router = useRouter();
@@ -36,9 +37,7 @@ const ForgotPasswordSuccessPage: React.FC<FormComponentProps> = ({ form }) => {
             router.push("/login");
           }
         } catch (err) {
-          err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2)
-            : message.error(err.message, 2);
+          errorMessage(err)
         }
       }
     });

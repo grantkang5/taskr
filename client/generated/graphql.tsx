@@ -227,6 +227,8 @@ export type Query = {
   getUserProject: Project,
   getUserProjects: Array<Project>,
   getPublicProjectLink: Scalars['String'],
+  validateLink: Scalars['Boolean'],
+  validatePublicProjectLink: Scalars['Boolean'],
 };
 
 
@@ -259,6 +261,18 @@ export type QueryGetPublicProjectLinkArgs = {
   projectId: Scalars['ID']
 };
 
+
+export type QueryValidateLinkArgs = {
+  link: Scalars['String'],
+  key: Scalars['String']
+};
+
+
+export type QueryValidatePublicProjectLinkArgs = {
+  link: Scalars['String'],
+  projectId: Scalars['ID']
+};
+
 export type Team = {
    __typename?: 'Team',
   id: Scalars['ID'],
@@ -282,6 +296,28 @@ export type User = {
   projects: Array<Project>,
   teams: Array<Team>,
 };
+
+export type ValidateLinkQueryVariables = {
+  key: Scalars['String'],
+  link: Scalars['String']
+};
+
+
+export type ValidateLinkQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'validateLink'>
+);
+
+export type ValidatePublicProjectLinkQueryVariables = {
+  projectId: Scalars['ID'],
+  link: Scalars['String']
+};
+
+
+export type ValidatePublicProjectLinkQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'validatePublicProjectLink'>
+);
 
 export type AcceptProjectInviteLinkMutationVariables = {
   email: Scalars['String'],
@@ -563,6 +599,36 @@ export type UpdateUsernameMutation = (
 );
 
 
+export const ValidateLinkDocument = gql`
+    query ValidateLink($key: String!, $link: String!) {
+  validateLink(key: $key, link: $link)
+}
+    `;
+
+    export function useValidateLinkQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ValidateLinkQuery, ValidateLinkQueryVariables>) {
+      return ApolloReactHooks.useQuery<ValidateLinkQuery, ValidateLinkQueryVariables>(ValidateLinkDocument, baseOptions);
+    }
+      export function useValidateLinkLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ValidateLinkQuery, ValidateLinkQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<ValidateLinkQuery, ValidateLinkQueryVariables>(ValidateLinkDocument, baseOptions);
+      }
+      
+export type ValidateLinkQueryHookResult = ReturnType<typeof useValidateLinkQuery>;
+export type ValidateLinkQueryResult = ApolloReactCommon.QueryResult<ValidateLinkQuery, ValidateLinkQueryVariables>;
+export const ValidatePublicProjectLinkDocument = gql`
+    query ValidatePublicProjectLink($projectId: ID!, $link: String!) {
+  validatePublicProjectLink(projectId: $projectId, link: $link)
+}
+    `;
+
+    export function useValidatePublicProjectLinkQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>) {
+      return ApolloReactHooks.useQuery<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>(ValidatePublicProjectLinkDocument, baseOptions);
+    }
+      export function useValidatePublicProjectLinkLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>(ValidatePublicProjectLinkDocument, baseOptions);
+      }
+      
+export type ValidatePublicProjectLinkQueryHookResult = ReturnType<typeof useValidatePublicProjectLinkQuery>;
+export type ValidatePublicProjectLinkQueryResult = ApolloReactCommon.QueryResult<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>;
 export const AcceptProjectInviteLinkDocument = gql`
     mutation AcceptProjectInviteLink($email: String!, $projectInviteLink: String!) {
   acceptProjectInviteLink(email: $email, projectInviteLink: $projectInviteLink)

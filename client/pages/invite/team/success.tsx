@@ -3,11 +3,13 @@ import styles from "./TeamInvite.module.less";
 import Layout from "../../../components/layouts/Layout";
 import {
   useMeQuery,
-  useAcceptTeamInviteLinkMutation
+  useAcceptTeamInviteLinkMutation,
+  useValidateLinkQuery
 } from "../../../generated/graphql";
-import { message } from "antd";
 import { useRouter } from "next/router";
 import AnonLayout from "../../../components/layouts/AnonLayout";
+import { errorMessage } from "../../../lib/messageHandler";
+import ErrorLayout from "../../../components/layouts/ErrorLayout";
 
 /**
  * @route '/invite/team/success
@@ -17,6 +19,15 @@ import AnonLayout from "../../../components/layouts/AnonLayout";
 const TeamInviteSuccessPage: React.FC = () => {
   const router = useRouter();
   const { data, loading } = useMeQuery();
+  const { data: validated, loading: validateLoading } = useValidateLinkQuery({
+    variables: {
+      key: `team-invite-${router.query.email}`,
+      link: router.query.id as string
+    },
+    onError: err => {
+      errorMessage(err);
+    }
+  });
   const [acceptTeamInviteLink] = useAcceptTeamInviteLinkMutation();
 
   useEffect(() => {
@@ -24,7 +35,7 @@ const TeamInviteSuccessPage: React.FC = () => {
     if (!router.query.id || !router.query.email) {
       router.push("/error", "/");
     }
-    if (!loading && data) {
+    if (!loading && data && validated && !validateLoading) {
       const fetchData = async () => {
         const { id, email } = router.query;
         try {
@@ -38,9 +49,7 @@ const TeamInviteSuccessPage: React.FC = () => {
             router.push({ pathname: "/" });
           }
         } catch (err) {
-          err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2.5)
-            : message.error("An unknown error has occurred", 2);
+          errorMessage(err);
         }
       };
 
@@ -73,6 +82,12 @@ const TeamInviteSuccessPage: React.FC = () => {
       }
     });
   };
+
+  if (!validated && !validateLoading) {
+    return (
+      <ErrorLayout message={"This link has expired or has already been used"} />
+    );
+  }
 
   if (!loading && !data) {
     return <AnonLayout handleSignup={handleSignup} handleLogin={handleLogin} />;

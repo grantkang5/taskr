@@ -3,6 +3,7 @@ import { Modal, Form, Input, Icon, message } from "antd";
 import { useModal } from ".";
 import { FormComponentProps } from "antd/lib/form";
 import { GetUserProjectsDocument, useCreateProjectMutation } from "../../generated/graphql";
+import { errorMessage } from "../../lib/messageHandler";
 
 
 const CreateProjectModal: React.FC<FormComponentProps> = ({ form }) => {
@@ -42,9 +43,7 @@ const CreateProjectModal: React.FC<FormComponentProps> = ({ form }) => {
           }
           unmount();
         } catch (err) {
-          err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2.5)
-            : message.error("An unknown error has occurred", 2);
+          errorMessage(err)
         }
       }
     })

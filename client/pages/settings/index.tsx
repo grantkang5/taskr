@@ -11,6 +11,7 @@ import {
 import { EditButton } from "../../components/common/Input";
 
 import styles from "./Settings.module.less";
+import { errorMessage } from "../../lib/messageHandler";
 
 const SettingsPage: React.FC = () => {
   const { data } = useMeQuery();
@@ -37,9 +38,7 @@ const SettingsPage: React.FC = () => {
         message.success(`Your username has been changed successfully`);
       }
     } catch (err) {
-      err.graphQLErrors
-        ? message.error(err.graphQLErrors[0].message, 2.5)
-        : message.error("An unknown error has occurred", 2);
+      errorMessage(err)
     }
   };
 

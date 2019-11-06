@@ -3,14 +3,25 @@ import Layout from "../../../components/layouts/Layout";
 import { useRouter } from "next/router";
 import {
   useMeQuery,
-  useAcceptProjectInviteLinkMutation
+  useAcceptProjectInviteLinkMutation,
+  useValidateLinkQuery
 } from "../../../generated/graphql";
-import { message } from "antd";
 import AnonLayout from "../../../components/layouts/AnonLayout";
+import ErrorLayout from "../../../components/layouts/ErrorLayout";
+import { errorMessage } from "../../../lib/messageHandler";
 
 const ProjectInviteSuccessPage: React.FC = () => {
   const router = useRouter();
   const { data, loading } = useMeQuery();
+  const { data: validated, loading: validateLoading } = useValidateLinkQuery({
+    variables: {
+      key: `project-invite-${router.query.email}`,
+      link: router.query.id as string
+    },
+    onError: err => {
+      errorMessage(err)
+    }
+  });
   const [acceptProjectInviteLink] = useAcceptProjectInviteLinkMutation();
 
   useEffect(() => {
@@ -19,7 +30,7 @@ const ProjectInviteSuccessPage: React.FC = () => {
       router.push("/error", "/");
     }
 
-    if (!loading && data) {
+    if (!loading && data && validated && !validateLoading) {
       const fetchData = async () => {
         const { id, email } = router.query;
         try {
@@ -33,9 +44,7 @@ const ProjectInviteSuccessPage: React.FC = () => {
             router.push({ pathname: "/" });
           }
         } catch (err) {
-          err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2.5)
-            : message.error("An unknown error has occurred", 2);
+          errorMessage(err);
         }
       };
 
@@ -55,8 +64,8 @@ const ProjectInviteSuccessPage: React.FC = () => {
         registerKey: "project-invite",
         ...router.query
       }
-    })
-  }
+    });
+  };
 
   const handleLogin = () => {
     router.push({
@@ -66,9 +75,14 @@ const ProjectInviteSuccessPage: React.FC = () => {
         registerKey: "project-invite",
         ...router.query
       }
-    })
-  }
+    });
+  };
 
+  if (!validated && !validateLoading) {
+    return (
+      <ErrorLayout message={"This link has expired or has already been used"} />
+    );
+  }
   if (!loading && !data) {
     return <AnonLayout handleSignup={handleSignup} handleLogin={handleLogin} />;
   }

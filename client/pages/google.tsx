@@ -6,7 +6,7 @@ import { useAuth_GoogleOAuthMutation } from "../generated/graphql";
 const GoogleOAuth: React.FC = () => {
   const [auth] = useAuth_GoogleOAuthMutation();
   const router = useRouter();
-  console.log(router);
+
   useEffect(() => {
     const { code, state }: { code?: string; state?: string } = router.query;
 

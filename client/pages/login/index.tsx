@@ -3,12 +3,13 @@ import { useLoginMutation } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import { setAccessToken } from "../../lib/accessToken";
 import Layout from "../../components/layouts/Layout";
-import { Form, Icon, Input, Button, message } from "antd";
+import { Form, Icon, Input, Button } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import AuthLayout from "../../components/auth/AuthLayout";
 import GoogleLogin from "../../components/auth/GoogleLogin";
 
 import styles from "./Login.module.less";
+import { errorMessage } from "../../lib/messageHandler";
 
 const Login: React.FC<FormComponentProps> = ({ form }) => {
   const router = useRouter();
@@ -43,9 +44,7 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
           }
         } catch (err) {
           showForgotPassword(true);
-          err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2.5)
-            : message.error("An unknown error has occurred", 2);
+          errorMessage(err)
         }
       }
     });
