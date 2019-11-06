@@ -6,10 +6,12 @@ import {
   ManyToMany,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToOne
+  ManyToOne,
+  OneToMany
 } from 'typeorm';
 import { ObjectType, Field, Int } from 'type-graphql';
 import { User } from './User';
+import { List } from './List';
 import { Team } from './Team';
 
 @ObjectType()
@@ -27,6 +29,9 @@ export class Project extends BaseEntity {
   @Column({ nullable: true })
   desc: string;
 
+  @Column({ type: 'double precision', default: 0 })
+  lastPos: number;
+
   @Field()
   @CreateDateColumn()
   created_at: Date;
@@ -41,7 +46,15 @@ export class Project extends BaseEntity {
   })
   owner: User;
 
-  // TODO: maybe need eager
+  @Field(() => List)
+  @OneToMany(() => List, list => list.project, {
+    cascade: true,
+    eager: true
+  })
+  lists: List[];
+
+  // @OneToMany(() => Label, label => label.project)
+  // labels: Label[];
   @Field(() => [User])
   @ManyToMany(() => User, user => user.projects)
   members: User[];
@@ -50,5 +63,5 @@ export class Project extends BaseEntity {
   @ManyToOne(() => Team, team => team.projects, {
     onDelete: "SET NULL"
   })
-  team: Team
+  team: Team;
 }

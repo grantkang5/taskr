@@ -1,13 +1,13 @@
-import { gql } from "apollo-server-express";
-import { testServer, createTestDb, closeTestDb } from "../mocks/server";
-import { Connection } from "typeorm";
-import { User } from "../../entity/User";
+import { gql } from 'apollo-server-express';
+import { testServer, createTestDb, closeTestDb } from '../mocks/server';
+import { Connection } from 'typeorm';
+import { User } from '../../entity/User';
 import faker from 'faker';
 
-import { createTestClient } from "apollo-server-testing";
+import { createTestClient } from 'apollo-server-testing';
 const { query, mutate } = createTestClient(testServer);
 
-describe("User Resolver", () => {
+describe('User Resolver', () => {
   let connection: Connection;
   beforeAll(async () => {
     connection = await createTestDb();
@@ -20,11 +20,11 @@ describe("User Resolver", () => {
   const mockUser = {
     email: faker.internet.email(),
     password: faker.internet.password(),
-    newPassword: faker.internet.password(),
-  }
+    newPassword: faker.internet.password()
+  };
 
-  describe("SendVerificationLink and Register mutation", () => {
-    it("should register a user into the db", async () => {
+  describe('SendVerificationLink and Register mutation', () => {
+    it('should register a user into the db', async () => {
       const sendVerificationLink = await mutate({
         mutation: gql`
           mutation SendVerificationLink($email: String!, $password: String!) {
@@ -57,8 +57,8 @@ describe("User Resolver", () => {
     });
   });
 
-  describe("Login mutation", () => {
-    it("should return an accessToken", async () => {
+  describe('Login mutation', () => {
+    it('should return an accessToken', async () => {
       const res = await mutate({
         mutation: gql`
           mutation Login($email: String!, $password: String!) {
@@ -74,8 +74,8 @@ describe("User Resolver", () => {
     });
   });
 
-  describe("Me query", () => {
-    it("should fetch a current user", async () => {
+  describe('Me query', () => {
+    it('should fetch a current user', async () => {
       const res = await query({
         query: gql`
           query Me {
@@ -91,8 +91,8 @@ describe("User Resolver", () => {
     });
   });
 
-  describe("Logout mutation", () => {
-    it("should log the user out", async () => {
+  describe('Logout mutation', () => {
+    it('should log the user out', async () => {
       const res = await mutate({
         mutation: gql`
           mutation Logout {
@@ -105,24 +105,32 @@ describe("User Resolver", () => {
     });
   });
 
-  describe("ForgotPassword mutation", () => {
+  describe('ForgotPassword mutation', () => {
     it("should send a link to user's email and then update the user's password", async () => {
-      jest.setTimeout(20000)
+      jest.setTimeout(50000);
       const res = await mutate({
         mutation: gql`
           mutation SendForgotPasswordLink($email: String!) {
-            sendForgotPasswordLink(email:$email)
+            sendForgotPasswordLink(email: $email)
           }
         `,
         variables: { email: mockUser.email }
-      })
+      });
       expect(res.data).toBeDefined();
       expect(res.errors).toBeUndefined();
 
       const forgotPassword = await mutate({
         mutation: gql`
-          mutation forgotPassword($email: String!, $forgotPasswordLink: String!, $password: String!) {
-            forgotPassword(email:$email, forgotPasswordLink:$forgotPasswordLink, password:$password)
+          mutation forgotPassword(
+            $email: String!
+            $forgotPasswordLink: String!
+            $password: String!
+          ) {
+            forgotPassword(
+              email: $email
+              forgotPasswordLink: $forgotPasswordLink
+              password: $password
+            )
           }
         `,
         variables: {
@@ -130,65 +138,71 @@ describe("User Resolver", () => {
           forgotPasswordLink: res.data!.sendForgotPasswordLink,
           password: mockUser.newPassword
         }
-      })
+      });
       expect(forgotPassword.data).toBeDefined();
       expect(forgotPassword.errors).toBeUndefined();
 
       const incorrectLogin = await mutate({
         mutation: gql`
           mutation Login($email: String!, $password: String!) {
-            login(email:$email, password:$password) {
+            login(email: $email, password: $password) {
               accessToken
             }
           }
         `,
         variables: { email: mockUser.email, password: mockUser.password }
-      })
+      });
 
-      expect(incorrectLogin.errors).toBeDefined()
+      expect(incorrectLogin.errors).toBeDefined();
 
       const successfulLogin = await mutate({
         mutation: gql`
           mutation Login($email: String!, $password: String!) {
-            login(email:$email, password:$password) {
+            login(email: $email, password: $password) {
               accessToken
             }
           }
         `,
         variables: { email: mockUser.email, password: mockUser.newPassword }
-      })
+      });
 
       expect(successfulLogin.data).toBeDefined();
       expect(successfulLogin.errors).toBeUndefined();
     });
   });
 
-  describe("Change password mutation", () => {
+  describe('Change password mutation', () => {
     it("should change the user's password", async () => {
       const res = await mutate({
         mutation: gql`
-          mutation ChangePassword($currentPassword: String!, $newPassword: String!) {
-            changePassword(currentPassword:$currentPassword, newPassword:$newPassword)
+          mutation ChangePassword(
+            $currentPassword: String!
+            $newPassword: String!
+          ) {
+            changePassword(
+              currentPassword: $currentPassword
+              newPassword: $newPassword
+            )
           }
         `,
         variables: { currentPassword: 'password', newPassword: 'password2' }
-      })
+      });
 
       const successfulLogin = await mutate({
         mutation: gql`
           mutation Login($email: String!, $password: String!) {
-            login(email:$email, password:$password) {
+            login(email: $email, password: $password) {
               accessToken
             }
           }
         `,
         variables: { email: 'dev@email.com', password: 'password2' }
-      })
-      
-      expect(res.data).toBeDefined()
+      });
+
+      expect(res.data).toBeDefined();
       expect(res.errors).toBeUndefined();
       expect(successfulLogin.data).toBeDefined();
       expect(successfulLogin.errors).toBeUndefined();
-    })
-  })
+    });
+  });
 });

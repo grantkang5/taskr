@@ -10,3 +10,23 @@ items:
       - '@user2'
       - '@user3'
     team: '@team*'
+  project2:
+    name: 'Dorya'
+    desc: 'dorya!'
+    owner: '@user2'
+    members:
+      - '@user2'
+      - '@user1'
+      - '@user3'
+  project3:
+    name: 'Products'
+    desc: 'some products'
+    owner: '@user3'
+    members:
+      - '@user2'
+      - '@user4'
+  # project{4..10}:
+  #   name: '{{commerce.productName}}'
+  #   desc: '{{lorem.sentence}}'
+  #   owner: '@user*'
+  # members:

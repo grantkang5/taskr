@@ -1,37 +1,55 @@
-// import {
-//   BaseEntity,
-//   Entity,
-//   PrimaryGeneratedColumn,
-//   Column,
-//   CreateDateColumn,
-//   UpdateDateColumn,
-//   ManyToOne,
-//   OneToMany
-// } from 'typeorm';
-// import { ObjectType, Field, Int } from 'type-graphql';
-// import { Project } from './Project';
+import {
+  BaseEntity,
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  BeforeInsert
+} from 'typeorm';
+import { ObjectType, Field, ID } from 'type-graphql';
+import { Project } from './Project';
 // import { Task } from './Task';
 
-// @ObjectType()
-// @Entity('lists')
-// export class List extends BaseEntity {
-//   @Field(() => Int)
-//   @PrimaryGeneratedColumn()
-//   id: number;
+@ObjectType()
+@Entity('lists')
+export class List extends BaseEntity {
+  @BeforeInsert()
+  async generatePos() {
+    try {
+      this.project.lastPos += 16384;
+      await this.project.save();
+      this.pos = this.project.lastPos;
+    } catch (err) {
+      console.log(err);
+      return err;
+    }
+  }
+  @Field(() => ID)
+  @PrimaryGeneratedColumn()
+  id: number;
 
-//   @Field()
-//   @Column()
-//   name: string;
+  @Field()
+  @Column()
+  name: string;
 
-//   @CreateDateColumn()
-//   created_at: Date;
+  @Field()
+  @Column({ type: 'double precision' })
+  pos: number;
 
-//   @UpdateDateColumn()
-//   updated_at: Date;
+  @CreateDateColumn()
+  created_at: Date;
 
-//   @ManyToOne(() => Project, project => project.lists)
-//   project: Project;
+  @UpdateDateColumn()
+  updated_at: Date;
 
-//   @OneToMany(() => Task, task => task.list)
-//   tasks: Task[];
-// }
+  @Field(() => Project)
+  @ManyToOne(() => Project, project => project.lists, {
+    onDelete: 'CASCADE'
+  })
+  project: Project;
+
+  // @OneToMany(() => Task, task => task.list)
+  // tasks: Task[];
+}

@@ -1,14 +1,15 @@
-import { createTestClient } from "apollo-server-testing";
-import { gql } from "apollo-server-express";
+import { createTestClient } from 'apollo-server-testing';
+import { gql } from 'apollo-server-express';
 
-import { testServer, createTestDb, closeTestDb } from "../mocks/server";
-import { Connection } from "typeorm";
-import faker from "faker";
-import { Project } from "../../entity/Project";
+import { testServer, createTestDb, closeTestDb } from '../mocks/server';
+import { Connection } from 'typeorm';
+import faker from 'faker';
+import { Project } from '../../entity/Project';
+import { GraphQLResponse } from 'graphql-extensions';
 
 const { query, mutate } = createTestClient(testServer);
 
-describe("Project Resolver", () => {
+describe('Project Resolver', () => {
   let connection: Connection;
   beforeAll(async () => {
     connection = await createTestDb();
@@ -23,29 +24,59 @@ describe("Project Resolver", () => {
     email: faker.internet.email()
   };
 
-  describe("Create project", () => {
-    it("should create a project into the db", async () => {
+  describe('CRUD project', () => {
+    let createdProject: GraphQLResponse;
+    it('should create a project into the db', async () => {
       const createProject = await mutate({
         mutation: gql`
           mutation CreateProject($name: String!, $desc: String) {
             createProject(name: $name, desc: $desc) {
+              id
               name
+              desc
             }
           }
         `,
         variables: { name: mockProject.name, desc: mockProject.desc }
       });
-
+      createdProject = createProject;
       const project = await Project.findOne({ name: mockProject.name });
 
       expect(project!.name).toEqual(mockProject.name);
-      expect(createProject.data).toBeDefined();
-      expect(createProject.errors).toBeUndefined();
+      expect(createdProject.data).toBeDefined();
+      expect(createdProject.errors).toBeUndefined();
     });
-  });
 
-  describe("GetUserProject query", () => {
-    it("should retrieve a project from the user using projectId", async () => {
+    it('should update the created project in the db', async () => {
+      const updatedProject = {
+        name: faker.commerce.productName(),
+        desc: faker.lorem.sentence()
+      };
+
+      const res = await mutate({
+        mutation: gql`
+          mutation UpdateProject($id: ID!, $name: String, $desc: String) {
+            updateProject(id: $id, name: $name, desc: $desc)
+          }
+        `,
+        variables: {
+          id: createdProject.data!.createProject.id,
+          name: updatedProject.name,
+          desc: updatedProject.desc
+        }
+      });
+
+      const project = await Project.findOne({
+        where: { id: createdProject.data!.createProject.id }
+      });
+
+      expect(project!.name).toEqual(updatedProject.name);
+      expect(project!.desc).toEqual(updatedProject.desc);
+      expect(res.data).toBeDefined();
+      expect(res.errors).toBeUndefined();
+    });
+
+    it('should retrieve a project from the user using projectId', async () => {
       const res = await query({
         query: gql`
           query GetUserProject($id: ID!) {
@@ -56,7 +87,26 @@ describe("Project Resolver", () => {
           }
         `,
         variables: {
-          id: 2
+          id: createdProject.data!.createProject.id
+        }
+      });
+
+      expect(res.data).toBeDefined();
+      expect(res.errors).toBeUndefined();
+    });
+
+    it('should delete a project in the db', async () => {
+      const res = await mutate({
+        mutation: gql`
+          mutation DeleteProject($id: ID!) {
+            deleteProject(id: $id) {
+              id
+              name
+            }
+          }
+        `,
+        variables: {
+          id: createdProject.data!.createProject.id
         }
       });
 
@@ -65,8 +115,8 @@ describe("Project Resolver", () => {
     });
   });
 
-  describe("GetUserProjects query", () => {
-    it("should retrieve all projects from the user", async () => {
+  describe('GetUserProjects query', () => {
+    it('should retrieve all projects from the user', async () => {
       const res = await query({
         query: gql`
           query GetUserProjects {
@@ -83,56 +133,8 @@ describe("Project Resolver", () => {
     });
   });
 
-  describe("Update Project", () => {
-    it("should update a project in the db", async () => {
-      const updatedProject = {
-        name: faker.commerce.productName(),
-        desc: faker.lorem.sentence()
-      };
-      const res = await mutate({
-        mutation: gql`
-          mutation UpdateProject($id: ID!, $name: String, $desc: String) {
-            updateProject(id: $id, name: $name, desc: $desc)
-          }
-        `,
-        variables: {
-          id: 2,
-          name: updatedProject.name,
-          desc: updatedProject.desc
-        }
-      });
-      const project = await Project.findOne({ where: { id: 2 } });
-
-      expect(project!.name).toEqual(updatedProject.name);
-      expect(project!.desc).toEqual(updatedProject.desc);
-      expect(res.data).toBeDefined();
-      expect(res.errors).toBeUndefined();
-    });
-  });
-
-  describe("Delete Project", () => {
-    it("should delete a project in the db", async () => {
-      const res = await mutate({
-        mutation: gql`
-          mutation DeleteProject($id: ID!) {
-            deleteProject(id: $id) {
-              id
-              name
-            }
-          }
-        `,
-        variables: {
-          id: 2
-        }
-      });
-
-      expect(res.data).toBeDefined();
-      expect(res.errors).toBeUndefined();
-    });
-  });
-
-  describe("SendProjectInviteLink and AcceptProjectInviteLink mutation", () => {
-    it("should send a project invite link to an email address and add the user to a project", async () => {
+  describe('SendProjectInviteLink and AcceptProjectInviteLink mutation', () => {
+    it('should send a project invite link to an email address and add the user to a project', async () => {
       const projectLink = await mutate({
         mutation: gql`
           mutation SendProjectInviteLink($projectId: ID!, $email: String!) {
@@ -171,8 +173,8 @@ describe("Project Resolver", () => {
     });
   });
 
-  describe("GetPublicProjectLink and AcceptPublicProjectLink mutation", () => {
-    it("should return a public project invite link and register a user into a project", async () => {
+  describe('GetPublicProjectLink and AcceptPublicProjectLink mutation', () => {
+    it('should return a public project invite link and register a user into a project', async () => {
       const projectLink = await query({
         query: gql`
           query GetPublicProjectLink($projectId: ID!) {
@@ -182,7 +184,7 @@ describe("Project Resolver", () => {
         variables: {
           projectId: 1
         }
-      })
+      });
 
       expect(projectLink.data).toBeDefined();
       expect(projectLink.errors).toBeUndefined();
@@ -190,14 +192,14 @@ describe("Project Resolver", () => {
       const res = await mutate({
         mutation: gql`
           mutation AcceptPublicProjectLink($link: String!, $projectId: ID!) {
-            acceptPublicProjectLink(link:$link, projectId:$projectId)
+            acceptPublicProjectLink(link: $link, projectId: $projectId)
           }
         `,
         variables: {
           projectId: 1,
           link: projectLink.data!.getPublicProjectLink
         }
-      })
+      });
 
       expect(res.data).toBeDefined();
       expect(res.errors).toBeUndefined();
