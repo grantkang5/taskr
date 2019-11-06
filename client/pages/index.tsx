@@ -5,16 +5,24 @@ import { Menu, Icon, Skeleton } from "antd";
 import "./App.less";
 import { MenuItemIcon } from "../components/common/Menu";
 import { useModal } from "../components/modals";
-import { useGetUserTeamsQuery } from "../generated/graphql";
+import { useGetUserTeamsQuery, useGetUserProjectsQuery } from "../generated/graphql";
 import DashboardLayout from "../components/layouts/DashboardLayout";
+import DashboardProjects from "../components/layouts/DashboardLayout/DashboardProjects";
 /**
  * Route: '/'
  * Api: Query currentUser's projects / Activity / Cards
  */
 
 const Dashboard = () => {
+  const { data, loading } = useGetUserProjectsQuery();
   return (
-    <DashboardLayout />
+    <DashboardLayout>
+       {
+        !loading && data && data.getUserProjects ? (
+          <DashboardProjects />
+        ) : <Skeleton active />
+      }
+    </DashboardLayout>
   )
 };
 

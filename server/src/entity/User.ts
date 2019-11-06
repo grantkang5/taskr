@@ -3,18 +3,20 @@ import {
   PrimaryGeneratedColumn,
   Column,
   BaseEntity,
-  ManyToMany,
-  JoinTable,
+  // ManyToMany,
+  // JoinTable,
   OneToMany,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  ManyToMany,
+  JoinTable
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Project } from './Project';
-import { Team } from "./Team";
+import { Team } from './Team';
 
 @ObjectType()
-@Entity("users")
+@Entity('users')
 export class User extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
@@ -40,7 +42,7 @@ export class User extends BaseEntity {
   // TODO: make enum. 'website' | 'google'
 
   @Field()
-  @Column({ default: "website" })
+  @Column({ default: 'website' })
   auth: string;
 
   @Field()

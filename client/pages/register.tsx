@@ -17,9 +17,35 @@ import { errorMessage } from "../lib/messageHandler";
 
 const Register: React.FC<FormComponentProps> = ({ form }) => {
   const router = useRouter();
-  const [getMe] = useMeLazyQuery();
-  const [sendVerificationLink, { loading }] = useSendVerificationLinkMutation();
-  const [register, { loading: registerLoading }] = useRegisterMutation();
+  const [sendVerificationLink, { loading }] = useSendVerificationLinkMutation({
+    onCompleted: data => {
+      router.push({
+        pathname: "/email-verification",
+        query: {
+          email: form.getFieldValue("email"),
+          id: data.sendVerificationLink
+        }
+      });
+    },
+    onError: err => errorMessage(err)
+  });
+  const [register, { loading: registerLoading }] = useRegisterMutation({
+    onCompleted: data => {
+      setAccessToken(data.register.accessToken);
+      getMe();
+    },
+    onError: err => errorMessage(err)
+  });
+  const [getMe] = useMeLazyQuery({
+    onCompleted: data => {
+      const { returnUrl, ...queryParams } = router.query;
+      message.success(`Congratulations! Welcome to Taskr`, 2.5);
+      router.push({
+        pathname: router.query.returnUrl as string,
+        query: { ...queryParams }
+      });
+    }
+  });
 
   const handleSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -31,43 +57,21 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
 
       if (router.query.returnUrl) {
         const { returnUrl, registerKey, ...queryParams } = router.query;
-        try {
-          const response = await register({
-            variables: {
-              email,
-              verificationLink: queryParams.id as string,
-              registerKey: registerKey as string,
-              password
-            }
-          });
-
-          setAccessToken(response.data!.register.accessToken);
-          await getMe();
-          message.success(`Congratulations! Welcome to Taskr`, 2.5);
-          router.push({
-            pathname: router.query.returnUrl as string,
-            query: { ...queryParams }
-          });
-        } catch (err) {
-          errorMessage(err)
-        }
-      } else {
-        try {
-          const response = await sendVerificationLink({
-            variables: {
-              email,
-              password
-            }
-          });
-          if (response && response.data) {
-            router.push({
-              pathname: "/email-verification",
-              query: { email, id: response.data.sendVerificationLink }
-            });
+        register({
+          variables: {
+            email,
+            verificationLink: queryParams.id as string,
+            registerKey: registerKey as string,
+            password
           }
-        } catch (err) {
-          errorMessage(err)
-        }
+        });
+      } else {
+        sendVerificationLink({
+          variables: {
+            email,
+            password
+          }
+        });
       }
     });
   };
@@ -89,7 +93,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
         <Form onSubmit={handleSubmit}>
           <Form.Item hasFeedback>
             {getFieldDecorator("email", {
-              initialValue: router.query.email ? router.query.email : '',
+              initialValue: router.query.email ? router.query.email : "",
               rules: [
                 { required: true, message: "Email field is required" },
                 { type: "email", message: "Not a a valid email address" }
@@ -139,7 +143,7 @@ const Register: React.FC<FormComponentProps> = ({ form }) => {
               htmlType="submit"
               type="primary"
               style={{ width: "100%" }}
-              loading={loading}
+              loading={loading || registerLoading}
             >
               Sign up
             </Button>

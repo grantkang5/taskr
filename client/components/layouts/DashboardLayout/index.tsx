@@ -14,11 +14,11 @@ const DashboardLayout: React.FC = ({ children }) => {
   const showCreateTeamModal = () => showModal("createTeam");
   const showCreateProjectModal = () => showModal("createProject")
 
+  const handleProjectClick = (projectId: string | number) => () => {
+    router.push({ pathname: `/project/${projectId}` })
+  }
   const handleTeamClick = (teamId: string | number) => () => {
     router.push({ pathname: `/team/${teamId}` })
-  }
-  const handleProjectClick = (projectId: string | number) => () => {
-    router.push({ pathname: `project/${projectId}` })
   }
 
   return (
@@ -44,7 +44,7 @@ const DashboardLayout: React.FC = ({ children }) => {
                   <Skeleton active />
                 ) : (
                   projectData.getUserProjects.map(project => (
-                    <Menu.Item key={project.id} onClick={handleProjectClick(project.id)}>
+                    <Menu.Item key={`project-${project.id}`} onClick={handleProjectClick(project.id)}>
                       {project.name}
                     </Menu.Item>
                   ))
@@ -64,7 +64,7 @@ const DashboardLayout: React.FC = ({ children }) => {
                 <Skeleton active />
               ) : (
                 teamData.getUserTeams.map(team => (
-                  <Menu.Item key={team.id} onClick={handleTeamClick(team.id)}>
+                  <Menu.Item key={`team-${team.id}`} onClick={handleTeamClick(team.id)}>
                     {team.name}
                   </Menu.Item>
                 ))
@@ -89,11 +89,7 @@ const DashboardLayout: React.FC = ({ children }) => {
         </>
       }
     >
-      {
-        !projectLoading && projectData && projectData.getUserProjects ? (
-          <DashboardProjects />
-        ) : <Skeleton active />
-      }
+     {children}
     </Layout>
   );
 };
