@@ -26,7 +26,6 @@ export class ListResolver extends ListBaseResolver {
         name,
         project
       }).save();
-      project.save();
       return list;
     } catch (err) {
       console.log(err);
@@ -79,16 +78,12 @@ export class ListResolver extends ListBaseResolver {
       if (belowId === undefined) {
         // get pos of last list
         targetList.pos = targetList.project.lastPos + buffer;
-
-        // do you need to save loaded project manually? probably not
-        // await targetList.project.save();
       }
 
       // move target to top of list
       else if (aboveId === undefined) {
         // get pos of first list
         const firstList = targetList.project.lists.find(list => {
-          console.log(typeof list.id, typeof belowId);
           return list.id === parseInt(belowId);
         });
         if (!firstList) {

@@ -1,5 +1,5 @@
 entity: Project
-processor: ../processor/ProjectProcessor
+# processor: ../processor/ProjectProcessor
 items:
   project1:
     name: 'Taskr'

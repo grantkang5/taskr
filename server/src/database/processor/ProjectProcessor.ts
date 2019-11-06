@@ -10,17 +10,14 @@ import { Project } from '../../entity/Project';
 
 export default class ProjectProcessor implements IProcessor<Project> {
   // preProcess(_name: string, object: any): any {
-
   //   return object;
   // }
-
-  async postProcess(_name: string, object: any): Promise<any> {
-    // generate a random number from 1 - 10 that is not current
-    // const userId = randomExcluded(1, 10, object.owner.id);
-    // const user = await User.findOne({ where: { id: userId } });
-
-    // object.members.push(object.owner);
-    // object.members.push(user);
-    return object;
-  }
+  // async postProcess(_name: string, object: any): Promise<any> {
+  //   // generate a random number from 1 - 10 that is not current
+  //   // const userId = randomExcluded(1, 10, object.owner.id);
+  //   // const user = await User.findOne({ where: { id: userId } });
+  //   // object.members.push(object.owner);
+  //   // object.members.push(user);
+  //   return object;
+  // }
 }
