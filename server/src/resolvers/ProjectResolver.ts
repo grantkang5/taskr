@@ -6,36 +6,36 @@ import {
   Ctx,
   ID,
   Query
-} from "type-graphql";
-import { isAuth } from "../services/auth/isAuth";
-import { Project } from "../entity/Project";
-import { MyContext } from "../services/context";
-import { User } from "../entity/User";
-import { rateLimit } from "../services/rate-limit";
-import { createBaseResolver } from "./BaseResolver";
-import { v4 } from "uuid";
-import { redis } from "../services/redis";
-import { projectInviteEmail } from "../services/emails/projectInviteEmail";
-import { transporter } from "../services/emails/transporter";
-import { Team } from "../entity/Team";
-import { generateProjectLink } from "../services/links";
+} from 'type-graphql';
+import { isAuth } from '../services/auth/isAuth';
+import { Project } from '../entity/Project';
+import { MyContext } from '../services/context';
+import { User } from '../entity/User';
+import { rateLimit } from '../services/rate-limit';
+import { createBaseResolver } from './BaseResolver';
+import { v4 } from 'uuid';
+import { redis } from '../services/redis';
+import { projectInviteEmail } from '../services/emails/projectInviteEmail';
+import { transporter } from '../services/emails/transporter';
+import { Team } from '../entity/Team';
+import { generateProjectLink } from '../services/links';
 
-const ProjectBaseResolver = createBaseResolver("Project", Project);
+const ProjectBaseResolver = createBaseResolver('Project', Project);
 
 @Resolver()
 export class ProjectResolver extends ProjectBaseResolver {
   @Query(() => Project)
   @UseMiddleware(isAuth)
   async getUserProject(
-    @Arg("id", () => ID) id: number,
+    @Arg('id', () => ID) id: number,
     @Ctx() { payload }: MyContext
   ) {
     try {
-      const project = await Project.createQueryBuilder("project")
-        .innerJoinAndSelect("project.members", "user", "user.id = :userId", {
+      const project = await Project.createQueryBuilder('project')
+        .innerJoinAndSelect('project.members', 'user', 'user.id = :userId', {
           userId: payload!.userId
         })
-        .where("project.id = :projectId", { projectId: id })
+        .where('project.id = :projectId', { projectId: id })
         .getOne();
       if (!project) {
         throw new Error(
@@ -54,7 +54,7 @@ export class ProjectResolver extends ProjectBaseResolver {
   async getUserProjects(@Ctx() { payload }: MyContext) {
     try {
       const user = await User.findOne({
-        relations: ["projects"],
+        relations: ['projects'],
         where: { id: payload!.userId }
       });
       if (!user) throw new Error(`This user doesn't exist`);
@@ -69,9 +69,9 @@ export class ProjectResolver extends ProjectBaseResolver {
   @UseMiddleware(isAuth)
   async createProject(
     @Ctx() { payload }: MyContext,
-    @Arg("name") name: string,
-    @Arg("desc", { nullable: true }) desc?: string,
-    @Arg("teamId", () => ID, { nullable: true }) teamId?: number
+    @Arg('name') name: string,
+    @Arg('desc', { nullable: true }) desc?: string,
+    @Arg('teamId', () => ID, { nullable: true }) teamId?: number
   ) {
     try {
       const user = await User.findOne({ where: { id: payload!.userId } });
@@ -96,15 +96,15 @@ export class ProjectResolver extends ProjectBaseResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async updateProject(
-    @Arg("id", () => ID) id: number,
-    @Arg("name", { nullable: true }) name?: string,
-    @Arg("desc", { nullable: true }) desc?: string,
-    @Arg("teamId", () => ID, { nullable: true }) teamId?: number
+    @Arg('id', () => ID) id: number,
+    @Arg('name', { nullable: true }) name?: string,
+    @Arg('desc', { nullable: true }) desc?: string,
+    @Arg('teamId', () => ID, { nullable: true }) teamId?: number
   ) {
     try {
       const project = await Project.findOne({ where: { id } });
       if (!project) {
-        throw new Error("Project does not exist");
+        throw new Error('Project does not exist');
       }
       if (name && project.name !== name) {
         project.name = name;
@@ -131,8 +131,8 @@ export class ProjectResolver extends ProjectBaseResolver {
   @Mutation(() => String)
   @UseMiddleware(isAuth, rateLimit(10))
   async sendProjectInviteLink(
-    @Arg("projectId", () => ID) projectId: number,
-    @Arg("email") email: string,
+    @Arg('projectId', () => ID) projectId: string,
+    @Arg('email') email: string,
     @Ctx() { payload }: MyContext
   ) {
     try {
@@ -165,8 +165,8 @@ export class ProjectResolver extends ProjectBaseResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async acceptProjectInviteLink(
-    @Arg("email") email: string,
-    @Arg("projectInviteLink") projectInviteLink: string,
+    @Arg('email') email: string,
+    @Arg('projectInviteLink') projectInviteLink: string,
     @Ctx() { payload }: MyContext
   ) {
     try {
@@ -174,13 +174,13 @@ export class ProjectResolver extends ProjectBaseResolver {
         `project-invite-${email}`
       );
       if (storedLink !== projectInviteLink) {
-        throw new Error("This link has expired");
+        throw new Error('This link has expired');
       }
 
       const user = await User.findOne({ id: payload!.userId });
       if (!user) throw new Error(`This user doesn't exist`);
       const project = await Project.findOne({
-        relations: ["members"],
+        relations: ['members'],
         where: { id: projectId }
       });
       if (!project) throw new Error(`This project doesn't exist`);
@@ -195,12 +195,12 @@ export class ProjectResolver extends ProjectBaseResolver {
   }
 
   @Query(() => String)
-  async getPublicProjectLink(@Arg("projectId", () => ID) projectId: number) {
+  async getPublicProjectLink(@Arg('projectId', () => ID) projectId: number) {
     try {
       const project = await Project.findOne({ where: { id: projectId } });
       if (!project) throw new Error(`This project doesn't exist`);
-      const publicLink = generateProjectLink(project.id)
-      return publicLink
+      const publicLink = generateProjectLink(project.id);
+      return publicLink;
     } catch (err) {
       console.log(err);
       return err;
@@ -210,24 +210,27 @@ export class ProjectResolver extends ProjectBaseResolver {
   @Mutation(() => Boolean)
   @UseMiddleware(isAuth)
   async acceptPublicProjectLink(
-    @Arg("link") link: String,
-    @Arg("projectId", () => ID) projectId: number,
+    @Arg('link') link: String,
+    @Arg('projectId', () => ID) projectId: number,
     @Ctx() { payload }: MyContext
   ) {
     try {
       const me = await User.findOne({ where: { id: payload!.userId } });
-      if (!me) throw new Error(`This user doesn't exist`)
-      const project = await Project.findOne({ relations: ["members"], where: { id: projectId } })
-      if (!project) throw new Error(`This project doesn't exist`)
-      const publicLink = generateProjectLink(project.id)
+      if (!me) throw new Error(`This user doesn't exist`);
+      const project = await Project.findOne({
+        relations: ['members'],
+        where: { id: projectId }
+      });
+      if (!project) throw new Error(`This project doesn't exist`);
+      const publicLink = generateProjectLink(project.id);
       if (publicLink !== link) {
-        throw new Error(`This link is either incorrect or has expired`)
+        throw new Error(`This link is either incorrect or has expired`);
       }
       project.members = [...project.members, me];
       await project.save();
-      return true
+      return true;
     } catch (err) {
-      console.log(err)
+      console.log(err);
       return err;
     }
   }
