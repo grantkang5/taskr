@@ -51,7 +51,7 @@ const PublicProjectInvitePage: React.FC = () => {
     return () => {
       didCancel = true;
     };
-  }, [data]);
+  }, [data, validated]);
 
   const handleSignup = () => {
     router.push({

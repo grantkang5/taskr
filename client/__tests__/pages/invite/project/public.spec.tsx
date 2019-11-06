@@ -2,36 +2,37 @@ import * as React from "react";
 import { mount } from "enzyme";
 import { MockedProvider, wait } from "@apollo/react-testing";
 import {
-  AcceptTeamInviteLinkDocument,
   MeDocument,
-  ValidateLinkDocument
+  ValidatePublicProjectLinkDocument,
+  AcceptPublicProjectLinkDocument
 } from "../../../../generated/graphql";
-import TeamInviteSuccessPage from "../../../../pages/invite/team/success";
+import PublicProjectInvitePage from "../../../../pages/invite/project/public";
 import { act } from "react-dom/test-utils";
-import AnonLayout from "../../../../components/layouts/AnonLayout";
 import { GraphQLError } from "graphql";
 import ErrorLayout from "../../../../components/layouts/ErrorLayout";
+import AnonLayout from "../../../../components/layouts/AnonLayout";
 
 describe("Pages", () => {
-  describe("TeamInviteSuccessPage", () => {
+  describe("PublicProjectInvitePage", () => {
     const mockQuery = {
-      id: 178,
       email: "dev@email.com",
-      username: "dev",
-      teamInviteLink: "abc",
-      key: "team-invite-dev@email.com"
+      id: 123,
+      projectId: 1241,
+      projectInviteLink: "abc",
+      username: "dev"
     };
+
     const useRouter = jest.spyOn(require("next/router"), "useRouter");
     useRouter.mockImplementation(() => ({
-      route: "/email-verification/success",
+      route: "/invite/project/public",
       query: {
-        email: mockQuery.email,
-        id: mockQuery.teamInviteLink
+        id: mockQuery.projectInviteLink,
+        project: mockQuery.projectId
       },
       // tslint:disable-next-line: no-empty
       push: () => {}
     }));
-    let acceptTeamInviteLinkCalled = false;
+    let acceptProjectLinkCalled = false;
     const meQuery = {
       request: {
         query: MeDocument
@@ -47,82 +48,83 @@ describe("Pages", () => {
         loading: false
       }
     };
-    const validateLinkQuery = {
+
+    const validateQuery = {
       request: {
-        query: ValidateLinkDocument,
+        query: ValidatePublicProjectLinkDocument,
         variables: {
-          key: mockQuery.key,
-          link: mockQuery.teamInviteLink
+          projectId: mockQuery.projectId,
+          link: mockQuery.projectInviteLink
         }
       },
       result: {
         data: {
-          validateLink: true
-        },
-        loading: false
+          validatePublicProjectLink: true
+        }
       }
     };
 
-    const acceptTeamLinkInviteQuery = {
+    const acceptProjectLinkQuery = {
       request: {
-        query: AcceptTeamInviteLinkDocument,
+        query: AcceptPublicProjectLinkDocument,
         variables: {
-          email: mockQuery.email,
-          teamInviteLink: mockQuery.teamInviteLink
+          link: mockQuery.projectInviteLink,
+          projectId: mockQuery.projectId
         }
       },
       result: () => {
-        acceptTeamInviteLinkCalled = true;
+        acceptProjectLinkCalled = true;
         return {
           data: {
-            acceptTeamInviteLink: mockQuery.teamInviteLink
+            acceptPublicProjectLink: true
           }
-        };
+        }
       }
-    };
+    }
 
-    it("fires acceptTeamInvite mutation on mount", async () => {
+    it("fires acceptPublicProjectLink mutation on mount", async () => {
       const wrapper = mount(
         <MockedProvider
-          mocks={[meQuery, validateLinkQuery, acceptTeamLinkInviteQuery]}
+          mocks={[meQuery, validateQuery, acceptProjectLinkQuery]}
           addTypename={false}
         >
-          <TeamInviteSuccessPage />
+          <PublicProjectInvitePage />
         </MockedProvider>
-      );
+      )
 
       await act(async () => {
         await wait(10);
       });
 
-      expect(acceptTeamInviteLinkCalled).toBe(true);
+      expect(acceptProjectLinkCalled).toBe(true);
       wrapper.unmount();
-    });
+    })
 
     it("should render an error layout if the link has expired", async () => {
       const errorQuery = {
-        ...validateLinkQuery,
+        ...validateQuery,
         result: {
-          errors: [new GraphQLError('This link has expired')]
+          errors: [new GraphQLError(`This link has expired`)]
         }
-      }
+      };
+
       const wrapper = mount(
-        <MockedProvider mocks={[errorQuery]}>
-          <TeamInviteSuccessPage />
+        <MockedProvider mocks={[errorQuery]} addTypename={false}>
+          <PublicProjectInvitePage />
         </MockedProvider>
       );
 
       await act(async () => {
-        await wait(0)
-      })
+        await wait(0);
+      });
 
-      expect(wrapper.contains(<ErrorLayout />))
-    })
+      expect(wrapper.contains(<ErrorLayout />));
+    });
 
     it("should render an auth form if user is not authenticated", async () => {
       const wrapper = mount(
-        <MockedProvider mocks={[validateLinkQuery]}>
-          <TeamInviteSuccessPage />
+        <MockedProvider mocks={[validateQuery]} addTypename={false}>
+          <PublicProjectInvitePage />
         </MockedProvider>
       );
 
