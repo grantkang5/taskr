@@ -18,7 +18,8 @@ describe("Team Resolver", () => {
   });
 
   const mockTeam = {
-    name: faker.random.word()
+    name: faker.random.word(),
+    email: faker.internet.email()
   };
 
   describe("GetUserTeam query", () => {
@@ -60,27 +61,8 @@ describe("Team Resolver", () => {
     });
   });
 
-  describe("DeleteTeam mutation", () => {
-    it("should remove a team from the db using teamId", async () => {
-      const res = await mutate({
-        mutation: gql`
-          mutation DeleteTeam($id: ID!) {
-            deleteTeam(id: $id) {
-              id
-              name
-            }
-          }
-        `,
-        variables: { id: 1 }
-      });
-
-      expect(res.data).toBeDefined();
-      expect(res.errors).toBeUndefined();
-    });
-  });
-
-  describe("CreateTeam mutation", () => {
-    it("should create a team from the db and add the user as a member", async () => {
+  describe("CreateTeam and DeleteTeam mutation", () => {
+    it("should create a team from the db and then delete it", async () => {
       const res = await mutate({
         mutation: gql`
           mutation CreateTeam($name: String!) {
@@ -100,6 +82,58 @@ describe("Team Resolver", () => {
       expect(res.data).toBeDefined();
       expect(team).toBeDefined();
       expect(team!.members).toHaveLength(1);
+      expect(res.errors).toBeUndefined();
+
+      const deleteTeam = await mutate({
+        mutation: gql`
+          mutation DeleteTeam($id: ID!) {
+            deleteTeam(id: $id) {
+              id
+              name
+            }
+          }
+        `,
+        variables: { id: team!.id }
+      });
+
+      expect(deleteTeam.data).toBeDefined();
+      expect(deleteTeam.errors).toBeUndefined();
+    });
+  });
+
+  describe("SendTeamInviteLink and AcceptTeamInviteLink mutation", () => {
+    it("should send a team invite to an email address and add a user to the team", async () => {
+      const teamInviteLink = await mutate({
+        mutation: gql`
+          mutation SendTeamInviteLink($teamId: ID!, $email: String!) {
+            sendTeamInviteLink(teamId: $teamId, email: $email)
+          }
+        `,
+        variables: {
+          teamId: 1,
+          email: mockTeam.email
+        }
+      });
+
+      expect(teamInviteLink.data).toBeDefined();
+      expect(teamInviteLink.errors).toBeUndefined();
+
+      const res = await mutate({
+        mutation: gql`
+          mutation AcceptTeamInviteLink(
+            $email: String!
+            $teamInviteLink: String!
+          ) {
+            acceptTeamInviteLink(email: $email, teamInviteLink: $teamInviteLink)
+          }
+        `,
+        variables: {
+          email: mockTeam.email,
+          teamInviteLink: teamInviteLink.data!.sendTeamInviteLink
+        }
+      });
+
+      expect(res.data).toBeDefined();
       expect(res.errors).toBeUndefined();
     });
   });

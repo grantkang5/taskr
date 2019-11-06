@@ -1,0 +1,3 @@
+query LoginGoogleOAuth($returnUrl: String) {
+  loginGoogleOAuth(returnUrl:$returnUrl)
+}

@@ -6,6 +6,7 @@ import {
 } from "../../generated/graphql";
 import { useRouter } from "next/router";
 import { Button, Input, message } from "antd";
+import { errorMessage } from "../../lib/messageHandler";
 
 const Team: React.FC = () => {
   const router = useRouter();
@@ -29,9 +30,7 @@ const Team: React.FC = () => {
         message.success(`A team invitation has been sent to ${value}`);
       }
     } catch (err) {
-      err.graphQLErrors
-        ? message.error(err.graphQLErrors[0].message, 2.5)
-        : message.error("An unknown error has occurred", 2);
+      errorMessage(err)
     }
   };
 

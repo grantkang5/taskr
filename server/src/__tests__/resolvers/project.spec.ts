@@ -19,7 +19,8 @@ describe("Project Resolver", () => {
 
   const mockProject = {
     name: faker.commerce.productName(),
-    desc: faker.lorem.sentence()
+    desc: faker.lorem.sentence(),
+    email: faker.internet.email()
   };
 
   describe("Create project", () => {
@@ -123,10 +124,83 @@ describe("Project Resolver", () => {
         variables: {
           id: 2
         }
+      });
+
+      expect(res.data).toBeDefined();
+      expect(res.errors).toBeUndefined();
+    });
+  });
+
+  describe("SendProjectInviteLink and AcceptProjectInviteLink mutation", () => {
+    it("should send a project invite link to an email address and add the user to a project", async () => {
+      const projectLink = await mutate({
+        mutation: gql`
+          mutation SendProjectInviteLink($projectId: ID!, $email: String!) {
+            sendProjectInviteLink(projectId: $projectId, email: $email)
+          }
+        `,
+        variables: {
+          projectId: 1,
+          email: mockProject.email
+        }
+      });
+
+      expect(projectLink.data).toBeDefined();
+      expect(projectLink.errors).toBeUndefined();
+
+      const res = await mutate({
+        mutation: gql`
+          mutation AcceptProjectInviteLink(
+            $email: String!
+            $projectInviteLink: String!
+          ) {
+            acceptProjectInviteLink(
+              email: $email
+              projectInviteLink: $projectInviteLink
+            )
+          }
+        `,
+        variables: {
+          email: mockProject.email,
+          projectInviteLink: projectLink.data!.sendProjectInviteLink
+        }
+      });
+
+      expect(res.data).toBeDefined();
+      expect(res.errors).toBeUndefined();
+    });
+  });
+
+  describe("GetPublicProjectLink and AcceptPublicProjectLink mutation", () => {
+    it("should return a public project invite link and register a user into a project", async () => {
+      const projectLink = await query({
+        query: gql`
+          query GetPublicProjectLink($projectId: ID!) {
+            getPublicProjectLink(projectId: $projectId)
+          }
+        `,
+        variables: {
+          projectId: 1
+        }
+      })
+
+      expect(projectLink.data).toBeDefined();
+      expect(projectLink.errors).toBeUndefined();
+
+      const res = await mutate({
+        mutation: gql`
+          mutation AcceptPublicProjectLink($link: String!, $projectId: ID!) {
+            acceptPublicProjectLink(link:$link, projectId:$projectId)
+          }
+        `,
+        variables: {
+          projectId: 1,
+          link: projectLink.data!.getPublicProjectLink
+        }
       })
 
       expect(res.data).toBeDefined();
       expect(res.errors).toBeUndefined();
-    })
-  })
+    });
+  });
 });

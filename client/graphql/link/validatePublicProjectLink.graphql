@@ -1,0 +1,3 @@
+query ValidatePublicProjectLink($projectId: ID!, $link: String!) {
+  validatePublicProjectLink(projectId:$projectId, link:$link)
+}

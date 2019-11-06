@@ -1,93 +1,76 @@
 import React, { useEffect } from "react";
-import styles from "./TeamInvite.module.less";
 import Layout from "../../../components/layouts/Layout";
+import { useRouter } from "next/router";
 import {
   useMeQuery,
-  useAcceptTeamInviteLinkMutation,
-  useValidateLinkQuery
+  useAcceptPublicProjectLinkMutation,
+  useValidatePublicProjectLinkQuery
 } from "../../../generated/graphql";
-import { useRouter } from "next/router";
 import AnonLayout from "../../../components/layouts/AnonLayout";
 import { errorMessage } from "../../../lib/messageHandler";
 import ErrorLayout from "../../../components/layouts/ErrorLayout";
 
-/**
- * @route '/invite/team/success
- * @routeQuery { email: string, id: string }
- */
-
-const TeamInviteSuccessPage: React.FC = () => {
+const PublicProjectInvitePage: React.FC = () => {
   const router = useRouter();
   const { data, loading } = useMeQuery();
-  const { data: validated, loading: validateLoading } = useValidateLinkQuery({
+  const { data: validated, loading: validateLoading } = useValidatePublicProjectLinkQuery({
     variables: {
-      key: `team-invite-${router.query.email}`,
+      projectId: router.query.project as string,
       link: router.query.id as string
     },
-    onError: err => {
-      errorMessage(err);
+    onError: (err) => {
+      errorMessage(err)
     }
   });
-  const [acceptTeamInviteLink] = useAcceptTeamInviteLinkMutation();
+  const [acceptProjectLink] = useAcceptPublicProjectLinkMutation();
 
   useEffect(() => {
     let didCancel = false;
-    if (!router.query.id || !router.query.email) {
+    if (!router.query.project || !router.query.id) {
       router.push("/error", "/");
     }
-
     if (!loading && data && validated && !validateLoading) {
       const fetchData = async () => {
-        const { id, email } = router.query;
         try {
-          const response = await acceptTeamInviteLink({
+          const response = await acceptProjectLink({
             variables: {
-              email: email as string,
-              teamInviteLink: id as string
+              link: router.query.id as string,
+              projectId: router.query.project as string
             }
           });
           if (response && response.data) {
             router.push({ pathname: "/" });
           }
         } catch (err) {
-          errorMessage(err);
+          errorMessage(err)
         }
       };
-
       fetchData();
-
-      return () => {
-        didCancel = true;
-      };
     }
-  }, [data, validated]);
+
+    return () => {
+      didCancel = true;
+    };
+  }, [data]);
 
   const handleSignup = () => {
     router.push({
-      pathname: "/register",
-      query: {
-        returnUrl: "/invite/team/success",
-        registerKey: "team-invite",
-        ...router.query
-      }
-    });
-  };
+      pathname: "/register"
+    })
+  }
 
   const handleLogin = () => {
     router.push({
       pathname: "/login",
       query: {
-        returnUrl: "/invite/team/success",
-        registerKey: "team-invite",
+        returnUrl: "/invite/project/public",
         ...router.query
       }
-    });
-  };
+    })
+  }
 
   if (!validated && !validateLoading) {
-    return (
-      <ErrorLayout message={"This link has expired or has already been used"} />
-    );
+    return <ErrorLayout message={"This link has expired, ask for a new one :D"} />
   }
 
   if (!loading && !data) {
@@ -101,4 +84,4 @@ const TeamInviteSuccessPage: React.FC = () => {
   );
 };
 
-export default TeamInviteSuccessPage;
+export default PublicProjectInvitePage;

@@ -4,12 +4,14 @@ import Link from "next/link";
 import classNames from "classnames";
 
 import styles from "./Header.module.less";
+import { useRouter } from "next/router";
 
 interface Props {
   dark?: number;
 }
 
 const AnonHeader: React.FC<Props> = ({ dark }) => {
+  const router = useRouter();
   const headerStyle = classNames(styles.header, {
     [styles.dark]: dark
   });
@@ -30,14 +32,18 @@ const AnonHeader: React.FC<Props> = ({ dark }) => {
         <Col span={16}>
           <Row type="flex" justify="end">
             <Col span={3}>
-              <Link href="/login" as="/login">
+              <Link
+                href={{ pathname: "/login", query: { ...router.query } }}
+              >
                 <Button type="link" ghost={dark ? true : false}>
                   Login
                 </Button>
               </Link>
             </Col>
             <Col span={3}>
-              <Link href="/register" as="/register">
+              <Link
+                href={{ pathname: "/register", query: { ...router.query } }}
+              >
                 <Button type="link" ghost={dark ? true : false}>
                   Signup
                 </Button>

@@ -2,6 +2,7 @@ import React from "react";
 import { Form, Input, Icon, Button, message } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import { useChangePasswordMutation } from "../../../generated/graphql";
+import { errorMessage } from "../../../lib/messageHandler";
 
 const ChangePassword: React.FC<FormComponentProps> = ({ form }) => {
   const [changePassword, { loading }] = useChangePasswordMutation();
@@ -27,9 +28,7 @@ const ChangePassword: React.FC<FormComponentProps> = ({ form }) => {
               resetFields();
             }
           } catch (err) {
-            err.graphQLErrors
-              ? message.error(err.graphQLErrors[0].message, 2.5)
-              : message.error("An unknown error has occurred", 2);
+            errorMessage(err)
           }
         }
       }

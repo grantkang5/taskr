@@ -1,0 +1,3 @@
+query GetPublicProjectLink($projectId: ID!) {
+  getPublicProjectLink(projectId: $projectId)
+}
