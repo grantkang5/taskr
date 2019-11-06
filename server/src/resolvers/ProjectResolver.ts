@@ -200,7 +200,7 @@ export class ProjectResolver extends ProjectBaseResolver {
       const project = await Project.findOne({ where: { id: projectId } });
       if (!project) throw new Error(`This project doesn't exist`);
       const publicLink = generateProjectLink(project.id)
-      return `${process.env.CLIENT_URL}/invite/project/public?project=${project.id}&id=${publicLink}`;
+      return publicLink
     } catch (err) {
       console.log(err);
       return err;
@@ -220,6 +220,7 @@ export class ProjectResolver extends ProjectBaseResolver {
       const project = await Project.findOne({ relations: ["members"], where: { id: projectId } })
       if (!project) throw new Error(`This project doesn't exist`)
       const publicLink = generateProjectLink(project.id)
+
       if (publicLink !== link) {
         throw new Error(`This link is either incorrect or has expired`)
       }
