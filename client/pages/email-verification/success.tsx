@@ -9,6 +9,7 @@ import { setAccessToken } from "../../lib/accessToken";
 import { message, Button, Icon } from "antd";
 import Layout from "../../components/layouts/Layout";
 import ErrorLayout from "../../components/layouts/ErrorLayout";
+import { errorMessage } from "../../lib/messageHandler";
 
 const EmailVerificationSuccessPage: React.FC = () => {
   const router = useRouter();
@@ -36,9 +37,7 @@ const EmailVerificationSuccessPage: React.FC = () => {
         });
       }
     } catch (err) {
-      err.graphQLErrors
-        ? message.error(err.graphQLErrors[0].message, 2)
-        : message.error(err.message, 2);
+      errorMessage(err)
     }
   };
 

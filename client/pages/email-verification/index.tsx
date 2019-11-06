@@ -4,6 +4,7 @@ import { SubText } from "../../components/common/Text";
 import { Button, message, PageHeader, Empty } from "antd";
 import { useRouter } from "next/router";
 import { useResendVerificationLinkMutation } from "../../generated/graphql";
+import { errorMessage } from "../../lib/messageHandler";
 
 const EmailVerificationPage = () => {
   const router = useRouter();
@@ -26,9 +27,7 @@ const EmailVerificationPage = () => {
         message.success('Email verification sent', 2)
       }
     } catch (err) {
-      err.graphQLErrors
-        ? message.error(err.graphQLErrors[0].message, 2)
-        : message.error(err.message, 2);
+      errorMessage(err)
     }
   };
 

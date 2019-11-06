@@ -20,6 +20,15 @@ describe("Component", () => {
         }
       }
     ];
+
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      route: '/',
+      query: {
+        returnUrl: ''
+      }
+    }))
+
     it("should render AnonHeader if user is not authenticated", async () => {
       const wrapper = mount(
         <MockedProvider mocks={[]}>

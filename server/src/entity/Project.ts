@@ -61,7 +61,7 @@ export class Project extends BaseEntity {
 
   @Field(() => Team)
   @ManyToOne(() => Team, team => team.projects, {
-    onDelete: 'CASCADE'
+    onDelete: "SET NULL"
   })
   team: Team;
 }

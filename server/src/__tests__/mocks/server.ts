@@ -9,10 +9,11 @@ import { redis } from "../../services/redis";
 import { UserResolver } from "../../resolvers/UserResolver";
 import { TeamResolver } from "../../resolvers/TeamResolver";
 import { ProjectResolver } from "../../resolvers/ProjectResolver";
+import { LinkResolver } from "../../resolvers/LinkResolver";
 
 export const testServer = new ApolloServer({
   schema: buildSchemaSync({
-    resolvers: [UserResolver, TeamResolver, ProjectResolver]
+    resolvers: [UserResolver, TeamResolver, ProjectResolver, LinkResolver]
   }),
   context: () => {
     return {

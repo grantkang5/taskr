@@ -4,7 +4,11 @@ import Layout from '../Layout';
 
 import styles from './ErrorLayout.module.less'
 
-const ErrorLayout: React.FC = () => {
+interface Props {
+  message?: string
+}
+
+const ErrorLayout: React.FC<Props> = ({ message }) => {
   return (
     <Layout hide={1}>
       <div className={styles.errorLayout}>
@@ -14,7 +18,9 @@ const ErrorLayout: React.FC = () => {
           opacity: 0.6
         }}
         description={
-          <span>Oops! Something went wrong.</span>
+          <span>
+            {message ? message : 'Oops! Something went wrong.'}
+          </span>
         }
       />
       </div>

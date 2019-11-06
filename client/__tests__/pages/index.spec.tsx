@@ -20,6 +20,12 @@ describe('Pages', () => {
       }
     ];
 
+    const useRouter = jest.spyOn(require('next/router'), 'useRouter')
+    useRouter.mockImplementation(() => ({
+      route: '/home',
+      query: {}
+    }))
+
     it('should render and call me query', () => {
       render(
         <MockedProvider mocks={mocks} addTypename={false}>

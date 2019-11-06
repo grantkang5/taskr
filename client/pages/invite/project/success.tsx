@@ -1,34 +1,28 @@
 import React, { useEffect } from "react";
-import styles from "./TeamInvite.module.less";
 import Layout from "../../../components/layouts/Layout";
+import { useRouter } from "next/router";
 import {
   useMeQuery,
-  useAcceptTeamInviteLinkMutation,
+  useAcceptProjectInviteLinkMutation,
   useValidateLinkQuery
 } from "../../../generated/graphql";
-import { useRouter } from "next/router";
 import AnonLayout from "../../../components/layouts/AnonLayout";
-import { errorMessage } from "../../../lib/messageHandler";
 import ErrorLayout from "../../../components/layouts/ErrorLayout";
+import { errorMessage } from "../../../lib/messageHandler";
 
-/**
- * @route '/invite/team/success
- * @routeQuery { email: string, id: string }
- */
-
-const TeamInviteSuccessPage: React.FC = () => {
+const ProjectInviteSuccessPage: React.FC = () => {
   const router = useRouter();
   const { data, loading } = useMeQuery();
   const { data: validated, loading: validateLoading } = useValidateLinkQuery({
     variables: {
-      key: `team-invite-${router.query.email}`,
+      key: `project-invite-${router.query.email}`,
       link: router.query.id as string
     },
     onError: err => {
-      errorMessage(err);
+      errorMessage(err)
     }
   });
-  const [acceptTeamInviteLink] = useAcceptTeamInviteLinkMutation();
+  const [acceptProjectInviteLink] = useAcceptProjectInviteLinkMutation();
 
   useEffect(() => {
     let didCancel = false;
@@ -40,10 +34,10 @@ const TeamInviteSuccessPage: React.FC = () => {
       const fetchData = async () => {
         const { id, email } = router.query;
         try {
-          const response = await acceptTeamInviteLink({
+          const response = await acceptProjectInviteLink({
             variables: {
               email: email as string,
-              teamInviteLink: id as string
+              projectInviteLink: id as string
             }
           });
           if (response && response.data) {
@@ -55,19 +49,19 @@ const TeamInviteSuccessPage: React.FC = () => {
       };
 
       fetchData();
-
-      return () => {
-        didCancel = true;
-      };
     }
+
+    return () => {
+      didCancel = true;
+    };
   }, [data, validated]);
 
   const handleSignup = () => {
     router.push({
       pathname: "/register",
       query: {
-        returnUrl: "/invite/team/success",
-        registerKey: "team-invite",
+        returnUrl: "/invite/project/success",
+        registerKey: "project-invite",
         ...router.query
       }
     });
@@ -77,8 +71,8 @@ const TeamInviteSuccessPage: React.FC = () => {
     router.push({
       pathname: "/login",
       query: {
-        returnUrl: "/invite/team/success",
-        registerKey: "team-invite",
+        returnUrl: "/invite/project/success",
+        registerKey: "project-invite",
         ...router.query
       }
     });
@@ -89,7 +83,6 @@ const TeamInviteSuccessPage: React.FC = () => {
       <ErrorLayout message={"This link has expired or has already been used"} />
     );
   }
-
   if (!loading && !data) {
     return <AnonLayout handleSignup={handleSignup} handleLogin={handleLogin} />;
   }
@@ -101,4 +94,4 @@ const TeamInviteSuccessPage: React.FC = () => {
   );
 };
 
-export default TeamInviteSuccessPage;
+export default ProjectInviteSuccessPage;

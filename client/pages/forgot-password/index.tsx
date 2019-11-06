@@ -5,6 +5,7 @@ import { Form, Input, Icon, Button, message } from "antd";
 import { FormComponentProps } from "antd/lib/form";
 import { SubText } from "../../components/common/Text";
 import { useSendForgotPasswordLinkMutation } from "../../generated/graphql";
+import { errorMessage } from "../../lib/messageHandler";
 
 const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
   const [
@@ -28,9 +29,7 @@ const ForgotPasswordPage: React.FC<FormComponentProps> = ({ form }) => {
             );
           }
         } catch (err) {
-          err.graphQLErrors
-            ? message.error(err.graphQLErrors[0].message, 2.5)
-            : message.error("An unknown error has occurred", 2);
+          errorMessage(err)
         }
       }
     });

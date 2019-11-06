@@ -59,6 +59,7 @@ export type Mutation = {
   updateProject: Scalars['Boolean'],
   sendProjectInviteLink: Scalars['String'],
   acceptProjectInviteLink: Scalars['Boolean'],
+  acceptPublicProjectLink: Scalars['Boolean'],
 };
 
 
@@ -170,12 +171,14 @@ export type MutationUpdateTeamArgs = {
 
 
 export type MutationCreateProjectArgs = {
+  teamId?: Maybe<Scalars['ID']>,
   desc?: Maybe<Scalars['String']>,
   name: Scalars['String']
 };
 
 
 export type MutationUpdateProjectArgs = {
+  teamId?: Maybe<Scalars['ID']>,
   desc?: Maybe<Scalars['String']>,
   name?: Maybe<Scalars['String']>,
   id: Scalars['ID']
@@ -193,6 +196,12 @@ export type MutationAcceptProjectInviteLinkArgs = {
   email: Scalars['String']
 };
 
+
+export type MutationAcceptPublicProjectLinkArgs = {
+  projectId: Scalars['ID'],
+  link: Scalars['String']
+};
+
 export type Project = {
    __typename?: 'Project',
   id: Scalars['Int'],
@@ -202,6 +211,7 @@ export type Project = {
   updated_at: Scalars['DateTime'],
   owner: User,
   members: Array<User>,
+  team: Team,
 };
 
 export type Query = {
@@ -211,11 +221,14 @@ export type Query = {
   getAllTeams: Array<Team>,
   getTeam: Team,
   me: User,
-  login_googleOAuth: Scalars['String'],
+  loginGoogleOAuth: Scalars['String'],
   getUserTeam: Team,
   getUserTeams: Array<Team>,
   getUserProject: Project,
   getUserProjects: Array<Project>,
+  getPublicProjectLink: Scalars['String'],
+  validateLink: Scalars['Boolean'],
+  validatePublicProjectLink: Scalars['Boolean'],
 };
 
 
@@ -229,6 +242,11 @@ export type QueryGetTeamArgs = {
 };
 
 
+export type QueryLoginGoogleOAuthArgs = {
+  returnUrl?: Maybe<Scalars['String']>
+};
+
+
 export type QueryGetUserTeamArgs = {
   id: Scalars['ID']
 };
@@ -238,6 +256,23 @@ export type QueryGetUserProjectArgs = {
   id: Scalars['ID']
 };
 
+
+export type QueryGetPublicProjectLinkArgs = {
+  projectId: Scalars['ID']
+};
+
+
+export type QueryValidateLinkArgs = {
+  link: Scalars['String'],
+  key: Scalars['String']
+};
+
+
+export type QueryValidatePublicProjectLinkArgs = {
+  link: Scalars['String'],
+  projectId: Scalars['ID']
+};
+
 export type Team = {
    __typename?: 'Team',
   id: Scalars['ID'],
@@ -245,6 +280,7 @@ export type Team = {
   created_at: Scalars['DateTime'],
   updated_at: Scalars['DateTime'],
   members: Array<User>,
+  projects: Array<Project>,
 };
 
 export type User = {
@@ -261,6 +297,28 @@ export type User = {
   teams: Array<Team>,
 };
 
+export type ValidateLinkQueryVariables = {
+  key: Scalars['String'],
+  link: Scalars['String']
+};
+
+
+export type ValidateLinkQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'validateLink'>
+);
+
+export type ValidatePublicProjectLinkQueryVariables = {
+  projectId: Scalars['ID'],
+  link: Scalars['String']
+};
+
+
+export type ValidatePublicProjectLinkQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'validatePublicProjectLink'>
+);
+
 export type AcceptProjectInviteLinkMutationVariables = {
   email: Scalars['String'],
   projectInviteLink: Scalars['String']
@@ -270,6 +328,17 @@ export type AcceptProjectInviteLinkMutationVariables = {
 export type AcceptProjectInviteLinkMutation = (
   { __typename?: 'Mutation' }
   & Pick<Mutation, 'acceptProjectInviteLink'>
+);
+
+export type AcceptPublicProjectLinkMutationVariables = {
+  link: Scalars['String'],
+  projectId: Scalars['ID']
+};
+
+
+export type AcceptPublicProjectLinkMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'acceptPublicProjectLink'>
 );
 
 export type CreateProjectMutationVariables = {
@@ -284,6 +353,16 @@ export type CreateProjectMutation = (
     { __typename?: 'Project' }
     & Pick<Project, 'id' | 'name'>
   ) }
+);
+
+export type GetPublicProjectLinkQueryVariables = {
+  projectId: Scalars['ID']
+};
+
+
+export type GetPublicProjectLinkQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'getPublicProjectLink'>
 );
 
 export type GetUserProjectQueryVariables = {
@@ -416,14 +495,6 @@ export type ForgotPasswordMutation = (
   & Pick<Mutation, 'forgotPassword'>
 );
 
-export type Google_OAuthQueryVariables = {};
-
-
-export type Google_OAuthQuery = (
-  { __typename?: 'Query' }
-  & Pick<Query, 'login_googleOAuth'>
-);
-
 export type LoginMutationVariables = {
   email: Scalars['String'],
   password: Scalars['String']
@@ -436,6 +507,16 @@ export type LoginMutation = (
     { __typename?: 'LoginResponse' }
     & Pick<LoginResponse, 'accessToken'>
   ) }
+);
+
+export type LoginGoogleOAuthQueryVariables = {
+  returnUrl?: Maybe<Scalars['String']>
+};
+
+
+export type LoginGoogleOAuthQuery = (
+  { __typename?: 'Query' }
+  & Pick<Query, 'loginGoogleOAuth'>
 );
 
 export type LogoutMutationVariables = {};
@@ -518,6 +599,36 @@ export type UpdateUsernameMutation = (
 );
 
 
+export const ValidateLinkDocument = gql`
+    query ValidateLink($key: String!, $link: String!) {
+  validateLink(key: $key, link: $link)
+}
+    `;
+
+    export function useValidateLinkQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ValidateLinkQuery, ValidateLinkQueryVariables>) {
+      return ApolloReactHooks.useQuery<ValidateLinkQuery, ValidateLinkQueryVariables>(ValidateLinkDocument, baseOptions);
+    }
+      export function useValidateLinkLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ValidateLinkQuery, ValidateLinkQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<ValidateLinkQuery, ValidateLinkQueryVariables>(ValidateLinkDocument, baseOptions);
+      }
+      
+export type ValidateLinkQueryHookResult = ReturnType<typeof useValidateLinkQuery>;
+export type ValidateLinkQueryResult = ApolloReactCommon.QueryResult<ValidateLinkQuery, ValidateLinkQueryVariables>;
+export const ValidatePublicProjectLinkDocument = gql`
+    query ValidatePublicProjectLink($projectId: ID!, $link: String!) {
+  validatePublicProjectLink(projectId: $projectId, link: $link)
+}
+    `;
+
+    export function useValidatePublicProjectLinkQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>) {
+      return ApolloReactHooks.useQuery<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>(ValidatePublicProjectLinkDocument, baseOptions);
+    }
+      export function useValidatePublicProjectLinkLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>(ValidatePublicProjectLinkDocument, baseOptions);
+      }
+      
+export type ValidatePublicProjectLinkQueryHookResult = ReturnType<typeof useValidatePublicProjectLinkQuery>;
+export type ValidatePublicProjectLinkQueryResult = ApolloReactCommon.QueryResult<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>;
 export const AcceptProjectInviteLinkDocument = gql`
     mutation AcceptProjectInviteLink($email: String!, $projectInviteLink: String!) {
   acceptProjectInviteLink(email: $email, projectInviteLink: $projectInviteLink)
@@ -531,6 +642,19 @@ export type AcceptProjectInviteLinkMutationFn = ApolloReactCommon.MutationFuncti
 export type AcceptProjectInviteLinkMutationHookResult = ReturnType<typeof useAcceptProjectInviteLinkMutation>;
 export type AcceptProjectInviteLinkMutationResult = ApolloReactCommon.MutationResult<AcceptProjectInviteLinkMutation>;
 export type AcceptProjectInviteLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<AcceptProjectInviteLinkMutation, AcceptProjectInviteLinkMutationVariables>;
+export const AcceptPublicProjectLinkDocument = gql`
+    mutation AcceptPublicProjectLink($link: String!, $projectId: ID!) {
+  acceptPublicProjectLink(link: $link, projectId: $projectId)
+}
+    `;
+export type AcceptPublicProjectLinkMutationFn = ApolloReactCommon.MutationFunction<AcceptPublicProjectLinkMutation, AcceptPublicProjectLinkMutationVariables>;
+
+    export function useAcceptPublicProjectLinkMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<AcceptPublicProjectLinkMutation, AcceptPublicProjectLinkMutationVariables>) {
+      return ApolloReactHooks.useMutation<AcceptPublicProjectLinkMutation, AcceptPublicProjectLinkMutationVariables>(AcceptPublicProjectLinkDocument, baseOptions);
+    }
+export type AcceptPublicProjectLinkMutationHookResult = ReturnType<typeof useAcceptPublicProjectLinkMutation>;
+export type AcceptPublicProjectLinkMutationResult = ApolloReactCommon.MutationResult<AcceptPublicProjectLinkMutation>;
+export type AcceptPublicProjectLinkMutationOptions = ApolloReactCommon.BaseMutationOptions<AcceptPublicProjectLinkMutation, AcceptPublicProjectLinkMutationVariables>;
 export const CreateProjectDocument = gql`
     mutation CreateProject($name: String!, $desc: String) {
   createProject(name: $name, desc: $desc) {
@@ -547,6 +671,21 @@ export type CreateProjectMutationFn = ApolloReactCommon.MutationFunction<CreateP
 export type CreateProjectMutationHookResult = ReturnType<typeof useCreateProjectMutation>;
 export type CreateProjectMutationResult = ApolloReactCommon.MutationResult<CreateProjectMutation>;
 export type CreateProjectMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateProjectMutation, CreateProjectMutationVariables>;
+export const GetPublicProjectLinkDocument = gql`
+    query GetPublicProjectLink($projectId: ID!) {
+  getPublicProjectLink(projectId: $projectId)
+}
+    `;
+
+    export function useGetPublicProjectLinkQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>) {
+      return ApolloReactHooks.useQuery<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>(GetPublicProjectLinkDocument, baseOptions);
+    }
+      export function useGetPublicProjectLinkLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>(GetPublicProjectLinkDocument, baseOptions);
+      }
+      
+export type GetPublicProjectLinkQueryHookResult = ReturnType<typeof useGetPublicProjectLinkQuery>;
+export type GetPublicProjectLinkQueryResult = ApolloReactCommon.QueryResult<GetPublicProjectLinkQuery, GetPublicProjectLinkQueryVariables>;
 export const GetUserProjectDocument = gql`
     query GetUserProject($id: ID!) {
   getUserProject(id: $id) {
@@ -715,21 +854,6 @@ export type ForgotPasswordMutationFn = ApolloReactCommon.MutationFunction<Forgot
 export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
 export type ForgotPasswordMutationResult = ApolloReactCommon.MutationResult<ForgotPasswordMutation>;
 export type ForgotPasswordMutationOptions = ApolloReactCommon.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
-export const Google_OAuthDocument = gql`
-    query Google_OAuth {
-  login_googleOAuth
-}
-    `;
-
-    export function useGoogle_OAuthQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<Google_OAuthQuery, Google_OAuthQueryVariables>) {
-      return ApolloReactHooks.useQuery<Google_OAuthQuery, Google_OAuthQueryVariables>(Google_OAuthDocument, baseOptions);
-    }
-      export function useGoogle_OAuthLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<Google_OAuthQuery, Google_OAuthQueryVariables>) {
-        return ApolloReactHooks.useLazyQuery<Google_OAuthQuery, Google_OAuthQueryVariables>(Google_OAuthDocument, baseOptions);
-      }
-      
-export type Google_OAuthQueryHookResult = ReturnType<typeof useGoogle_OAuthQuery>;
-export type Google_OAuthQueryResult = ApolloReactCommon.QueryResult<Google_OAuthQuery, Google_OAuthQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($email: String!, $password: String!) {
   login(email: $email, password: $password) {
@@ -745,6 +869,21 @@ export type LoginMutationFn = ApolloReactCommon.MutationFunction<LoginMutation, 
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = ApolloReactCommon.MutationResult<LoginMutation>;
 export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LoginGoogleOAuthDocument = gql`
+    query LoginGoogleOAuth($returnUrl: String) {
+  loginGoogleOAuth(returnUrl: $returnUrl)
+}
+    `;
+
+    export function useLoginGoogleOAuthQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>) {
+      return ApolloReactHooks.useQuery<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>(LoginGoogleOAuthDocument, baseOptions);
+    }
+      export function useLoginGoogleOAuthLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>) {
+        return ApolloReactHooks.useLazyQuery<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>(LoginGoogleOAuthDocument, baseOptions);
+      }
+      
+export type LoginGoogleOAuthQueryHookResult = ReturnType<typeof useLoginGoogleOAuthQuery>;
+export type LoginGoogleOAuthQueryResult = ApolloReactCommon.QueryResult<LoginGoogleOAuthQuery, LoginGoogleOAuthQueryVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout

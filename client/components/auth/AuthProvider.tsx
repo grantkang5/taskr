@@ -16,7 +16,11 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     }
   }, [data]);
 
-  const anonList = ["/invite/team/success"];
+  const anonList = [
+    "/invite/team/success",
+    "/invite/project/success",
+    "/invite/project/public"
+  ];
 
   const whiteList = [
     "/login",
