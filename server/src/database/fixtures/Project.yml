@@ -2,12 +2,14 @@ entity: Project
 # processor: ../processor/ProjectProcessor
 items:
   project1:
-    name: 'Taskr'
-    desc: 'this is taskr'
+    name: 'Mello'
+    desc: 'this is mello'
     owner: '@user1'
     members:
       - '@user1'
-      - '@user5'
+      - '@user2'
+      - '@user3'
+    team: '@team*'
   project2:
     name: 'Dorya'
     desc: 'dorya!'

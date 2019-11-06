@@ -7,12 +7,13 @@ import {
   // JoinTable,
   OneToMany,
   CreateDateColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
+  ManyToMany,
+  JoinTable
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
-// import { Task } from './Task';
-// import { Message } from './Message';
 import { Project } from './Project';
+import { Team } from './Team';
 
 @ObjectType()
 @Entity('users')
@@ -59,16 +60,13 @@ export class User extends BaseEntity {
   })
   ownedProjects: Project[];
 
-  // TODO: probably need eager
-  // @Field(() => [Project])
-  // @ManyToMany(() => Project, project => project.members)
-  // @JoinTable()
-  // projects: Project[];
+  @Field(() => [Project])
+  @ManyToMany(() => Project, project => project.members)
+  @JoinTable()
+  projects: Project[];
 
-  // @ManyToMany(() => Task)
-  // @JoinTable()
-  // tasks: Task[];
-
-  // @OneToMany(() => Message, message => message.user)
-  // messages: Message[];
+  @Field(() => [Team])
+  @ManyToMany(() => Team, team => team.members)
+  @JoinTable()
+  teams: Team[];
 }

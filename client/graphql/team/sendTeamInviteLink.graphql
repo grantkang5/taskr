@@ -1,0 +1,3 @@
+mutation SendTeamInviteLink($email: String!, $teamId: ID!) {
+  sendTeamInviteLink(email:$email, teamId:$teamId)
+}

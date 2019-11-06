@@ -1,23 +1,25 @@
+import "./App.less";
 import App from "next/app";
 import React from "react";
 import { ApolloProvider } from "@apollo/react-hooks";
 import { withApollo } from "../lib/apollo";
-import AuthProvider from "../components/AuthProvider";
+import AuthProvider from "../components/auth/AuthProvider";
+import { ModalProvider } from "../components/modals";
 
 interface Props {
-  apolloClient: any
+  apolloClient: any;
 }
-
-import './App.module.less'
 
 class MyApp extends App<Props> {
   render() {
     const { Component, pageProps, apolloClient } = this.props;
     return (
       <ApolloProvider client={apolloClient}>
-        <AuthProvider>
-          <Component {...pageProps} />
-        </AuthProvider>
+        <ModalProvider>
+          <AuthProvider>
+            <Component {...pageProps} />
+          </AuthProvider>
+        </ModalProvider>
       </ApolloProvider>
     );
   }

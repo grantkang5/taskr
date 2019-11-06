@@ -30,7 +30,14 @@ describe("Pages", () => {
     ];
 
     const useRouter = jest.spyOn(require('next/router'), 'useRouter')
-    useRouter.mockImplementation(() => ({ route: '/register' }))
+    useRouter.mockImplementation(() => ({
+      route: '/register',
+      query: {
+        returnUrl: '',
+        id: '',
+        email: ''
+      }
+    }))
 
     it("fires sendVerificationLink mutation on clicking the submit button", async () => {
       const wrapper = mount(

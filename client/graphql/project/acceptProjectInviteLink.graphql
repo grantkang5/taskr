@@ -1,0 +1,3 @@
+mutation AcceptProjectInviteLink($email:String!, $projectInviteLink:String!) {
+  acceptProjectInviteLink(email: $email, projectInviteLink: $projectInviteLink)
+}

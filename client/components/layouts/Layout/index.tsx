@@ -12,6 +12,13 @@ type Props = {
   sider?: React.ReactNode;
 };
 
+/**
+ *
+ * @param {1 | 0} hide (Number) Hides the header if 1
+ * @param {1 | 0} dark (Number) Makes layout background dark if 1
+ * @param {React.ReactNode} (ReactNode) sider Enables sider element
+ */
+
 const Layout: React.FC<Props> = ({
   children,
   hide,

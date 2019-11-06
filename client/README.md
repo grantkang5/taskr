@@ -206,6 +206,15 @@ export default () => (
 | **`white`**        | Text color white                             | _(number)_     | _undefined_    | ❌       |
 | **`children`**         | Children | _(ReactNode)_  | _undefined_    | ✅             |
 
+##### Modals
+```jsx
+const RandomPage = () => {
+    const { showModal } = useModal()
+    return (
+        <button onClick={() => showModal('welcome')}>Open Modal</button>
+    )
+}
+```
 _________
 
 ### Tests 🔀

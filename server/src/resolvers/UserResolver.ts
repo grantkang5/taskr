@@ -34,7 +34,7 @@ export class UserResolver {
   @UseMiddleware(isAuth)
   async me(@Ctx() { payload }: MyContext) {
     try {
-      const user = await User.findOne({ id: parseInt(payload!.userId) });
+      const user = await User.findOne({ id: payload!.userId });
       return user;
     } catch (err) {
       console.log(err);
@@ -79,7 +79,10 @@ export class UserResolver {
       const verificationLink = v4();
       const hashedPassword = await hash(password, 12);
 
-      await redis.hmset(email, { password: hashedPassword, verificationLink });
+      await redis.hmset(email, {
+        password: hashedPassword,
+        link: verificationLink
+      });
       await redis.expire(email, 3600);
 
       transporter.sendMail(verificationEmail(email, verificationLink));
@@ -96,15 +99,15 @@ export class UserResolver {
     try {
       const user = await User.findOne({ email });
       if (user) throw new Error('This account has already been verified');
-      const { password, verificationLink } = await redis.hgetall(email);
-      if (!password || !verificationLink) {
+      const { password, link } = await redis.hgetall(email);
+      if (!password || !link) {
         throw new Error('This email is no longer valid, sign up again');
       }
       const newVerificationLink = v4();
 
       await redis.hmset(email, {
         password,
-        verificationLink: newVerificationLink
+        link: newVerificationLink
       });
       await redis.expire(email, 3600);
 
@@ -121,12 +124,16 @@ export class UserResolver {
   async register(
     @Arg('email') email: string,
     @Arg('verificationLink') verificationLink: string,
+    @Arg('registerKey', { nullable: true }) registerKey: string,
+    @Arg('password', { nullable: true }) password: string,
     @Ctx() { res }: MyContext
   ) {
     try {
-      const { verificationLink: storedLink, password } = await redis.hgetall(
-        email
-      );
+      const key = registerKey ? `${registerKey}-${email}` : email;
+      const {
+        link: storedLink,
+        password: storedPassword
+      } = await redis.hgetall(key);
       if (verificationLink !== storedLink) {
         throw new Error('This link has expired');
       }
@@ -135,7 +142,7 @@ export class UserResolver {
 
       const user = await User.create({
         email,
-        password,
+        password: registerKey ? await hash(password, 12) : storedPassword,
         username,
         auth: 'website'
       }).save();
@@ -264,7 +271,7 @@ export class UserResolver {
     @Ctx() { payload }: MyContext
   ) {
     try {
-      const user = await User.findOne({ id: parseInt(payload!.userId) });
+      const user = await User.findOne({ id: payload!.userId });
       const res = await cloudinary.uploader.upload(image);
       user!.avatar = res.public_id;
       await user!.save();
@@ -282,7 +289,7 @@ export class UserResolver {
     @Ctx() { payload }: MyContext
   ) {
     try {
-      const user = await User.findOne({ id: parseInt(payload!.userId) });
+      const user = await User.findOne({ id: payload!.userId });
       // destroy current user's avatar from storage
       await cloudinary.uploader.destroy(user!.avatar);
 
@@ -303,7 +310,7 @@ export class UserResolver {
     @Ctx() { payload }: MyContext
   ) {
     try {
-      const user = await User.findOne({ id: parseInt(payload!.userId) });
+      const user = await User.findOne({ id: payload!.userId });
       user!.username = username;
       const newUser = await user!.save();
       return newUser;
@@ -342,7 +349,7 @@ export class UserResolver {
   }
 
   @Mutation(() => Boolean)
-  @UseMiddleware(rateLimit(5))
+  @UseMiddleware(rateLimit(10))
   async forgotPassword(
     @Arg('email') email: string,
     @Arg('forgotPasswordLink') forgotPasswordLink: string,
@@ -374,7 +381,7 @@ export class UserResolver {
     @Ctx() { payload }: MyContext
   ) {
     try {
-      const user = await User.findOne({ id: parseInt(payload!.userId) });
+      const user = await User.findOne({ id: payload!.userId });
       if (!user) throw new Error('User not found');
       // if user's password from db is NULL
       if (!user.password) {

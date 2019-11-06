@@ -1,0 +1,6 @@
+query GetUserProject($id:ID!) {
+  getUserProject(id:$id) {
+    id
+    name
+  }
+}

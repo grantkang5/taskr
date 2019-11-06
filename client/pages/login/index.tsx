@@ -31,7 +31,15 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
 
           if (response && response.data) {
             setAccessToken(response.data.login.accessToken);
-            router.push("/error", "/");
+            if (router.query.returnUrl) {
+              const { returnUrl, ...queryParams } = router.query
+              router.push({
+                pathname: returnUrl as string,
+                query: { ...queryParams }
+              })
+            } else {
+              router.push('/error', '/')
+            }
           }
         } catch (err) {
           showForgotPassword(true);
@@ -51,6 +59,7 @@ const Login: React.FC<FormComponentProps> = ({ form }) => {
         <Form onSubmit={handleSubmit}>
           <Form.Item hasFeedback>
             {getFieldDecorator("email", {
+              initialValue: router.query.email ? router.query.email : '',
               rules: [
                 { required: true, message: "Email field is required" },
                 { type: "email", message: "Not a a valid email address" }
