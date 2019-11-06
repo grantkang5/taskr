@@ -35,6 +35,7 @@ const TeamInviteSuccessPage: React.FC = () => {
     if (!router.query.id || !router.query.email) {
       router.push("/error", "/");
     }
+
     if (!loading && data && validated && !validateLoading) {
       const fetchData = async () => {
         const { id, email } = router.query;
@@ -59,7 +60,7 @@ const TeamInviteSuccessPage: React.FC = () => {
         didCancel = true;
       };
     }
-  }, [data]);
+  }, [data, validated]);
 
   const handleSignup = () => {
     router.push({
