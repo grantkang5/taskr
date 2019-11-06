@@ -12,7 +12,6 @@ interface Props {
 
 const AnonHeader: React.FC<Props> = ({ dark }) => {
   const router = useRouter();
-  console.log("ANON HEADER ROUTER: ", router)
   const headerStyle = classNames(styles.header, {
     [styles.dark]: dark
   });

@@ -49,7 +49,7 @@ jobs:
           command: yarn lint
       - run:
           name: "React test suite"
-          command: yarn test:coverage
+          command: yarn test
 
   api_build:
     working_directory: ~/taskr/server
