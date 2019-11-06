@@ -131,7 +131,9 @@ export class UserResolver {
         username,
         auth: "website"
       }).save();
-      await redis.del(key);
+      if (!registerKey) {
+        await redis.del(email);
+      }
 
       sendRefreshToken(res, createRefreshToken(user));
       return {
