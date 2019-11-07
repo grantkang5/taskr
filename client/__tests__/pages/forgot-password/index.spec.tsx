@@ -50,7 +50,7 @@ describe("Pages", () => {
             target: { name: "email", value: mockQuery.email }
           });
         wrapper.find("form").simulate("submit");
-        await wait(0);
+        await wait(1);
       });
 
       expect(sendForgotPasswordLinkCalled).toBe(true);
