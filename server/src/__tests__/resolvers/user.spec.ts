@@ -141,7 +141,9 @@ describe('User Resolver', () => {
       });
       expect(forgotPassword.data).toBeDefined();
       expect(forgotPassword.errors).toBeUndefined();
+    });
 
+    it("should fail login on old password and pass using new password", async () => {
       const incorrectLogin = await mutate({
         mutation: gql`
           mutation Login($email: String!, $password: String!) {
@@ -168,7 +170,7 @@ describe('User Resolver', () => {
 
       expect(successfulLogin.data).toBeDefined();
       expect(successfulLogin.errors).toBeUndefined();
-    });
+    })
   });
 
   describe('Change password mutation', () => {
