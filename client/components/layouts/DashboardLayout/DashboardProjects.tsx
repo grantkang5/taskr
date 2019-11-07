@@ -1,6 +1,7 @@
 import React from "react";
 import { useGetUserProjectsQuery } from "../../../generated/graphql";
 import { useRouter } from "next/router";
+import { encode } from "../../../lib/hashids";
 
 const DashboardProjects: React.FC = () => {
   const router = useRouter();
@@ -8,7 +9,7 @@ const DashboardProjects: React.FC = () => {
 
   const handleClick = (id: string | number) => () => {
     router.push({
-      pathname: `/project/${id}`
+      pathname: `/project/${encode(id)}`
     });
   };
   return (

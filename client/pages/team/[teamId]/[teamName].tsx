@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import DashboardLayout from "../../components/layouts/DashboardLayout";
+import DashboardLayout from "../../../components/layouts/DashboardLayout";
 import {
   useSendTeamInviteLinkMutation,
   useGetUserTeamQuery
-} from "../../generated/graphql";
+} from "../../../generated/graphql";
 import { useRouter } from "next/router";
 import { Button, Input, message, Skeleton } from "antd";
-import { errorMessage } from "../../lib/messageHandler";
+import { errorMessage } from "../../../lib/messageHandler";
+import { decode } from "../../../lib/hashids";
 
 const Team: React.FC = () => {
   const router = useRouter();
   const [value, setValue] = useState("");
   const { data, loading } = useGetUserTeamQuery({
     variables: {
-      id: router.query.teamId as string
+      id: decode(router.query.teamId as string)
     }
   });
   const [sendTeamInviteLink] = useSendTeamInviteLinkMutation({
@@ -32,7 +33,10 @@ const Team: React.FC = () => {
     });
   };
 
-  if (loading && !data) {
+  if (!loading && !data) {
+    return null;
+  }
+  if (loading || !data) {
     return (
       <DashboardLayout>
         <Skeleton active />
