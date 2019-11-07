@@ -25,6 +25,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "resolveJsonModule": true,
+    "downlevelIteration": true,
     "baseUrl": "."
   },
   "exclude": [
