@@ -30,7 +30,7 @@ export class Project extends BaseEntity {
   desc: string;
 
   @Column({ type: 'double precision', default: 0 })
-  lastPos: number;
+  maxPos: number;
 
   @Field()
   @CreateDateColumn()
@@ -46,15 +46,13 @@ export class Project extends BaseEntity {
   })
   owner: User;
 
-  @Field(() => List)
+  @Field(() => [List])
   @OneToMany(() => List, list => list.project, {
     cascade: true,
     eager: true
   })
   lists: List[];
 
-  // @OneToMany(() => Label, label => label.project)
-  // labels: Label[];
   @Field(() => [User])
   @ManyToMany(() => User, user => user.projects)
   members: User[];

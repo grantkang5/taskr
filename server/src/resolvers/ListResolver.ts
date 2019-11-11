@@ -77,7 +77,7 @@ export class ListResolver extends ListBaseResolver {
       // move target to bottom of list
       if (belowId === undefined) {
         // get pos of last list
-        targetList.pos = targetList.project.lastPos + buffer;
+        targetList.pos = targetList.project.maxPos + buffer;
       }
 
       // move target to top of list
