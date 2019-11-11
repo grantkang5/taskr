@@ -1,0 +1,6 @@
+entity: Task
+items:
+  task{1..50}:
+    name: '{{hacker.verb}}'
+    desc: '{{hacker.noun}}'
+    list: '@list*'

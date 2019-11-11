@@ -1,58 +1,54 @@
-// import {
-//   BaseEntity,
-//   Entity,
-//   PrimaryGeneratedColumn,
-//   Column,
-//   CreateDateColumn,
-//   UpdateDateColumn,
-//   OneToMany,
-//   ManyToMany,
-//   ManyToOne
-// } from 'typeorm';
-// import { ObjectType, Field, Int } from 'type-graphql';
-// import { Message } from './Message';
-// import { User } from './User';
-// import { Label } from './Label';
-// import { List } from './List';
+import { ObjectType, Field, ID } from "type-graphql";
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, BeforeInsert } from "typeorm";
+import { List } from "./List";
 
-// @ObjectType()
-// @Entity('tasks')
-// export class Task extends BaseEntity {
-//   @Field(() => Int)
-//   @PrimaryGeneratedColumn()
-//   id: number;
+@ObjectType()
+@Entity('tasks')
+export class Task extends BaseEntity {
+  @BeforeInsert()
+  async generatePos() {
+    const maxPosTask = await Task.findOne({
+      order: {
+        id: "DESC"
+      },
+      where: {
+        list: this.list.id
+      }
+    })
+    this.pos = maxPosTask ? maxPosTask.pos + 16384 : 16384
+  }
 
-//   @Field()
-//   @Column()
-//   name: string;
+  @Field(() => ID)
+  @PrimaryGeneratedColumn()
+  id: number;
 
-//   @Field()
-//   @Column()
-//   description: string;
+  @Field()
+  @Column()
+  name: string;
 
-//   @Field()
-//   @Column()
-//   dueDate: Date;
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  desc: string;
 
-//   @Field()
-//   @Column()
-//   position: number;
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  dueDate: Date;
 
-//   @CreateDateColumn()
-//   created_at: Date;
+  @Field()
+  @Column({ type: 'double precision' })
+  pos: number;
 
-//   @UpdateDateColumn()
-//   updated_at: Date;
+  @CreateDateColumn()
+  created_at: Date;
 
-//   @ManyToMany(() => User)
-//   users: User[];
+  @UpdateDateColumn()
+  updated_at: Date;
 
-//   @ManyToOne(() => List, list => list.tasks)
-//   list: List;
-
-//   @ManyToMany(() => Label)
-//   labels: Label[];
-
-//   @OneToMany(() => Message, message => message.task)
-//   messages: Message[];
-// }
+  @Field(() => List)
+  @ManyToOne(() => List, list => list.tasks, {
+    cascade: ["insert", "update"],
+    onDelete: 'CASCADE',
+    nullable: false
+  })
+  list: List
+}
