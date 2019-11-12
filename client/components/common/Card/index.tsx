@@ -149,3 +149,48 @@ export const DropLayout: React.FC = () => {
     </div>
   );
 };
+
+export const DropLayout2: React.FC = () => {
+  const [cards, setCards] = useState([
+    {
+      id: 6,
+      text: "Sixth"
+    },
+    {
+      id: 7,
+      text: "Seventh"
+    },
+    {
+      id: 8,
+      text: "Eighth"
+    },
+    {
+      id: 9,
+      text: "Ninth"
+    },
+    {
+      id: 10,
+      text: "Tenth"
+    }
+  ]);
+
+  const moveCard = useCallback(
+    (dragIndex: number, hoverIndex: number) => {
+      const dragCard = cards[dragIndex]
+      setCards(
+        update(cards, {
+          $splice: [[dragIndex, 1], [hoverIndex, 0, dragCard]],
+        }),
+      )
+    },
+    [cards]
+  )
+
+  return (
+    <div>
+      {cards.map((card, i) => (
+        <Card id={card.id} key={card.id} text={card.text} index={i} moveCard={moveCard} />
+      ))}
+    </div>
+  );
+}

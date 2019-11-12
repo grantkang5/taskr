@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import { Button, Input, message, Skeleton } from "antd";
 import { errorMessage } from "../../../lib/messageHandler";
 import { decode } from "../../../lib/hashids";
-import { Card, DropLayout } from "../../../components/common/Card";
+import { Card, DropLayout, DropLayout2 } from "../../../components/common/Card";
 
 const Team: React.FC = () => {
   const router = useRouter();
@@ -50,6 +50,7 @@ const Team: React.FC = () => {
       <Input value={value} onChange={e => setValue(e.currentTarget.value)} />
       <Button onClick={handleInviteMember}>Invite member</Button>
       <DropLayout />
+      <DropLayout2 />
     </DashboardLayout>
   );
 };
