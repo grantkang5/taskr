@@ -23,7 +23,7 @@ const AnonHeader: React.FC<Props> = ({ dark }) => {
             <Col span={4}>
               <Link href="/home" as="/home">
                 <Button type="link" ghost={dark ? true : false}>
-                  Home
+                  <img src="/static/logo/header-white.png" alt="Home" height={16} />
                 </Button>
               </Link>
             </Col>

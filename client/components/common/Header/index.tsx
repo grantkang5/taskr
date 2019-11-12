@@ -73,7 +73,9 @@ export const Header: React.FC<Props> = ({ dark }) => {
         <Col span={8}>
           <Row>
             <Col span={4}>
-              <ButtonLink path="/">Home</ButtonLink>
+              <ButtonLink path="/">
+                <img src="/static/logo/group.png" alt="Home" height={16} />
+              </ButtonLink>
             </Col>
           </Row>
         </Col>
