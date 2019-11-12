@@ -35,6 +35,7 @@ const Layout: React.FC<Props> = ({
       <Head>
         <title>{title}</title>
         <meta charSet="utf-8" />
+        <link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" /> 
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       {!hide ? <Header dark={dark} /> : null}
