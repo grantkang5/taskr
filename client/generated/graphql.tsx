@@ -317,6 +317,11 @@ export type QueryGetUserTeamArgs = {
   id: Scalars['ID']
 };
 
+export type Subscription = {
+   __typename?: 'Subscription',
+  listAdded: Scalars['Boolean'],
+};
+
 export type Team = {
    __typename?: 'Team',
   id: Scalars['ID'],
@@ -449,6 +454,14 @@ export type GetUserProjectsQuery = (
     { __typename?: 'Project' }
     & Pick<Project, 'id' | 'name'>
   )> }
+);
+
+export type OnListAddedSubscriptionVariables = {};
+
+
+export type OnListAddedSubscription = (
+  { __typename?: 'Subscription' }
+  & Pick<Subscription, 'listAdded'>
 );
 
 export type SendProjectInviteLinkMutationVariables = {
@@ -805,6 +818,17 @@ export const GetUserProjectsDocument = gql`
       
 export type GetUserProjectsQueryHookResult = ReturnType<typeof useGetUserProjectsQuery>;
 export type GetUserProjectsQueryResult = ApolloReactCommon.QueryResult<GetUserProjectsQuery, GetUserProjectsQueryVariables>;
+export const OnListAddedDocument = gql`
+    subscription onListAdded {
+  listAdded
+}
+    `;
+
+    export function useOnListAddedSubscription(baseOptions?: ApolloReactHooks.SubscriptionHookOptions<OnListAddedSubscription, OnListAddedSubscriptionVariables>) {
+      return ApolloReactHooks.useSubscription<OnListAddedSubscription, OnListAddedSubscriptionVariables>(OnListAddedDocument, baseOptions);
+    }
+export type OnListAddedSubscriptionHookResult = ReturnType<typeof useOnListAddedSubscription>;
+export type OnListAddedSubscriptionResult = ApolloReactCommon.SubscriptionResult<OnListAddedSubscription>;
 export const SendProjectInviteLinkDocument = gql`
     mutation SendProjectInviteLink($email: String!, $projectId: ID!) {
   sendProjectInviteLink(email: $email, projectId: $projectId)

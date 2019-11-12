@@ -1,5 +1,15 @@
 import { createBaseResolver } from './BaseResolver';
-import { Resolver, Mutation, UseMiddleware, Arg, ID } from 'type-graphql';
+import {
+  Resolver,
+  Mutation,
+  UseMiddleware,
+  Arg,
+  ID,
+  PubSubEngine,
+  PubSub,
+  Subscription,
+  Root
+} from 'type-graphql';
 import { List } from '../entity/List';
 import { isAuth } from '../services/auth/isAuth';
 import { Project } from '../entity/Project';
@@ -13,7 +23,8 @@ export class ListResolver extends ListBaseResolver {
   @UseMiddleware(isAuth)
   async createList(
     @Arg('projectId', () => ID) projectId: number,
-    @Arg('name') name: string
+    @Arg('name') name: string,
+    @PubSub() pubSub: PubSubEngine
   ) {
     try {
       const project = await Project.findOne({ where: { id: projectId } });
@@ -26,11 +37,17 @@ export class ListResolver extends ListBaseResolver {
         name,
         project
       }).save();
+      await pubSub.publish('LISTS', list);
       return list;
     } catch (err) {
       console.log(err);
       return err;
     }
+  }
+
+  @Subscription({ topics: 'LISTS' })
+  listAdded(@Root() list: List): List {
+    return list;
   }
 
   // update name
