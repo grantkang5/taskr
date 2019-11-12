@@ -1,8 +1,9 @@
-import { useState, createContext, useContext } from "react";
-import CreateTeamModal from "./CreateTeamModal";
-import CreateProjectModal from "./CreateProjectModal";
+import { useState, createContext, useContext } from 'react';
+import CreateTeamModal from './CreateTeamModal';
+import CreateProjectModal from './CreateProjectModal';
+import CreateListModal from './CreateListModal';
 
-export type ModalTypes = "" | "createTeam" | "createProject";
+export type ModalTypes = '' | 'createTeam' | 'createProject' | 'createList';
 
 export interface ModalContextType {
   modalKey: string;
@@ -11,34 +12,36 @@ export interface ModalContextType {
 }
 
 export const ModalContext = createContext<ModalContextType>({
-  modalKey: "",
+  modalKey: '',
   showModal: () => null,
   hideModal: () => null
 });
 
 export const useModal = () => {
-  const { showModal, hideModal } = useContext(ModalContext)
+  const { showModal, hideModal } = useContext(ModalContext);
 
-  return { showModal, hideModal }
-}
+  return { showModal, hideModal };
+};
 
 export const ModalProvider: React.FC = ({ children }) => {
-  const [modalKey, setModalKey] = useState<ModalTypes>("");
+  const [modalKey, setModalKey] = useState<ModalTypes>('');
 
   const showModal = () => (key: ModalTypes) => {
     setModalKey(key);
   };
 
   const hideModal = () => () => {
-    setModalKey('')
-  }
+    setModalKey('');
+  };
 
   const mountModal = () => {
     switch (modalKey) {
-      case "createTeam":
+      case 'createTeam':
         return <CreateTeamModal />;
-      case "createProject":
-        return <CreateProjectModal />
+      case 'createProject':
+        return <CreateProjectModal />;
+      case 'createList':
+        return <CreateListModal />;
       default:
         return null;
     }

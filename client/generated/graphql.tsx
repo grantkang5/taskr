@@ -27,6 +27,14 @@ export type ImageResponse = {
   original_filename: Scalars['String'],
 };
 
+export type List = {
+   __typename?: 'List',
+  id: Scalars['ID'],
+  name: Scalars['String'],
+  pos: Scalars['Float'],
+  project: Project,
+};
+
 export type LoginResponse = {
    __typename?: 'LoginResponse',
   accessToken: Scalars['String'],
@@ -35,8 +43,9 @@ export type LoginResponse = {
 
 export type Mutation = {
    __typename?: 'Mutation',
-  deleteProject: Project,
   deleteTeam: Team,
+  deleteList: List,
+  deleteProject: Project,
   sendVerificationLink: Scalars['String'],
   resendVerificationLink: Scalars['String'],
   register: LoginResponse,
@@ -50,25 +59,33 @@ export type Mutation = {
   forgotPassword: Scalars['Boolean'],
   changePassword: Scalars['Boolean'],
   revokeRefreshToken: Scalars['Boolean'],
-  createTeam: Team,
-  sendTeamInviteLink: Scalars['String'],
-  acceptTeamInviteLink: Scalars['Boolean'],
-  deleteTeamMember: Scalars['Boolean'],
-  updateTeam: Team,
   createProject: Project,
   updateProject: Scalars['Boolean'],
   sendProjectInviteLink: Scalars['String'],
   acceptProjectInviteLink: Scalars['Boolean'],
   acceptPublicProjectLink: Scalars['Boolean'],
-};
-
-
-export type MutationDeleteProjectArgs = {
-  id: Scalars['ID']
+  createList: List,
+  updateListName: Scalars['Boolean'],
+  updateListPos: Scalars['Boolean'],
+  createTeam: Team,
+  sendTeamInviteLink: Scalars['String'],
+  acceptTeamInviteLink: Scalars['Boolean'],
+  deleteTeamMember: Scalars['Boolean'],
+  updateTeam: Team,
 };
 
 
 export type MutationDeleteTeamArgs = {
+  id: Scalars['ID']
+};
+
+
+export type MutationDeleteListArgs = {
+  id: Scalars['ID']
+};
+
+
+export type MutationDeleteProjectArgs = {
   id: Scalars['ID']
 };
 
@@ -141,35 +158,6 @@ export type MutationRevokeRefreshTokenArgs = {
 };
 
 
-export type MutationCreateTeamArgs = {
-  name: Scalars['String']
-};
-
-
-export type MutationSendTeamInviteLinkArgs = {
-  email: Scalars['String'],
-  teamId: Scalars['ID']
-};
-
-
-export type MutationAcceptTeamInviteLinkArgs = {
-  teamInviteLink: Scalars['String'],
-  email: Scalars['String']
-};
-
-
-export type MutationDeleteTeamMemberArgs = {
-  userId: Scalars['ID'],
-  teamId: Scalars['ID']
-};
-
-
-export type MutationUpdateTeamArgs = {
-  name: Scalars['String'],
-  teamId: Scalars['ID']
-};
-
-
 export type MutationCreateProjectArgs = {
   teamId?: Maybe<Scalars['ID']>,
   desc?: Maybe<Scalars['String']>,
@@ -202,6 +190,54 @@ export type MutationAcceptPublicProjectLinkArgs = {
   link: Scalars['String']
 };
 
+
+export type MutationCreateListArgs = {
+  name: Scalars['String'],
+  projectId: Scalars['ID']
+};
+
+
+export type MutationUpdateListNameArgs = {
+  name: Scalars['String'],
+  id: Scalars['ID']
+};
+
+
+export type MutationUpdateListPosArgs = {
+  belowId?: Maybe<Scalars['ID']>,
+  aboveId?: Maybe<Scalars['ID']>,
+  id: Scalars['ID']
+};
+
+
+export type MutationCreateTeamArgs = {
+  name: Scalars['String']
+};
+
+
+export type MutationSendTeamInviteLinkArgs = {
+  email: Scalars['String'],
+  teamId: Scalars['ID']
+};
+
+
+export type MutationAcceptTeamInviteLinkArgs = {
+  teamInviteLink: Scalars['String'],
+  email: Scalars['String']
+};
+
+
+export type MutationDeleteTeamMemberArgs = {
+  userId: Scalars['ID'],
+  teamId: Scalars['ID']
+};
+
+
+export type MutationUpdateTeamArgs = {
+  name: Scalars['String'],
+  teamId: Scalars['ID']
+};
+
 export type Project = {
    __typename?: 'Project',
   id: Scalars['Int'],
@@ -210,30 +246,28 @@ export type Project = {
   created_at: Scalars['DateTime'],
   updated_at: Scalars['DateTime'],
   owner: User,
+  lists: Array<List>,
   members: Array<User>,
   team: Team,
 };
 
 export type Query = {
    __typename?: 'Query',
-  getAllProjects: Array<Project>,
-  getProject: Project,
   getAllTeams: Array<Team>,
   getTeam: Team,
+  getAllLists: Array<List>,
+  getList: List,
+  getAllProjects: Array<Project>,
+  getProject: Project,
   me: User,
   loginGoogleOAuth: Scalars['String'],
-  getUserTeam: Team,
-  getUserTeams: Array<Team>,
   getUserProject: Project,
   getUserProjects: Array<Project>,
   getPublicProjectLink: Scalars['String'],
   validateLink: Scalars['Boolean'],
   validatePublicProjectLink: Scalars['Boolean'],
-};
-
-
-export type QueryGetProjectArgs = {
-  id: Scalars['ID']
+  getUserTeam: Team,
+  getUserTeams: Array<Team>,
 };
 
 
@@ -242,13 +276,18 @@ export type QueryGetTeamArgs = {
 };
 
 
-export type QueryLoginGoogleOAuthArgs = {
-  returnUrl?: Maybe<Scalars['String']>
+export type QueryGetListArgs = {
+  id: Scalars['ID']
 };
 
 
-export type QueryGetUserTeamArgs = {
+export type QueryGetProjectArgs = {
   id: Scalars['ID']
+};
+
+
+export type QueryLoginGoogleOAuthArgs = {
+  returnUrl?: Maybe<Scalars['String']>
 };
 
 
@@ -271,6 +310,11 @@ export type QueryValidateLinkArgs = {
 export type QueryValidatePublicProjectLinkArgs = {
   link: Scalars['String'],
   projectId: Scalars['ID']
+};
+
+
+export type QueryGetUserTeamArgs = {
+  id: Scalars['ID']
 };
 
 export type Team = {
@@ -317,6 +361,20 @@ export type ValidatePublicProjectLinkQueryVariables = {
 export type ValidatePublicProjectLinkQuery = (
   { __typename?: 'Query' }
   & Pick<Query, 'validatePublicProjectLink'>
+);
+
+export type CreateListMutationVariables = {
+  name: Scalars['String'],
+  projectId: Scalars['ID']
+};
+
+
+export type CreateListMutation = (
+  { __typename?: 'Mutation' }
+  & { createList: (
+    { __typename?: 'List' }
+    & Pick<List, 'id' | 'name'>
+  ) }
 );
 
 export type AcceptProjectInviteLinkMutationVariables = {
@@ -375,6 +433,10 @@ export type GetUserProjectQuery = (
   & { getUserProject: (
     { __typename?: 'Project' }
     & Pick<Project, 'id' | 'name'>
+    & { lists: Array<(
+      { __typename?: 'List' }
+      & Pick<List, 'id' | 'name' | 'pos'>
+    )> }
   ) }
 );
 
@@ -629,6 +691,22 @@ export const ValidatePublicProjectLinkDocument = gql`
       
 export type ValidatePublicProjectLinkQueryHookResult = ReturnType<typeof useValidatePublicProjectLinkQuery>;
 export type ValidatePublicProjectLinkQueryResult = ApolloReactCommon.QueryResult<ValidatePublicProjectLinkQuery, ValidatePublicProjectLinkQueryVariables>;
+export const CreateListDocument = gql`
+    mutation CreateList($name: String!, $projectId: ID!) {
+  createList(name: $name, projectId: $projectId) {
+    id
+    name
+  }
+}
+    `;
+export type CreateListMutationFn = ApolloReactCommon.MutationFunction<CreateListMutation, CreateListMutationVariables>;
+
+    export function useCreateListMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateListMutation, CreateListMutationVariables>) {
+      return ApolloReactHooks.useMutation<CreateListMutation, CreateListMutationVariables>(CreateListDocument, baseOptions);
+    }
+export type CreateListMutationHookResult = ReturnType<typeof useCreateListMutation>;
+export type CreateListMutationResult = ApolloReactCommon.MutationResult<CreateListMutation>;
+export type CreateListMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateListMutation, CreateListMutationVariables>;
 export const AcceptProjectInviteLinkDocument = gql`
     mutation AcceptProjectInviteLink($email: String!, $projectInviteLink: String!) {
   acceptProjectInviteLink(email: $email, projectInviteLink: $projectInviteLink)
@@ -691,6 +769,11 @@ export const GetUserProjectDocument = gql`
   getUserProject(id: $id) {
     id
     name
+    lists {
+      id
+      name
+      pos
+    }
   }
 }
     `;

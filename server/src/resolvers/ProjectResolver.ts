@@ -36,12 +36,15 @@ export class ProjectResolver extends ProjectBaseResolver {
           userId: payload!.userId
         })
         .where('project.id = :projectId', { projectId: id })
+        .leftJoinAndSelect('project.lists', 'list')
         .getOne();
+
       if (!project) {
         throw new Error(
           `This project doesn't exist or you don't have access to it`
         );
       }
+
       return project;
     } catch (err) {
       console.log(err);

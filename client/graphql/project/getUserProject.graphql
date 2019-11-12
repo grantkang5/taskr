@@ -1,6 +1,11 @@
-query GetUserProject($id:ID!) {
-  getUserProject(id:$id) {
+query GetUserProject($id: ID!) {
+  getUserProject(id: $id) {
     id
     name
+    lists {
+      id
+      name
+      pos
+    }
   }
 }
