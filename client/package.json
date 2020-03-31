@@ -28,7 +28,7 @@
     "hashids": "latest",
     "isomorphic-unfetch": "^3.0.0",
     "jwt-decode": "^2.2.0",
-    "next": "9.0.7",
+    "next": "9.3.2",
     "next-antd-aza-less": "^1.0.2",
     "null-loader": "^3.0.0",
     "react": "16.10.2",
